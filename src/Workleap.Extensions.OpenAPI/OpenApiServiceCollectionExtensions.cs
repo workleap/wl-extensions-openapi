@@ -2,9 +2,16 @@
 
 namespace Workleap.Extensions.OpenAPI;
 
-public static class ServiceCollectionOpenApiExtensions
+/// <summary>
+/// TODO
+/// </summary>
+public static class OpenApiServiceCollectionExtensions
 {
-    // TODO: Check the setup name
+    /// <summary>
+    /// TODO
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
     public static OpenApiBuilder AddOpenApi(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);

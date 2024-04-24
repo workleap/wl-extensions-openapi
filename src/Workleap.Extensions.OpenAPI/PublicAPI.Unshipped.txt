@@ -1,1 +1,5 @@
 #nullable enable
+static Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions.AddOpenApi(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Workleap.Extensions.OpenAPI.OpenApiBuilder!
+Workleap.Extensions.OpenAPI.OpenApiBuilder
+Workleap.Extensions.OpenAPI.OpenApiBuilder.FallbackOnMethodNameForOperationId() -> Workleap.Extensions.OpenAPI.OpenApiBuilder!
+Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions

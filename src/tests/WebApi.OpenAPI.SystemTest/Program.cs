@@ -1,4 +1,5 @@
 using WebApi.OpenAPI.SystemTest;
+using WebApi.OpenAPI.SystemTest.Properties;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +9,7 @@ builder.Services.AddSwagger();
 
 var app = builder.Build();
 
-// Test with minimal API
-app.MapGet("/", () => "Hello World!");
+app.AddEndpointsForOperationId();
 
 app.UseSwagger();
 app.UseSwaggerUI();

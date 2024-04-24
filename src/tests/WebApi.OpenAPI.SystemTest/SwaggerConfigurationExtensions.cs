@@ -1,4 +1,5 @@
-﻿using Workleap.Extensions.OpenAPI;
+﻿using Microsoft.OpenApi.Models;
+using Workleap.Extensions.OpenAPI;
 
 namespace WebApi.OpenAPI.SystemTest;
 
@@ -6,11 +7,13 @@ public static class SwaggerConfigurationExtensions
 {
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
-        services.AddControllers();
+        // Required to detect Minimal Api Endpoints
+        services.AddEndpointsApiExplorer();
 
-        services.AddSwaggerGen(x =>
+        services.AddSwaggerGen(options =>
         {
-            x.EnableAnnotations();
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "v1" });
+            options.EnableAnnotations();
         });
 
         services.AddOpenApi()

@@ -5,17 +5,10 @@ namespace WebApi.OpenAPI.SystemTest.Properties;
 
 [ApiController]
 [Route("OperationId")]
-public class OperationIdController: ControllerBase
+public class OperationIdController : ControllerBase
 {
     [HttpGet("/explicitOperationIdInName", Name = "GetExplicitOperationIdInName")]
     public IActionResult GetExplicitOperationIdInName()
-    {
-        return this.Ok();
-    }
-
-    [HttpGet(Name = "GetExplicitOperationIdInNameWithRoute")]
-    [Route("/explicitOperationIdInSwagger")]
-    public IActionResult GetExplicitOperationIdInNameWithRouteAttribute()
     {
         return this.Ok();
     }

@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Workleap.Extensions.OpenAPI;
 
-internal class DisplayOperationIdInSwaggerUIOptions: IConfigureOptions<SwaggerUIOptions>
+internal class DisplayOperationIdInSwaggerUiOptions : IConfigureOptions<SwaggerUIOptions>
 {
     public void Configure(SwaggerUIOptions options)
     {
