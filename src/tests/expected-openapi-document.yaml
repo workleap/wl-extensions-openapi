@@ -1,0 +1,45 @@
+openapi: 3.0.0
+info:
+  title: Test API
+  version: v1
+paths:
+  /minimal-endpoint-with-name:
+    get:
+      tags:
+        - OperationId
+      operationId: GetMinimalApiWithName2
+      responses:
+        '200':
+          description: OK
+  /minimal-endpoint-with-no-name:
+    get:
+      tags:
+        - OperationId
+      responses:
+        '200':
+          description: OK
+  /explicitOperationIdInName:
+    get:
+      tags:
+        - OperationId
+      operationId: GetExplicitOperationIdInName
+      responses:
+        '200':
+          description: Success
+  /explicitOperationIdInSwagger:
+    get:
+      tags:
+        - OperationId
+      operationId: GetExplicitOperationIdInSwagger
+      responses:
+        '200':
+          description: Success
+  /noOperationId:
+    get:
+      tags:
+        - OperationId
+      operationId: GetNotOperationId
+      responses:
+        '200':
+          description: Success
+components: { }
