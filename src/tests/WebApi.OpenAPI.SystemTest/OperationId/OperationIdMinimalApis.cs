@@ -14,8 +14,3 @@ public static class OperationIdMinimalApis
             .WithOpenApi();
     }
 }
-
-public class Test
-{
-    public int Count { get; set; }
-}
