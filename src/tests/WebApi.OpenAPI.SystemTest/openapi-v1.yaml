@@ -1,0 +1,30 @@
+openapi: 3.0.1
+info:
+  title: WebApi.OpenAPI.SystemTest
+  version: '1.0'
+paths:
+  /explicitOperationIdInName:
+    get:
+      tags:
+        - OperationId
+      operationId: GetExplicitOperationIdInName
+      responses:
+        '200':
+          description: Success
+  /explicitOperationIdInSwagger:
+    get:
+      tags:
+        - OperationId
+      operationId: GetExplicitOperationIdInSwagger
+      responses:
+        '200':
+          description: Success
+  /noOperationId:
+    get:
+      tags:
+        - OperationId
+      operationId: GetNotOperationId
+      responses:
+        '200':
+          description: Success
+components: { }
