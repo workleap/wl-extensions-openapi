@@ -5,8 +5,22 @@
 
 ## Getting started
 
-TODO
+This library's purpose is to provide helpers and guidelines for annotating API endpoints for OpenAPI spec generation. As such, we provide the following features:
 
+- Fallback to use controller name as OperationId when there is no OperationId explicitly defined for the endpoint.
+
+### How to use it
+
+Install the package Workleap.Extensions.OpenAPI in your .NET API project. Then you may use the following method to register the required service.  Here is a code snippet on how to register this and to enable the operationId fallback feature in your application.
+
+```
+public void ConfigureServices(IServiceCollection services)
+{
+  // [...]
+  services.AddOpenApi().FallbackOnMethodNameForOperationId();
+  // [...]
+}
+```
 
 ## Building, releasing and versioning
 

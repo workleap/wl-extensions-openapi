@@ -7,6 +7,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../Workleap.Extensions.OpenAPI.snk</AssemblyOriginatorKeyFile>
+    <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
