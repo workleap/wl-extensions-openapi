@@ -5,9 +5,14 @@
 
 ## Getting started
 
-This library provides helpers and guidelines for API endpoints annotations during OpenAPI spec generation. As such, we provide the following features:
+The goal of the library is to help generate better OpenApi document with less effort.
 
-- Fallback to use controller name as OperationId when there is no OperationId explicitly defined for the endpoint.
+To achieve this, the library offers an opinionated configuration of OpenAPI document generation and SwaggerUI.
+
+As such, we provide the following features:
+
+- Display OperationId in SwaggerUI
+- (Optional) Fallback to use controller name as OperationId when there is no OperationId explicitly defined for the endpoint.
 
 ### How to use it
 
