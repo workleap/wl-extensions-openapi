@@ -3,7 +3,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Workleap.Extensions.OpenAPI;
 
-public class SwaggerDefaultOperationIdToMethodNameFilter: IOperationFilter
+internal class SwaggerDefaultOperationIdToMethodNameFilter: IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
@@ -12,6 +12,8 @@ public class SwaggerDefaultOperationIdToMethodNameFilter: IOperationFilter
             return;
         }
 
+        // Remove Async
+        // Should we provide an extension points to customize the name?
         operation.OperationId = context.MethodInfo.Name;
     }
 }

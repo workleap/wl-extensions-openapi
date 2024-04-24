@@ -13,6 +13,13 @@ public class OperationIdController: ControllerBase
         return this.Ok();
     }
 
+    [HttpGet(Name = "GetExplicitOperationIdInNameWithRoute")]
+    [Route("/explicitOperationIdInSwagger")]
+    public IActionResult GetExplicitOperationIdInNameWithRouteAttribute()
+    {
+        return this.Ok();
+    }
+
     [HttpGet]
     [SwaggerOperation(OperationId = "GetExplicitOperationIdInSwagger")]
     [Route("/explicitOperationIdInSwagger")]

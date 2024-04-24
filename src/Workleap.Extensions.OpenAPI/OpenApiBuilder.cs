@@ -15,11 +15,12 @@ public class OpenApiBuilder
     {
         this._services = services;
         
+        // TODO: Maybe not do in the constructor
         // Transiant or singleton?
-        this._services.AddTransient<IConfigureOptions<SwaggerUIOptions>, DisplayOperationIdOptions>();
+        this._services.AddTransient<IConfigureOptions<SwaggerUIOptions>, DisplayOperationIdInSwaggerUIOptions>();
     }
 
-    public OpenApiBuilder UseMethodNameAsOperationId()
+    public OpenApiBuilder FallbackOnMethodNameForOperationId()
     {
         this._services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerMethodAsOperationIdConfigureOptions>();
         return this;
