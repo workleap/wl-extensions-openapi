@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Workleap.Extensions.OpenAPI;
+namespace Workleap.Extensions.OpenAPI.OperationId;
 
 internal class FallbackOperationIdToMethodNameFilter : IOperationFilter
 {
@@ -13,14 +13,12 @@ internal class FallbackOperationIdToMethodNameFilter : IOperationFilter
             return;
         }
 
-        // Method name for Minimal API is not the best choice for OperationId we want to force explicit OperationId
+        // Method name for Minimal API is not the best choice for OperationId so we want to force explicit declaration
         if (IsMinimalApi(context))
         {
             return;
         }
 
-        // Remove Async
-        // Should we provide an extension points to customize the name?
         operation.OperationId = CleanupName(context.MethodInfo.Name);
     }
 

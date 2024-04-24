@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using Workleap.Extensions.OpenAPI.OperationId;
 
-namespace Workleap.Extensions.OpenAPI;
+namespace Workleap.Extensions.OpenAPI.Builder;
 
 /// <summary>
 /// Provides methods to configure Swagger/OpenAPI opinionated settings for the application.

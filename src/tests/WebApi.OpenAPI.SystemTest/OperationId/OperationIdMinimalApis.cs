@@ -1,4 +1,4 @@
-﻿namespace WebApi.OpenAPI.SystemTest.Properties;
+﻿namespace WebApi.OpenAPI.SystemTest.OperationId;
 
 public static class OperationIdMinimalApis
 {

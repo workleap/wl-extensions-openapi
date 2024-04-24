@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace Workleap.Extensions.OpenAPI;
+namespace Workleap.Extensions.OpenAPI.OperationId;
 
 internal class DisplayOperationIdInSwaggerUiOptions : IConfigureOptions<SwaggerUIOptions>
 {

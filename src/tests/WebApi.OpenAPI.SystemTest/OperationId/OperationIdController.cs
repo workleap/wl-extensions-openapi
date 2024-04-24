@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace WebApi.OpenAPI.SystemTest.Properties;
+namespace WebApi.OpenAPI.SystemTest.OperationId;
 
 [ApiController]
 [Route("OperationId")]

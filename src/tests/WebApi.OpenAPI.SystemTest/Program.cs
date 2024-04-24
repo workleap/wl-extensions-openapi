@@ -1,5 +1,5 @@
 using WebApi.OpenAPI.SystemTest;
-using WebApi.OpenAPI.SystemTest.Properties;
+using WebApi.OpenAPI.SystemTest.OperationId;
 
 var builder = WebApplication.CreateBuilder(args);
 

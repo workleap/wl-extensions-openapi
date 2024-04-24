@@ -1,4 +1,6 @@
-namespace Workleap.Extensions.OpenAPI.Tests;
+using Workleap.Extensions.OpenAPI.OperationId;
+
+namespace Workleap.Extensions.OpenAPI.Tests.OperationId;
 
 public class FallbackOperationIdToMethodNameFilterTests
 {
