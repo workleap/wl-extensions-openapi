@@ -5,7 +5,7 @@
 
 ## Getting started
 
-This library's purpose is to provide helpers and guidelines for annotating API endpoints for OpenAPI spec generation. As such, we provide the following features:
+This library's provide helpers and guidelines for API endpoints annotations during OpenAPI spec generation. As such, we provide the following features:
 
 - Fallback to use controller name as OperationId when there is no OperationId explicitly defined for the endpoint.
 
