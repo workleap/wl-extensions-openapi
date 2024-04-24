@@ -1,17 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Workleap.Extensions.OpenAPI.Builder;
 
 namespace Workleap.Extensions.OpenAPI;
 
 /// <summary>
-/// TODO
+/// Provides extension methods to the <see cref="IServiceCollection"/> for configuring OpenAPI/Swagger services.
 /// </summary>
 public static class OpenApiServiceCollectionExtensions
 {
     /// <summary>
-    /// TODO
+    /// Configures OpenAPI/Swagger document generation and SwaggerUI.
     /// </summary>
-    /// <param name="services"></param>
-    /// <returns></returns>
     public static OpenApiBuilder AddOpenApi(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
