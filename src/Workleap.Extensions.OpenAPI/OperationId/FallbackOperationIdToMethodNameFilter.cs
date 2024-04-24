@@ -13,7 +13,7 @@ internal class FallbackOperationIdToMethodNameFilter : IOperationFilter
             return;
         }
 
-        // Method name for Minimal API is not the best choice for OperationId so we want to force explicit declaration
+        // Method name for Minimal API is not the best choice for OperationId so we want to enforce explicit declaration
         if (IsMinimalApi(context))
         {
             return;
