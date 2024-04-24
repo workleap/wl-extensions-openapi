@@ -8,7 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{3B3625CC-919B-4216-9B50-BCFE297AA184}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workleap.Extensions.OpenAPI.Tests", "Workleap.Extensions.OpenAPI.Tests\Workleap.Extensions.OpenAPI.Tests.csproj", "{2A5429CC-E179-47E7-85BB-C1E33E2AFD8A}"
@@ -45,5 +44,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F7C54BE5-D538-4D2B-9B07-C77567CEB82A} = {1868781E-E97B-447A-AEB7-507739F5FA88}
+		{2A5429CC-E179-47E7-85BB-C1E33E2AFD8A} = {1868781E-E97B-447A-AEB7-507739F5FA88}
 	EndGlobalSection
 EndGlobal
