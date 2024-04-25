@@ -56,7 +56,7 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
         {
             yield return (NameStatusCodeDict[context.MethodInfo.ReturnType.Name], responseTypes.First());   
         }
-        else 
+        else
         {
             foreach (var responseType in responseTypes)
             {
