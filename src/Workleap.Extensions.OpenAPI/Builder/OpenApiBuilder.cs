@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Workleap.Extensions.OpenAPI.OperationId;
+using Workleap.Extensions.OpenAPI.TypedResult;
 
 namespace Workleap.Extensions.OpenAPI.Builder;
 
@@ -17,6 +18,10 @@ public class OpenApiBuilder
         this._services = services;
 
         this._services.AddSingleton<IConfigureOptions<SwaggerUIOptions>, DisplayOperationIdInSwaggerUiOptions>();
+        this._services.ConfigureSwaggerGen(options =>
+        {
+            options.OperationFilter<ExtractSchemaTypeResultFilter>();
+        });
     }
 
     /// <summary>
