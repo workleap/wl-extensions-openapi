@@ -3,18 +3,18 @@
 [![nuget](https://img.shields.io/nuget/v/Workleap.Extensions.OpenAPI.svg?logo=nuget)](https://www.nuget.org/packages/Workleap.Extensions.OpenAPI/)
 [![build](https://img.shields.io/github/actions/workflow/status/gsoft-inc/wl-extensions-openapi/publish.yml?logo=github&branch=main)](https://github.com/gsoft-inc/wl-extensions-openapi/actions/workflows/publish.yml)
 
-## Getting started
+The Workleap.Extensions.OpenAPI library is designed to help generate better OpenApi document with less effort.
 
-The goal of the library is to help generate better OpenApi document with less effort.
+## Value proposition and features overview
 
-To achieve this, the library offers an opinionated configuration of OpenAPI document generation and SwaggerUI.
+The library offers an opinionated configuration of OpenAPI document generation and SwaggerUI.
 
 As such, we provide the following features:
 
 - Display OperationId in SwaggerUI
 - (Optional) Fallback to use controller name as OperationId when there is no OperationId explicitly defined for the endpoint.
 
-### How to use it
+## Getting started
 
 Install the package Workleap.Extensions.OpenAPI in your .NET API project. Then you may use the following method to register the required service.  Here is a code snippet on how to register this and to enable the operationId fallback feature in your application.
 
