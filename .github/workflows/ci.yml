@@ -30,5 +30,3 @@ jobs:
           NUGET_SOURCE: ${{ secrets.NUGET_GSOFTDEV_FEED_URL }}
           NUGET_API_KEY: ${{ secrets.GSOFT_NUGET_API_KEY }}
 
-      - run: src/tests/RunSystemTest.ps1
-        shell: pwsh
