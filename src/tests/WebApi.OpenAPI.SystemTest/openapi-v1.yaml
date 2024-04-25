@@ -49,6 +49,21 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: '404'
+  /voidOk:
+    get:
+      tags:
+        - TypedResult
+      operationId: VoidOk
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
   /withSwaggerResponseAnnotation:
     get:
       tags:

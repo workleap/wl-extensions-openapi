@@ -32,7 +32,17 @@ public class TypedResultController : ControllerBase
             _ => TypedResults.Ok(new TypedResultExample("Example"))
         };
     }
-    
+
+    [HttpGet]
+    [Route("/voidOk")]
+    // [ProducesResponseType(typeof(TypedResultExample), StatusCodes.Status200OK)]
+    // [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Ok VoidOk(int id)
+    {
+        return TypedResults.Ok();
+    }
+
     [HttpGet]
     [Route("/withSwaggerResponseAnnotation")]
     [SwaggerResponse(StatusCodes.Status200OK, "Returns TypedResult", typeof(TypedResultExample), "application/json")]
