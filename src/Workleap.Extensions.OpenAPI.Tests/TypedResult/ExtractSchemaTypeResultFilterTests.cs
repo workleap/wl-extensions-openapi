@@ -99,14 +99,15 @@ public class ExtractSchemaTypeResultFilterTests
 
         // Assert
         Assert.Equal(expectedMetadata.Count, responsesMetadata.Count);
-        foreach(var (expected, actual) in expectedMetadata.Zip(responsesMetadata))
+        foreach (var (expected, actual) in expectedMetadata.Zip(responsesMetadata))
         {
+            Assert.NotNull(actual);
             Assert.Equal(expected.HttpCode, actual.HttpCode);
             Assert.Equal(expected.SchemaType, actual.SchemaType);
         }
     }
 
-    private class TestTypedSchema
+    private sealed class TestTypedSchema
     {
         public int Count { get; set; }
     }
