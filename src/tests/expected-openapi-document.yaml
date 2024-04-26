@@ -42,6 +42,62 @@ paths:
       responses:
         '200':
           description: Success
+  '/minimal-endpoint-with-typed-result-no-produces/{id}':
+    get:
+      tags:
+        - TypedResult
+      operationId: GetMinimalApiWithTypedResultWithNoProduces
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+  /minimal-endpoint-with-typed-result-with-produces:
+    get:
+      tags:
+        - TypedResult
+      operationId: GetMinimalApiWithTypedResultWithProduces
+      parameters:
+        - name: id
+          in: query
+          required: true
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
   /withOnlyOnePath:
     get:
       tags:
@@ -158,62 +214,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
-  '/minimal-endpoint-with-typed-result-no-produces/{id}':
-    get:
-      tags:
-        - TypedResultWithNoProduces
-      operationId: GetMinimalApiWithTypedResultWithNoProduces
-      parameters:
-        - name: id
-          in: path
-          required: true
-          style: simple
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypedResultExample'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
-        '404':
-          description: Not Found
-  /minimal-endpoint-with-typed-result-with-produces:
-    get:
-      tags:
-        - TypedResultWithProduces
-      operationId: GetMinimalApiWithTypedResultWithProduces
-      parameters:
-        - name: id
-          in: query
-          required: true
-          style: form
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypedResultExample'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
-        '404':
-          description: Not Found
 components:
   schemas:
     ProblemDetails:

@@ -72,7 +72,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             return endpointProducesAttribute.ContentTypes.ToList();
         }
 
-        // Fallback on default content types, not supporting globally defined content types (TODO: Document in README)
+        // Fallback on default content types, not supporting globally defined content types
         return DefaultContentTypes;
     }
 

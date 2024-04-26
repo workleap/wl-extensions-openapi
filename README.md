@@ -12,6 +12,7 @@ The library offers an opinionated configuration of OpenAPI document generation a
 As such, we provide the following features:
 
 - Display OperationId in SwaggerUI
+- Extract Type schema  from TypedResult endpoint response types 
 - (Optional) Fallback to use controller name as OperationId when there is no OperationId explicitly defined for the endpoint.
 
 ## Getting started
@@ -23,13 +24,83 @@ public void ConfigureServices(IServiceCollection services)
 {
   // [...]
   services.ConfigureOpenApiGeneration()
-    .GenerateMissingOperationId();
+    .GenerateMissingOperationId(); // Optional
+}
+```
+
+We support the extraction of Response Types automatically. For example, considering the following API code snippet:
+```cs
+[HttpGet]
+[Route("/get-example/{id}")]
+public Results<Ok<TypedResultExample>, BadRequest<ProblemDetails>, NotFound> GetExample(int id)
+{
+    return id switch
+    {
+        < 0 => TypedResults.NotFound(),
+        0 => TypedResults.BadRequest(new ProblemDetails()),
+        _ => TypedResults.Ok(new TypedResultExample("Example"))
+    };
+}
+```
+
+The resulting OpenAPI snippet would be generated:
+```yaml
+  /get-example:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotation2
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: '404'
+```
+
+One thing to note is that the library does not overwrite any explicitly defined ResponseType attributes on the endpoint. For example, considering the endpoints below, despite having `ProblemDetails` being defined as the TypedResult return, the schema will defer to the `TypedResultExample` schema given that it is explicitly defined in the SwaggerResponse or ProducesResponseType attributes. 
+
+```cs
+[HttpGet]
+[Route("/withSwaggerResponseAnnotation")]
+[SwaggerResponse(StatusCodes.Status200OK, "Returns TypedResult", typeof(TypedResultExample), "application/json")] 
+// The OpenAPI document would be generated with the TypedResultExample schema rather than ProblemDetails as per signature. 
+public Ok<ProblemDetails> TypedResultWithSwaggerResponseAnnotation()
+{
+    return TypedResults.Ok(new ProblemDetails());
+}
+
+[HttpGet]
+[Route("/producesResponseTypeAnnotation")]
+[ProducesResponseType(typeof(TypedResultExample), StatusCodes.Status200OK)] 
+// The OpenAPI document would be generated with the TypedResultExample schema rather than ProblemDetails as per signature.
+public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
+{
+    return TypedResults.Ok(new ProblemDetails());
 }
 ```
 
 
-TODO --> example of code and resulting spec generation
 
+### Limitations
+
+We currently only support the extraction of the default content types and not any globally defined content types.
 
 ## Building, releasing and versioning
 

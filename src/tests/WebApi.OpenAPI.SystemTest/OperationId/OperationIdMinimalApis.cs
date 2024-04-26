@@ -9,7 +9,7 @@ public static class OperationIdMinimalApis
             .WithTags("OperationId")
             .WithOpenApi();
 
-        app.MapGet("minimal-endpoint-with-no-name", () => Results.Ok())
+        app.MapGet("minimal-endpoint-with-no-name", () => TypedResults.Ok())
             .WithTags("OperationId")
             .WithOpenApi();
     }
