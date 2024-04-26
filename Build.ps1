@@ -4,8 +4,6 @@ Begin {
     $ErrorActionPreference = "stop"
 }
 
-
-
 Process {
     function Exec([scriptblock]$Command) {
         & $Command
