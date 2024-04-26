@@ -1,6 +1,3 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WebApi.OpenAPI.SystemTest.ExtractTypeResult;
-
 namespace WebApi.OpenAPI.SystemTest.OperationId;
 
 public static class OperationIdMinimalApis
@@ -9,11 +6,11 @@ public static class OperationIdMinimalApis
     {
         // app.MapGet("minimal-endpoint-with-name", (() => TypedResults.Ok()))
         //     .WithName("GetMinimalApiWithName")
-        //     .WithTags("ExtractTypeResult")
+        //     .WithTags("OperationId")
         //     .WithOpenApi();
         //
         // app.MapGet("minimal-endpoint-with-no-name", () => Results.Ok())
-        //     .WithTags("ExtractTypeResult")
+        //     .WithTags("OperationId")
         //     .WithOpenApi();
     }
 }

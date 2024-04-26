@@ -8,7 +8,7 @@ $generatedFilePath = Join-Path $projectPath "openapi-v1.yaml"
 $expectedFilePath = Join-Path $PSScriptRoot "expected-openapi-document.yaml"
 
 # Compile the project
-dotnet build $projectPath -c Debug
+dotnet build $projectPath -c Release
 
 # Check if the build was successful
 if ($LASTEXITCODE -ne 0) {
