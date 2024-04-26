@@ -16,12 +16,6 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
     // right now, 1. Start by fetching the return type.
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        // skip if annotation is present (TODO: WHY?)
-        // if(context.MethodInfo.CustomAttributes.Any(x =>x.AttributeType == typeof(Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute) || x.AttributeType.BaseType == typeof(Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute)))
-        // {
-        //     return;
-        // }
-
         foreach (var responseMetadata in GetResponsesMetadata(context.MethodInfo.ReturnType))
         {
             // TODO: Required since not nullable?
@@ -37,7 +31,6 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
             }
 
             var response = new OpenApiResponse();
-            operation.Responses[responseMetadata.HttpCode.ToString()] = response;
             if(responseMetadata.SchemaType != null)
             {
                 var schema = context.SchemaGenerator.GenerateSchema(responseMetadata.SchemaType, context.SchemaRepository);
@@ -48,15 +41,18 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
                     response.Content.Add(contentType, new OpenApiMediaType { Schema = schema });
                 }
             }
-            if (string.IsNullOrEmpty(response.Description)) // TODO: Why set the description? 
+
+            if (string.IsNullOrEmpty(response.Description))
             {
                 response.Description = responseMetadata.HttpCode.ToString();
             }
+
+            operation.Responses[responseMetadata.HttpCode.ToString()] = response;
         }
     }
 
     // TODO: Support minimal api (if too complicated: out-of-scoped)
-    internal static IReadOnlyCollection<string> GetContentTypes(OperationFilterContext context)
+    private static IReadOnlyCollection<string> GetContentTypes(OperationFilterContext context)
     {
         var methodProducesAttribute = context.MethodInfo.GetCustomAttribute<Microsoft.AspNetCore.Mvc.ProducesAttribute>();
         if (methodProducesAttribute != null)
@@ -69,7 +65,7 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
         {
             return controllerProducesAttribute.ContentTypes.ToList();
         }
-        
+
         // (TODO: TO TEST for Minimal API) If the method or controller does not have a ProducesAttribute, check the endpoint metadata
         var endpointProducesAttribute = context.ApiDescription.ActionDescriptor.EndpointMetadata.OfType<Microsoft.AspNetCore.Mvc.ProducesAttribute>().FirstOrDefault();
         if (endpointProducesAttribute != null)
@@ -77,7 +73,7 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
             return endpointProducesAttribute.ContentTypes.ToList();
         }
 
-        // Fallback on default content types, not supporting globally defined content types
+        // Fallback on default content types, not supporting globally defined content types (TODO: Document in README)
         return DefaultContentTypes;
     }
 
