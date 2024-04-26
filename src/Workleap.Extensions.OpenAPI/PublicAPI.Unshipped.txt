@@ -1,1 +1,5 @@
 #nullable enable
+static Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions.ConfigureOpenApiGeneration(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder!
+Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder
+Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder.GenerateMissingOperationId() -> Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder!
+Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions

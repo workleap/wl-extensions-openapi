@@ -3,10 +3,29 @@
 [![nuget](https://img.shields.io/nuget/v/Workleap.Extensions.OpenAPI.svg?logo=nuget)](https://www.nuget.org/packages/Workleap.Extensions.OpenAPI/)
 [![build](https://img.shields.io/github/actions/workflow/status/gsoft-inc/wl-extensions-openapi/publish.yml?logo=github&branch=main)](https://github.com/gsoft-inc/wl-extensions-openapi/actions/workflows/publish.yml)
 
+The `Workleap.Extensions.OpenAPI` library is designed to help generate better OpenApi document with less effort.
+
+## Value proposition and features overview
+
+The library offers an opinionated configuration of OpenAPI document generation and SwaggerUI.
+
+As such, we provide the following features:
+
+- Display OperationId in SwaggerUI
+- (Optional) Fallback to use controller name as OperationId when there is no OperationId explicitly defined for the endpoint.
+
 ## Getting started
 
-TODO
+Install the package Workleap.Extensions.OpenAPI in your .NET API project. Then you may use the following method to register the required service.  Here is a code snippet on how to register this and to enable the operationId fallback feature in your application.
 
+```cs
+public void ConfigureServices(IServiceCollection services)
+{
+  // [...]
+  services.AddOpenApi()
+    .FallbackOnMethodNameForOperationId();
+}
+```
 
 ## Building, releasing and versioning
 
@@ -16,7 +35,6 @@ A new *preview* NuGet package is **automatically published** on any new commit o
 
 When you are ready to **officially release** a stable NuGet package by following the [SemVer guidelines](https://semver.org/), simply **manually create a tag** with the format `x.y.z`. This will automatically create and publish a NuGet package for this version.
 
-
 ## License
 
-Copyright © 2024, Workleap This code is licensed under the Apache License, Version 2.0. You may obtain a copy of this license at https://github.com/gsoft-inc/gsoft-license/blob/master/LICENSE.
+Copyright © 2024, Workleap This code is licensed under the Apache License, Version 2.0. You may obtain a copy of this license at [License](https://github.com/gsoft-inc/gsoft-license/blob/master/LICENSE).
