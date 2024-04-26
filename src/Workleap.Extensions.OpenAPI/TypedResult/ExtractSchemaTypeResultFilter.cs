@@ -46,23 +46,38 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
 
     internal static IEnumerable<ResponseMetadata> GetResponsesMetadata(Type returnType)
     {
-        if (typeof(IResult).IsAssignableFrom(returnType))
+        // Unwrap Task<> to get the return type
+        if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
+        {
+            returnType = returnType.GetGenericArguments()[0];
+        }
+
+        if (!typeof(IResult).IsAssignableFrom(returnType))
         {
             yield break;
         }
 
         var genericTypeCount = returnType.GenericTypeArguments.Length;
 
+        // For type like Ok, BadRequest, NotFound
         if (genericTypeCount == 0)
         {
+            // Exclude raw IResult since we can't infer the status code
+            if (!typeof(IStatusCodeHttpResult).IsAssignableFrom(returnType))
+            {
+                yield break;
+            }
+
             var responseMetadata = ExtractResponseMetadata(returnType);
             yield return responseMetadata;
         }
+        // For types like Ok<T>, BadRequest<T>, NotFound<T>
         else if (genericTypeCount == 1)
         {
             var responseMetadata = ExtractResponseMetadata(returnType);
             yield return responseMetadata;
         }
+        // For types like Results<Ok<T>, BadRequest<T>, NotFound<T>>
         else
         {
             foreach (var resultType in returnType.GenericTypeArguments)
