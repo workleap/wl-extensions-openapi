@@ -18,12 +18,12 @@ As such, we provide the following features:
 
 Install the package Workleap.Extensions.OpenAPI in your .NET API project. Then you may use the following method to register the required service.  Here is a code snippet on how to register this and to enable the operationId fallback feature in your application.
 
-```
+```cs
 public void ConfigureServices(IServiceCollection services)
 {
   // [...]
-  services.AddOpenApi().FallbackOnMethodNameForOperationId();
-  // [...]
+  services.AddOpenApi()
+    .FallbackOnMethodNameForOperationId();
 }
 ```
 
@@ -35,7 +35,6 @@ A new *preview* NuGet package is **automatically published** on any new commit o
 
 When you are ready to **officially release** a stable NuGet package by following the [SemVer guidelines](https://semver.org/), simply **manually create a tag** with the format `x.y.z`. This will automatically create and publish a NuGet package for this version.
 
-
 ## License
 
-Copyright © 2024, Workleap This code is licensed under the Apache License, Version 2.0. You may obtain a copy of this license at https://github.com/gsoft-inc/gsoft-license/blob/master/LICENSE.
+Copyright © 2024, Workleap This code is licensed under the Apache License, Version 2.0. You may obtain a copy of this license at [License](https://github.com/gsoft-inc/gsoft-license/blob/master/LICENSE).
