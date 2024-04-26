@@ -3,7 +3,7 @@
 [![nuget](https://img.shields.io/nuget/v/Workleap.Extensions.OpenAPI.svg?logo=nuget)](https://www.nuget.org/packages/Workleap.Extensions.OpenAPI/)
 [![build](https://img.shields.io/github/actions/workflow/status/gsoft-inc/wl-extensions-openapi/publish.yml?logo=github&branch=main)](https://github.com/gsoft-inc/wl-extensions-openapi/actions/workflows/publish.yml)
 
-The Workleap.Extensions.OpenAPI library is designed to help generate better OpenApi document with less effort.
+The `Workleap.Extensions.OpenAPI` library is designed to help generate better OpenApi document with less effort.
 
 ## Value proposition and features overview
 

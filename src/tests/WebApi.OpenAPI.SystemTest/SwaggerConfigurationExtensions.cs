@@ -16,8 +16,8 @@ public static class SwaggerConfigurationExtensions
             options.EnableAnnotations();
         });
 
-        services.AddOpenApi()
-            .FallbackOnMethodNameForOperationId();
+        services.ConfigureOpenApiGeneration()
+            .GenerateMissingOperationId();
 
         return services;
     }

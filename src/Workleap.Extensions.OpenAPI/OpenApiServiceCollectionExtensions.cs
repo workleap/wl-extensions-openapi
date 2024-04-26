@@ -11,7 +11,7 @@ public static class OpenApiServiceCollectionExtensions
     /// <summary>
     /// Configures OpenAPI/Swagger document generation and SwaggerUI.
     /// </summary>
-    public static OpenApiBuilder AddOpenApi(this IServiceCollection services)
+    public static OpenApiBuilder ConfigureOpenApiGeneration(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
