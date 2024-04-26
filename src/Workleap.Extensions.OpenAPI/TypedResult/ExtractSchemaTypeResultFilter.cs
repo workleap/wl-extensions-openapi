@@ -23,46 +23,58 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
             return;
         }
         
-        foreach (var (statusCode, type) in this.GetResponseTypes(context))
+        foreach (var responseMetadata in GetResponsesMetadata(context.MethodInfo.ReturnType))
         {
-            if (!operation.Responses.TryGetValue(statusCode, out OpenApiResponse? response))
+            if (!operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var response))
             {
                 response = new OpenApiResponse();
             }
 
-            operation.Responses[statusCode] = response;
-            if(type != null)
+            operation.Responses[responseMetadata.HttpCode.ToString()] = response;
+            if(responseMetadata.SchemaType != null)
             {
-                var schema = context.SchemaGenerator.GenerateSchema(type, context.SchemaRepository);
+                var schema = context.SchemaGenerator.GenerateSchema(responseMetadata.SchemaType, context.SchemaRepository);
 
-                response.Content.Add("application/json", new OpenApiMediaType { Schema = schema });    
+                response.Content.Add("application/json", new OpenApiMediaType { Schema = schema });
             }
             if (string.IsNullOrEmpty(response.Description))
             {
-                response.Description = statusCode;
+                response.Description = responseMetadata.HttpCode.ToString();
             }
         }
     }
-    
-    private IEnumerable<(string, Type)> GetResponseTypes(OperationFilterContext context)
+
+    internal static IEnumerable<ResponseMetadata> GetResponsesMetadata(Type returnType)
     {
-        var responseTypes = context.MethodInfo.ReturnType.GenericTypeArguments;
-        if (responseTypes.Length == 1 && !responseTypes.First().IsGenericType)
+        if (typeof(IResult).IsAssignableFrom(returnType))
         {
-            var (httpCode, responseType) = this.ExtractResponseType(context.MethodInfo.ReturnType);
-            yield return (httpCode, responseType);
+            yield break;
+        }
+
+        var genericTypeCount = returnType.GenericTypeArguments.Length;
+
+        if (genericTypeCount == 0)
+        {
+            var responseMetadata = ExtractResponseMetadata(returnType);
+            yield return responseMetadata;
+        }
+        else if (genericTypeCount == 1)
+        {
+            var responseMetadata = ExtractResponseMetadata(returnType);
+            yield return responseMetadata;
         }
         else
         {
-            foreach (var resultType in responseTypes)
+            foreach (var resultType in returnType.GenericTypeArguments)
             {
-                var (httpCode, responseType) = this.ExtractResponseType(resultType);
-                yield return (httpCode, responseType);
+                var responseMetadata = ExtractResponseMetadata(resultType);
+                yield return responseMetadata;
             }
         }
     }
-    
-    private (string HttpCode, Type SchemaType) ExtractResponseType(Type resultType)
+
+    // TODO: Handle nulls
+    private static ResponseMetadata ExtractResponseMetadata(Type resultType)
     {
         if (!typeof(IResult).IsAssignableFrom(resultType))
         {
@@ -75,16 +87,29 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
         {
             var constructor = resultType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Array.Empty<Type>(), null);
             var instance = constructor.Invoke(Array.Empty<object>());
-            var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode.ToString();
+            var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode;
 
-            return (statusCode, null);
+            return new(statusCode ?? 0, null);
         } 
+        // I am declaring a return type with a schema
         else
         {
             var constructor = resultType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {resultType.GenericTypeArguments.First() }, null);
             var instance = constructor.Invoke(new object[] { null });
-            var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode.ToString();
-            return (statusCode, resultType.GenericTypeArguments.First());
+            var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode;
+            return new(statusCode ?? 0, resultType.GenericTypeArguments.First());
         }
+    }
+    
+    internal class ResponseMetadata
+    {
+        public ResponseMetadata(int httpCode, Type? schemaType)
+        {
+            this.HttpCode = httpCode;
+            this.SchemaType = schemaType;
+        }
+
+        public int HttpCode { get; set; }
+        public Type? SchemaType { get; set; }
     }
 }
