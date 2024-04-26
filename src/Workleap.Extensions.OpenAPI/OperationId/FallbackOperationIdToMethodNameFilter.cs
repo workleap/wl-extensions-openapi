@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Workleap.Extensions.OpenAPI.OperationId;
 
-internal class FallbackOperationIdToMethodNameFilter : IOperationFilter
+internal sealed class FallbackOperationIdToMethodNameFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
@@ -19,7 +19,7 @@ internal class FallbackOperationIdToMethodNameFilter : IOperationFilter
             return;
         }
 
-        operation.OperationId = CleanupName(context.MethodInfo.Name);
+        operation.OperationId = GenerateOperationIdFromMethodName(context.MethodInfo.Name);
     }
 
     private static bool IsMinimalApi(OperationFilterContext context)
@@ -27,8 +27,13 @@ internal class FallbackOperationIdToMethodNameFilter : IOperationFilter
         return !typeof(ControllerBase).IsAssignableFrom(context.MethodInfo.DeclaringType);
     }
 
-    internal static string CleanupName(string methodName)
+    internal static string GenerateOperationIdFromMethodName(string methodName)
     {
-        return methodName.Replace("Async", string.Empty, StringComparison.InvariantCultureIgnoreCase);
+        if (methodName.EndsWith("Async", StringComparison.OrdinalIgnoreCase))
+        {
+            return methodName[..^"Async".Length];
+        }
+
+        return methodName;
     }
 }

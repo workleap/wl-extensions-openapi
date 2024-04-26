@@ -9,7 +9,7 @@ namespace Workleap.Extensions.OpenAPI.Builder;
 /// <summary>
 /// Provides methods to configure Swagger/OpenAPI opinionated settings for the application.
 /// </summary>
-public class OpenApiBuilder
+public sealed class OpenApiBuilder
 {
     private readonly IServiceCollection _services;
 
@@ -33,7 +33,7 @@ public class OpenApiBuilder
     /// <returns>
     /// The same <see cref="OpenApiBuilder"/> instance so that multiple configuration calls can be chained.
     /// </returns>
-    public OpenApiBuilder FallbackOnMethodNameForOperationId()
+    public OpenApiBuilder GenerateMissingOperationId()
     {
         this._services.ConfigureSwaggerGen(options =>
         {
