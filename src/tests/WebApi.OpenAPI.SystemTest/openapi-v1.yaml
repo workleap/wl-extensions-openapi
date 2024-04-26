@@ -3,6 +3,120 @@ info:
   title: Test API
   version: v1
 paths:
+  /minimal-endpoint-with-name:
+    get:
+      tags:
+        - OperationId
+      operationId: GetMinimalApiWithName
+      responses:
+        '200':
+          description: OK
+  /minimal-endpoint-with-no-name:
+    get:
+      tags:
+        - OperationId
+      responses:
+        '200':
+          description: OK
+  /explicitOperationIdInName:
+    get:
+      tags:
+        - OperationId
+      operationId: GetExplicitOperationIdInName
+      responses:
+        '200':
+          description: Success
+  /explicitOperationIdInSwagger:
+    get:
+      tags:
+        - OperationId
+      operationId: GetExplicitOperationIdInSwagger
+      responses:
+        '200':
+          description: Success
+  /noOperationId:
+    get:
+      tags:
+        - OperationId
+      operationId: GetNotOperationId
+      responses:
+        '200':
+          description: Success
+  '/minimal-endpoint-with-typed-result-no-produces/{id}':
+    get:
+      tags:
+        - TypedResult
+      operationId: GetMinimalApiWithTypedResultWithNoProduces
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+  /minimal-endpoint-with-typed-result-with-produces:
+    get:
+      tags:
+        - TypedResult
+      operationId: GetMinimalApiWithTypedResultWithProduces
+      parameters:
+        - name: id
+          in: query
+          required: true
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+  /withOnlyOnePath:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypeResultWithOnlyOnePath
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
   /withNoAnnotation:
     get:
       tags:
@@ -53,26 +167,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
-            text/json:
-              schema:
-                $ref: '#/components/schemas/TypedResultExample'
-            text/plain:
-              schema:
-                $ref: '#/components/schemas/TypedResultExample'
         '400':
           description: '400'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-            text/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
-            text/plain:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: '404'
+  /voidOk:
+    get:
+      tags:
+        - TypedResult
+      operationId: VoidOk
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /withSwaggerResponseAnnotation:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithSwaggerResponseAnnotation
+      responses:
+        '200':
+          description: Returns TypedResult
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+  /producesResponseTypeAnnotation:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithProducesResponseTypeAnnotation
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
 components:
   schemas:
     ProblemDetails:

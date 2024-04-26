@@ -4,26 +4,27 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Workleap.Extensions.OpenAPI.TypedResult;
-// TODO: Deep cleanup redesign of this code (especially check + filtering)
-// TODO: Could this be tested with a unit test? (check how Swashbuckle is doing it)
-public class ExtractSchemaTypeResultFilter : IOperationFilter
+
+internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
 {
-    // Accoding to this documentation: https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-8.0
+    // According to this documentation: https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-8.0
     private static readonly IReadOnlyList<string> DefaultContentTypes = new List<string>() { "application/json", "text/json", "text/plain", };
 
-    // To obtain componenets --> scans all paths. Components is probably extracting from all responses and types.
-    // Easy way --> check if annotation present, if present, skip pis defer to annotation.
-    // right now, 1. Start by fetching the return type.
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         foreach (var responseMetadata in GetResponsesMetadata(context.MethodInfo.ReturnType))
         {
-            // TODO: Required since not nullable?
-            operation.Responses ??= new OpenApiResponses();
+            if (responseMetadata == null)
+            {
+                continue;
+            }
 
             if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse))
             {
                 var canEnrichContent = !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
+
+                // If the response content is already set, we won't overwrite it. This is the case for minimal APIs and
+                // when the ProducesResponseType attribute is present.
                 if (!canEnrichContent)
                 {
                     continue;
@@ -31,7 +32,7 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
             }
 
             var response = new OpenApiResponse();
-            if(responseMetadata.SchemaType != null)
+            if (responseMetadata.SchemaType != null)
             {
                 var schema = context.SchemaGenerator.GenerateSchema(responseMetadata.SchemaType, context.SchemaRepository);
 
@@ -51,7 +52,6 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
         }
     }
 
-    // TODO: Support minimal api (if too complicated: out-of-scoped)
     private static IReadOnlyCollection<string> GetContentTypes(OperationFilterContext context)
     {
         var methodProducesAttribute = context.MethodInfo.GetCustomAttribute<Microsoft.AspNetCore.Mvc.ProducesAttribute>();
@@ -66,7 +66,6 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
             return controllerProducesAttribute.ContentTypes.ToList();
         }
 
-        // (TODO: TO TEST for Minimal API) If the method or controller does not have a ProducesAttribute, check the endpoint metadata
         var endpointProducesAttribute = context.ApiDescription.ActionDescriptor.EndpointMetadata.OfType<Microsoft.AspNetCore.Mvc.ProducesAttribute>().FirstOrDefault();
         if (endpointProducesAttribute != null)
         {
@@ -77,8 +76,7 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
         return DefaultContentTypes;
     }
 
-
-    internal static IEnumerable<ResponseMetadata> GetResponsesMetadata(Type returnType)
+    internal static IEnumerable<ResponseMetadata?> GetResponsesMetadata(Type returnType)
     {
         // Unwrap Task<> to get the return type
         if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
@@ -96,7 +94,7 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
         // For type like Ok, BadRequest, NotFound
         if (genericTypeCount == 0)
         {
-            // Exclude raw IResult since we can't infer the status code
+            // Exclude raw IResult since we can't infer the status code --> minimal API causing issues here. 
             if (!typeof(IStatusCodeHttpResult).IsAssignableFrom(returnType))
             {
                 yield break;
@@ -122,26 +120,34 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
         }
     }
 
-    // TODO: Handle nulls: throw or simply return null so it can be ignore (better experience?)
-    private static ResponseMetadata ExtractMetadataFromTypedResult(Type resultType)
+    // Initialize an instance of the result type to get the response metadata and return null if it's not possible
+    private static ResponseMetadata? ExtractMetadataFromTypedResult(Type resultType)
     {
         // For type like Ok, BadRequest, NotFound
         if (!resultType.GenericTypeArguments.Any())
         {
             var constructor = resultType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Array.Empty<Type>(), null);
-            var instance = constructor.Invoke(Array.Empty<object>());
-            var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode;
+            if (constructor != null)
+            {
+                var instance = constructor.Invoke(Array.Empty<object>());
+                var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode;
 
-            return new(statusCode ?? 0, null);
+                return new(statusCode ?? 0, null);
+            }
         }
         // For types like Ok<T>, BadRequest<T>, NotFound<T>
         else
         {
-            var constructor = resultType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {resultType.GenericTypeArguments.First() }, null);
-            var instance = constructor.Invoke(new object[] { null });
-            var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode;
-            return new(statusCode ?? 0, resultType.GenericTypeArguments.First());
+            var constructor = resultType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { resultType.GenericTypeArguments.First() }, null);
+            if (constructor != null)
+            {
+                var instance = constructor.Invoke(new object?[] { null });
+                var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode;
+                return new(statusCode ?? 0, resultType.GenericTypeArguments.First());
+            }
         }
+
+        return null;
     }
 
     internal class ResponseMetadata

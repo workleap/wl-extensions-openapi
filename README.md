@@ -22,10 +22,14 @@ Install the package Workleap.Extensions.OpenAPI in your .NET API project. Then y
 public void ConfigureServices(IServiceCollection services)
 {
   // [...]
-  services.AddOpenApi()
-    .FallbackOnMethodNameForOperationId();
+  services.ConfigureOpenApiGeneration()
+    .GenerateMissingOperationId();
 }
 ```
+
+
+TODO --> example of code and resulting spec generation
+
 
 ## Building, releasing and versioning
 
