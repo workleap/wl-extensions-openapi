@@ -5,44 +5,82 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Workleap.Extensions.OpenAPI.TypedResult;
 // TODO: Deep cleanup redesign of this code (especially check + filtering)
+// TODO: Could this be tested with a unit test? (check how Swashbuckle is doing it)
 public class ExtractSchemaTypeResultFilter : IOperationFilter
 {
+    // Accoding to this documentation: https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-8.0
+    private static readonly IReadOnlyList<string> DefaultContentTypes = new List<string>() { "application/json", "text/json", "text/plain", };
+
     // To obtain componenets --> scans all paths. Components is probably extracting from all responses and types.
     // Easy way --> check if annotation present, if present, skip pis defer to annotation.
     // right now, 1. Start by fetching the return type.
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        if (operation.Responses == null)
-        {
-            operation.Responses = new OpenApiResponses();
-        }
+        // skip if annotation is present (TODO: WHY?)
+        // if(context.MethodInfo.CustomAttributes.Any(x =>x.AttributeType == typeof(Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute) || x.AttributeType.BaseType == typeof(Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute)))
+        // {
+        //     return;
+        // }
 
-        // skip if annotation is present
-        if(context.MethodInfo.CustomAttributes.Any(x =>x.AttributeType == typeof(Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute) || x.AttributeType.BaseType == typeof(Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute)))
-        {
-            return;
-        }
-        
         foreach (var responseMetadata in GetResponsesMetadata(context.MethodInfo.ReturnType))
         {
-            if (!operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var response))
+            // TODO: Required since not nullable?
+            operation.Responses ??= new OpenApiResponses();
+
+            if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse))
             {
-                response = new OpenApiResponse();
+                var canEnrichContent = !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
+                if (!canEnrichContent)
+                {
+                    continue;
+                }
             }
 
+            var response = new OpenApiResponse();
             operation.Responses[responseMetadata.HttpCode.ToString()] = response;
             if(responseMetadata.SchemaType != null)
             {
                 var schema = context.SchemaGenerator.GenerateSchema(responseMetadata.SchemaType, context.SchemaRepository);
 
-                response.Content.Add("application/json", new OpenApiMediaType { Schema = schema });
+                var contentTypes = GetContentTypes(context);
+                foreach (var contentType in contentTypes)
+                {
+                    response.Content.Add(contentType, new OpenApiMediaType { Schema = schema });
+                }
             }
-            if (string.IsNullOrEmpty(response.Description))
+            if (string.IsNullOrEmpty(response.Description)) // TODO: Why set the description? 
             {
                 response.Description = responseMetadata.HttpCode.ToString();
             }
         }
     }
+
+    // TODO: Support minimal api (if too complicated: out-of-scoped)
+    internal static IReadOnlyCollection<string> GetContentTypes(OperationFilterContext context)
+    {
+        var methodProducesAttribute = context.MethodInfo.GetCustomAttribute<Microsoft.AspNetCore.Mvc.ProducesAttribute>();
+        if (methodProducesAttribute != null)
+        {
+            return methodProducesAttribute.ContentTypes.ToList();
+        }
+
+        var controllerProducesAttribute = context.MethodInfo.DeclaringType?.GetCustomAttribute<Microsoft.AspNetCore.Mvc.ProducesAttribute>();
+        if (controllerProducesAttribute != null)
+        {
+            return controllerProducesAttribute.ContentTypes.ToList();
+        }
+        
+        // (TODO: TO TEST for Minimal API) If the method or controller does not have a ProducesAttribute, check the endpoint metadata
+        var endpointProducesAttribute = context.ApiDescription.ActionDescriptor.EndpointMetadata.OfType<Microsoft.AspNetCore.Mvc.ProducesAttribute>().FirstOrDefault();
+        if (endpointProducesAttribute != null)
+        {
+            return endpointProducesAttribute.ContentTypes.ToList();
+        }
+
+        // Fallback on default content types, not supporting globally defined content types
+        return DefaultContentTypes;
+    }
+
 
     internal static IEnumerable<ResponseMetadata> GetResponsesMetadata(Type returnType)
     {
@@ -68,13 +106,13 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
                 yield break;
             }
 
-            var responseMetadata = ExtractResponseMetadata(returnType);
+            var responseMetadata = ExtractMetadataFromTypedResult(returnType);
             yield return responseMetadata;
         }
         // For types like Ok<T>, BadRequest<T>, NotFound<T>
         else if (genericTypeCount == 1)
         {
-            var responseMetadata = ExtractResponseMetadata(returnType);
+            var responseMetadata = ExtractMetadataFromTypedResult(returnType);
             yield return responseMetadata;
         }
         // For types like Results<Ok<T>, BadRequest<T>, NotFound<T>>
@@ -82,22 +120,16 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
         {
             foreach (var resultType in returnType.GenericTypeArguments)
             {
-                var responseMetadata = ExtractResponseMetadata(resultType);
+                var responseMetadata = ExtractMetadataFromTypedResult(resultType);
                 yield return responseMetadata;
             }
         }
     }
 
-    // TODO: Handle nulls
-    private static ResponseMetadata ExtractResponseMetadata(Type resultType)
+    // TODO: Handle nulls: throw or simply return null so it can be ignore (better experience?)
+    private static ResponseMetadata ExtractMetadataFromTypedResult(Type resultType)
     {
-        if (!typeof(IResult).IsAssignableFrom(resultType))
-        {
-            // TODO: Means it's not a result type (maybe not strong enough check IActionResult,...)
-            throw new Exception();
-        }
-
-        // I am declaring a return type that return void
+        // For type like Ok, BadRequest, NotFound
         if (!resultType.GenericTypeArguments.Any())
         {
             var constructor = resultType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Array.Empty<Type>(), null);
@@ -105,8 +137,8 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
             var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode;
 
             return new(statusCode ?? 0, null);
-        } 
-        // I am declaring a return type with a schema
+        }
+        // For types like Ok<T>, BadRequest<T>, NotFound<T>
         else
         {
             var constructor = resultType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] {resultType.GenericTypeArguments.First() }, null);
@@ -115,7 +147,7 @@ public class ExtractSchemaTypeResultFilter : IOperationFilter
             return new(statusCode ?? 0, resultType.GenericTypeArguments.First());
         }
     }
-    
+
     internal class ResponseMetadata
     {
         public ResponseMetadata(int httpCode, Type? schemaType)
