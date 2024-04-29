@@ -22,4 +22,8 @@
     <ProjectReference Include="..\..\Workleap.Extensions.OpenAPI\Workleap.Extensions.OpenAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Analyzer Include="C:\dev\idp\Workleap.Extensions.OpenAPI\src\Workleap.Extensions.OpenApi.Analyzers\bin\Debug\netstandard2.0\Workleap.Extensions.OpenApi.Analyzers.dll" />
+  </ItemGroup>
+
 </Project>

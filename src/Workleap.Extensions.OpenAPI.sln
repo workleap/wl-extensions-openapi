@@ -20,6 +20,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1868781E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.OpenAPI.SystemTest", "tests\WebApi.OpenAPI.SystemTest\WebApi.OpenAPI.SystemTest.csproj", "{F7C54BE5-D538-4D2B-9B07-C77567CEB82A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workleap.Extensions.OpenApi.Analyzers", "Workleap.Extensions.OpenApi.Analyzers\Workleap.Extensions.OpenApi.Analyzers.csproj", "{EFCC98E1-0FA3-4AB9-A6F9-2E94C6A0E347}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workleap.Extensions.OpenAPI.Analyzers.Tests", "tests\Workleap.Extensions.OpenAPI.Analyzers.Tests\Workleap.Extensions.OpenAPI.Analyzers.Tests.csproj", "{C7774546-91C1-4B56-B65A-A88CCA68CFFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,9 +45,18 @@ Global
 		{F7C54BE5-D538-4D2B-9B07-C77567CEB82A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7C54BE5-D538-4D2B-9B07-C77567CEB82A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7C54BE5-D538-4D2B-9B07-C77567CEB82A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFCC98E1-0FA3-4AB9-A6F9-2E94C6A0E347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFCC98E1-0FA3-4AB9-A6F9-2E94C6A0E347}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFCC98E1-0FA3-4AB9-A6F9-2E94C6A0E347}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFCC98E1-0FA3-4AB9-A6F9-2E94C6A0E347}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7774546-91C1-4B56-B65A-A88CCA68CFFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7774546-91C1-4B56-B65A-A88CCA68CFFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7774546-91C1-4B56-B65A-A88CCA68CFFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7774546-91C1-4B56-B65A-A88CCA68CFFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F7C54BE5-D538-4D2B-9B07-C77567CEB82A} = {1868781E-E97B-447A-AEB7-507739F5FA88}
 		{2A5429CC-E179-47E7-85BB-C1E33E2AFD8A} = {1868781E-E97B-447A-AEB7-507739F5FA88}
+		{C7774546-91C1-4B56-B65A-A88CCA68CFFA} = {1868781E-E97B-447A-AEB7-507739F5FA88}
 	EndGlobalSection
 EndGlobal
