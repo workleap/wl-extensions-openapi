@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -17,6 +18,8 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
                                                 global using System.Linq;
                                                 global using System.Threading;
                                                 global using System.Threading.Tasks;
+                                                global using Microsoft.AspNetCore.Http.HttpResults;
+                                                global using Microsoft.AspNetCore.Mvc;
                                                 """;
 
     private const string SourceFileName = "Program.cs";
@@ -24,6 +27,14 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
     public BaseAnalyzerTest()
     {
         this.TestState.Sources.Add(CSharp10GlobalUsings);
+        this.TestState.ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
+
+        this.TestState.ReferenceAssemblies = this.TestState.ReferenceAssemblies.AddPackages(
+            ImmutableArray.Create(
+                new PackageIdentity("Microsoft.AspNetCore.App.Ref", "8.0.4")
+            ));
+
+        //this.TestState.AddNuget(" Microsoft.AspNetCore.App.Ref ") // TODO:
     }
 
     // TODO: Why this
@@ -35,7 +46,7 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
     // TODO: Why this
     protected override ParseOptions CreateParseOptions()
     {
-        return new CSharpParseOptions(LanguageVersion.CSharp12, DocumentationMode.Diagnose);
+        return new CSharpParseOptions(LanguageVersion.CSharp11, DocumentationMode.Diagnose);
     }
 
     // TODO: Understand this

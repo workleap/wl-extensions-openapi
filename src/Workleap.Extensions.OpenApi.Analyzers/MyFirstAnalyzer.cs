@@ -14,25 +14,60 @@ public class MyFirstAnalyzer : DiagnosticAnalyzer
     private static readonly LocalizableString Description = "Description of the issue";
     private const string Category = "Naming";
 
-    private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Error, isEnabledByDefault: true, description: Description);
+    public static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        DiagnosticId,
+        Title,
+        MessageFormat,
+        Category,
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: Description);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
 
     public override void Initialize(AnalysisContext context)
     {
-        context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.IdentifierName);
+        context.EnableConcurrentExecution();
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+        context.RegisterSyntaxNodeAction(AnalyzeClassDeclaration, SyntaxKind.ClassDeclaration);
     }
 
-    private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
+    private static void AnalyzeClassDeclaration(SyntaxNodeAnalysisContext context)
     {
-        var identifierName = (IdentifierNameSyntax)context.Node;
+        var classDeclaration = (ClassDeclarationSyntax)context.Node;
 
-        // Replace with your own logic
-        if (identifierName.Identifier.Text.StartsWith("Bad"))
+        if (classDeclaration.Identifier.Text.StartsWith("Bad"))
         {
-            var diagnostic = Diagnostic.Create(Rule, identifierName.GetLocation(), identifierName.Identifier.Text);
+            var diagnostic = Diagnostic.Create(Rule, classDeclaration.Identifier.GetLocation(), classDeclaration.Identifier.Text);
 
             context.ReportDiagnostic(diagnostic);
+        }
+    }
+
+    private static void AnalyzeMethodDeclaration(SyntaxNodeAnalysisContext context)
+    {
+        var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+
+        if (methodDeclaration.Identifier.Text.StartsWith("Bad"))
+        {
+            var diagnostic = Diagnostic.Create(Rule, methodDeclaration.Identifier.GetLocation(), methodDeclaration.Identifier.Text);
+
+            context.ReportDiagnostic(diagnostic);
+        }
+    }
+
+    private static void AnalyzeVariableDeclaration(SyntaxNodeAnalysisContext context)
+    {
+        var variableDeclaration = (VariableDeclarationSyntax)context.Node;
+
+        foreach (var variable in variableDeclaration.Variables)
+        {
+            if (variable.Identifier.Text.StartsWith("Bad"))
+            {
+                var diagnostic = Diagnostic.Create(Rule, variable.Identifier.GetLocation(), variable.Identifier.Text);
+
+                context.ReportDiagnostic(diagnostic);
+            }
         }
     }
 }

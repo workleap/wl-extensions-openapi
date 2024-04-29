@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.OpenAPI.SystemTest.Analyzers;
 
@@ -8,17 +9,8 @@ namespace WebApi.OpenAPI.SystemTest.Analyzers;
 public class AnalyzersController : ControllerBase
 {
     [HttpGet]
-    public IActionResult GetExplicitOperationIdInName()
+    public Ok<string> GetExplicitOperationIdInName()
     {
-        var badNaming = 1;
-        return this.Ok(badNaming);
-    }
-}
-
-public class BadClassName
-{
-    public void BadMethodName()
-    {
-        var BadVariableName = "This is a bad variable name";
+        return TypedResults.Ok("Hello World!");
     }
 }

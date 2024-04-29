@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace WebApi.OpenAPI.SystemTest.OperationId;
@@ -8,9 +9,11 @@ namespace WebApi.OpenAPI.SystemTest.OperationId;
 public class OperationIdController : ControllerBase
 {
     [HttpGet("/explicitOperationIdInName", Name = "GetExplicitOperationIdInName")]
-    public IActionResult GetExplicitOperationIdInName()
+    [ProducesResponseType<int>(StatusCodes.Status200OK)]
+    [ProducesResponseType( typeof(string), StatusCodes.Status200OK)]
+    public Ok<string> GetExplicitOperationIdInName()
     {
-        return this.Ok();
+        return TypedResults.Ok("Hello World");
     }
 
     [HttpGet]
