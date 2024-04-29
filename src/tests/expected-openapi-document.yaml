@@ -117,11 +117,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
-  /withNoAnnotation:
+  /withAnnotation:
     get:
       tags:
         - TypedResult
-      operationId: TypedResultWithNoAnnotation
+      operationId: TypedResultWithAnnotation
       parameters:
         - name: id
           in: query
@@ -148,11 +148,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /withNoAnnotation2:
+  /withNoAnnotation:
     get:
       tags:
         - TypedResult
-      operationId: TypedResultWithNoAnnotation2
+      operationId: TypedResultWithNoAnnotation
       parameters:
         - name: id
           in: query
@@ -198,18 +198,6 @@ paths:
       responses:
         '200':
           description: Returns TypedResult
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypedResultExample'
-  /producesResponseTypeAnnotation:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithProducesResponseTypeAnnotation
-      responses:
-        '200':
-          description: Success
           content:
             application/json:
               schema:

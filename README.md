@@ -100,7 +100,7 @@ public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
 
 ### Limitations
 
-We currently only support the extraction of the default content types and not any globally defined content types.
+We currently only support the extraction of the default media type types and not any globally defined content types such as [`{ "application/json", "text/json", "text/plain", }`](https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-8.0)
 
 ## Building, releasing and versioning
 

@@ -19,23 +19,23 @@ public class TypedResultController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/withNoAnnotation")]
+    [Route("/withAnnotation")]
     [ProducesResponseType(typeof(TypedResultExample), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Results<Ok<TypedResultExample>, BadRequest<ProblemDetails>, NotFound> TypedResultWithNoAnnotation(int id)
+    public Results<Ok<ProblemDetails>, BadRequest<ProblemDetails>, NotFound> TypedResultWithAnnotation(int id)
     {
         return id switch
         {
             < 0 => TypedResults.NotFound(),
             0 => TypedResults.BadRequest(new ProblemDetails()),
-            _ => TypedResults.Ok(new TypedResultExample("Example"))
+            _ => TypedResults.Ok(new ProblemDetails())
         };
     }
 
     [HttpGet]
-    [Route("/withNoAnnotation2")]
-    public Results<Ok<TypedResultExample>, BadRequest<ProblemDetails>, NotFound> TypedResultWithNoAnnotation2(int id)
+    [Route("/withNoAnnotation")]
+    public Results<Ok<TypedResultExample>, BadRequest<ProblemDetails>, NotFound> TypedResultWithNoAnnotation(int id)
     {
         return id switch
         {
@@ -56,14 +56,6 @@ public class TypedResultController : ControllerBase
     [Route("/withSwaggerResponseAnnotation")]
     [SwaggerResponse(StatusCodes.Status200OK, "Returns TypedResult", typeof(TypedResultExample), "application/json")]
     public Ok<ProblemDetails> TypedResultWithSwaggerResponseAnnotation()
-    {
-        return TypedResults.Ok(new ProblemDetails());
-    }
-
-    [HttpGet]
-    [Route("/producesResponseTypeAnnotation")]
-    [ProducesResponseType(typeof(TypedResultExample), StatusCodes.Status200OK)]
-    public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
     {
         return TypedResults.Ok(new ProblemDetails());
     }
