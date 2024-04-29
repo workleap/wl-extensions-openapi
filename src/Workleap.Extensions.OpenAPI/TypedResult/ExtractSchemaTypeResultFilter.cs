@@ -94,7 +94,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             var responseMetadata = ExtractMetadataFromTypedResult(returnType);
             if (responseMetadata != null)
             {
-                yield return responseMetadata;    
+                yield return responseMetadata;
             }
         }
         // For types like Ok<T>, BadRequest<T>, NotFound<T>
@@ -103,7 +103,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             var responseMetadata = ExtractMetadataFromTypedResult(returnType);
             if (responseMetadata != null)
             {
-                yield return responseMetadata;    
+                yield return responseMetadata;
             }
         }
         // For types like Results<Ok<T>, BadRequest<T>, NotFound<T>>
@@ -114,7 +114,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
                 var responseMetadata = ExtractMetadataFromTypedResult(resultType);
                 if (responseMetadata != null)
                 {
-                    yield return responseMetadata;    
+                    yield return responseMetadata;
                 }
             }
         }
