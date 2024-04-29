@@ -214,6 +214,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
+  /withExceptionsWithExtensions:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithExceptionsWithExtensions
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '500':
+          description: '500'
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   schemas:
     ProblemDetails:

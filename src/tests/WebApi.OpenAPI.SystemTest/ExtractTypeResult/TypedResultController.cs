@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Workleap.Extensions.OpenAPI.TypedResult;
 
 namespace WebApi.OpenAPI.SystemTest.ExtractTypeResult;
 
@@ -65,5 +66,16 @@ public class TypedResultController : ControllerBase
     public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
     {
         return TypedResults.Ok(new ProblemDetails());
+    }
+
+    [HttpGet]
+    [Route("/withExceptionsWithExtensions")]
+    public Results<Ok<TypedResultExample>, InternalServerError<string>> TypedResultWithExceptionsWithExtensions(int id)
+    {
+        return id switch
+        {
+            < 0 => TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
+            _ => TypedResults.Ok(new TypedResultExample("Example"))
+        };
     }
 }

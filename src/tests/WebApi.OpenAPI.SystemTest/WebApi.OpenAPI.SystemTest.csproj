@@ -22,4 +22,14 @@
     <ProjectReference Include="..\..\Workleap.Extensions.OpenAPI\Workleap.Extensions.OpenAPI.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <OpenApiSpectralRulesetUrl>./custom.spectral.yaml</OpenApiSpectralRulesetUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="custom.spectral.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
