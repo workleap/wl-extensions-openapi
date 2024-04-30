@@ -1,4 +1,5 @@
 using WebApi.OpenAPI.SystemTest;
+using WebApi.OpenAPI.SystemTest.ExtractTypeResult;
 using WebApi.OpenAPI.SystemTest.OperationId;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddSwagger();
 var app = builder.Build();
 
 app.AddEndpointsForOperationId();
+app.AddEndpointsForTypedResult();
 
 app.UseSwagger();
 app.UseSwaggerUI();

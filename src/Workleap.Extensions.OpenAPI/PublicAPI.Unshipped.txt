@@ -1,5 +1,13 @@
 #nullable enable
 static Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions.ConfigureOpenApiGeneration(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder!
+static Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.InternalServerError() -> Workleap.Extensions.OpenAPI.TypedResult.InternalServerError!
+static Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.InternalServerError<T>(T? error) -> Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<T>!
 Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder
 Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder.GenerateMissingOperationId() -> Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder!
 Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions
+Workleap.Extensions.OpenAPI.TypedResult.InternalServerError
+Workleap.Extensions.OpenAPI.TypedResult.InternalServerError.ExecuteAsync(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> System.Threading.Tasks.Task!
+Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<TValue>
+Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<TValue>.ExecuteAsync(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> System.Threading.Tasks.Task!
+Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<TValue>.Value.get -> TValue?
+Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions
