@@ -157,9 +157,28 @@ public class AnalyzersController : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    public Ok<int> GetExplicitOperationIdInName() => throw null;
+    public Ok<int> {|MyFirstAnalyzer:GetExplicitOperationIdInName|}() => throw null;
 }
 """;
+
+        await this.WithSourceCode(source)
+            .RunAsync();
+    }
+    
+    [Fact]
+    public async Task Given_DuplicateProducesResponse_When_Analyze_Then_Diagnostic()
+    {
+        const string source = """
+                              [ApiController]
+                              [Route("Analyzers")]
+                              public class AnalyzersController : ControllerBase
+                              {
+                                  [HttpGet]
+                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+                                  [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+                                  public Ok<int> {|MyFirstAnalyzer:GetExplicitOperationIdInName|}() => throw null;
+                              }
+                              """;
 
         await this.WithSourceCode(source)
             .RunAsync();
