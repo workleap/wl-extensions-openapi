@@ -70,4 +70,41 @@ public class TypedResultController : ControllerBase
             _ => TypedResults.Ok(new TypedResultExample("Example"))
         };
     }
+    
+    // // TODO remove. --> We have a method that extracts the return type from response metadata.
+    // // Should have the same for a list of attributes. Return the response metadata.
+    //
+    // [HttpGet]
+    // [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // public Ok<int> GetExplicitOperationIdInName() => throw null;
+    //
+    // [HttpGet]
+    // [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // public Results<Ok<String>, NotFound> GetExplicitOperationIdInName() => throw null;
+    //
+    // [HttpGet]
+    // [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // public async Task<Results<Ok<String>, NotFound>> GetExplicitOperationIdInName() => throw null;
+    //
+    // [HttpGet]
+    // [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // public async Task<Results<Ok<int>, NotFound>> GetExplicitOperationIdInName() => throw null;
+    //
+    // [HttpGet]
+    // [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // public async Task<Results<Ok<int>, NotFound<int>>> GetExplicitOperationIdInName() => throw null;
+    //
+    // [HttpGet]
+    // [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    // public async Task<Results<Ok<string>, InternalServerError>> GetExplicitOperationIdInName() => throw null;
+    //
+    // [HttpGet]
+    // [SwaggerResponse(StatusCodes.Status200OK, "Returns TypedResult", typeof(string))]
+    // public Ok<int> GetExplicitOperationIdInName() => throw null;
 }
