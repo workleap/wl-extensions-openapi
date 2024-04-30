@@ -43,14 +43,14 @@ public class [|BadClassName|]
     public async Task AnalyzerFindsBadIdentifier3()
     {
         const string source = """
-                              public class {|MyFirstAnalyzer:BadClassName|}
-                              {
-                                public void {|MyFirstAnalyzer:BadMethodName|}()
-                                {
-                                    var BadVariableName = "This is a asd variable name";
-                                }
-                              }
-                              """;
+public class {|MyFirstAnalyzer:BadClassName|}
+{
+    public void {|MyFirstAnalyzer:BadMethodName|}()
+    {
+        var BadVariableName = "This is a asd variable name";
+    }
+}
+""";
 
         await this.WithSourceCode(source)
             .RunAsync();

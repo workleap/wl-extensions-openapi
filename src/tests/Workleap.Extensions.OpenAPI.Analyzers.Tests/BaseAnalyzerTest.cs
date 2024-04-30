@@ -19,7 +19,9 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
                                                 global using System.Threading;
                                                 global using System.Threading.Tasks;
                                                 global using Microsoft.AspNetCore.Http.HttpResults;
+                                                global using Microsoft.AspNetCore.Http;
                                                 global using Microsoft.AspNetCore.Mvc;
+                                                global using Swashbuckle.AspNetCore.Annotations;
                                                 """;
 
     private const string SourceFileName = "Program.cs";
@@ -31,7 +33,8 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
 
         this.TestState.ReferenceAssemblies = this.TestState.ReferenceAssemblies.AddPackages(
             ImmutableArray.Create(
-                new PackageIdentity("Microsoft.AspNetCore.App.Ref", "8.0.4")
+                new PackageIdentity("Microsoft.AspNetCore.App.Ref", "8.0.4"),
+                new PackageIdentity("Swashbuckle.AspNetCore.Annotations", "6.5.0")
             ));
 
         //this.TestState.AddNuget(" Microsoft.AspNetCore.App.Ref ") // TODO:
