@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
+using Workleap.Extensions.OpenAPI.TypedResult;
 
 namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
 
@@ -22,6 +23,7 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
                                                 global using Microsoft.AspNetCore.Http;
                                                 global using Microsoft.AspNetCore.Mvc;
                                                 global using Swashbuckle.AspNetCore.Annotations;
+                                                global using Workleap.Extensions.OpenAPI.TypedResult;
                                                 """;
 
     private const string SourceFileName = "Program.cs";
@@ -36,8 +38,8 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
                 new PackageIdentity("Microsoft.AspNetCore.App.Ref", "8.0.4"),
                 new PackageIdentity("Swashbuckle.AspNetCore.Annotations", "6.5.0")
             ));
-
-        //this.TestState.AddNuget(" Microsoft.AspNetCore.App.Ref ") // TODO:
+        
+        this.TestState.AdditionalReferences.Add(typeof(InternalServerError).Assembly);
     }
 
     // TODO: Why this

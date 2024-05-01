@@ -1,4 +1,6 @@
-﻿using Workleap.Extensions.OpenAPI.Analyzers.Tests;
+﻿using System.Threading.Tasks;
+using Workleap.Extensions.OpenAPI.Analyzers.Tests;
+using Xunit;
 
 public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<CompareTypedResultWithAnnotationAnalyzer>
 {
@@ -64,7 +66,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                  [HttpGet]
                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-                                 // [ProducesResponseType(StatusCodes.Status404NotFound)]
+                                 [ProducesResponseType(StatusCodes.Status404NotFound)]
                                  public Results<Ok<String>, NotFound> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
@@ -251,7 +253,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                   [HttpGet]
                                   [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
                                   [ProducesResponseType(StatusCodes.Status404NotFound)]
-                                  public async Task<Results<Ok<int>, NotFound<int>>> {|WLOAS001:GetExplicitOperationIdInName()|} => throw null;
+                                  public async Task<Results<Ok<int>, NotFound<int>>> {|WLOAS001:{|WLOAS001:GetExplicitOperationIdInName|}|}() => throw null;
                               }
                               """;
 
@@ -259,22 +261,22 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
             .RunAsync();
     }
 
-    // [Fact]
-    // public async Task Given_ProducesResponseAndCorrectTypedResultsTaskWithInternalServerError_When_Analyze_Then_No_Diagnostic()
-    // {
-    //     const string source = """
-    //                           [ApiController]
-    //                           [Route("Analyzers")]
-    //                           public class AnalyzersController : ControllerBase
-    //                           {
-    //                               [HttpGet]
-    //                               [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    //                               [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    //                               public async Task<Results<Ok<string>, InternalServerError>> GetExplicitOperationIdInName() => throw null;
-    //                           }
-    //                           """;
-    //
-    //     await this.WithSourceCode(source)
-    //         .RunAsync();
-    // }
+    [Fact]
+    public async Task Given_ProducesResponseAndCorrectTypedResultsTaskWithInternalServerError_When_Analyze_Then_No_Diagnostic()
+    {
+        const string source = """
+                              [ApiController]
+                              [Route("Analyzers")]
+                              public class AnalyzersController : ControllerBase
+                              {
+                                  [HttpGet]
+                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+                                  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+                                  public async Task<Results<Ok<string>, InternalServerError>> GetExplicitOperationIdInName() => throw null;
+                              }
+                              """;
+    
+        await this.WithSourceCode(source)
+            .RunAsync();
+    }
 }

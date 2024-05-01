@@ -43,8 +43,10 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
     {
         private INamedTypeSymbol? TaskOfTSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.Task`1");
         private INamedTypeSymbol? ValueTaskOfTSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.ValueTask`1");
-
-
+        private INamedTypeSymbol? ProducesResponseSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute");
+        private INamedTypeSymbol? ProducesResponseOfTSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute`1");
+        private INamedTypeSymbol? SwaggerResponseSymbol { get; } = compilation.GetTypeByMetadataName("Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute");
+        
         public INamedTypeSymbol?[] ResultTaskOfTSymbol { get; } =
         [
             compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`2"),
@@ -66,6 +68,11 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             Add("Microsoft.AspNetCore.Http.HttpResults.Ok`1", 200);
             Add("Microsoft.AspNetCore.Http.HttpResults.NotFound", 404);
             Add("Microsoft.AspNetCore.Http.HttpResults.NotFound`1", 404);
+            // Supported in .NET 9
+            Add("Microsoft.AspNetCore.Http.HttpResults.InternalServerError", 500);
+            Add("Microsoft.AspNetCore.Http.HttpResults.InternalServerError`1", 500);
+            Add("Workleap.Extensions.OpenAPI.TypedResult.InternalServerError", 500);
+            Add("Workleap.Extensions.OpenAPI.TypedResult.InternalServerError`1", 500);
 
             return dictionary;
 
@@ -85,6 +92,8 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             var dictionary = new Dictionary<int, ITypeSymbol>();
             Add(200, "Microsoft.AspNetCore.Http.HttpResults.Ok");
             Add(404, "Microsoft.AspNetCore.Http.HttpResults.NotFound");
+            Add(500, "Microsoft.AspNetCore.Http.HttpResults.InternalServerError");
+            Add(500, "Workleap.Extensions.OpenAPI.TypedResult.InternalServerError");
 
             return dictionary;
 
@@ -123,27 +132,21 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 
                 if (Implements(typedReturnType, iResultTypeSymbol))
                 {
-                    // For each of get 
-                    var producesResponseTypeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute");
-                    // we put the number of generic arguments after the backtick
-                    var producesResponseTypeOfTSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute`1");
-                    var swaggerResponseTypeSymbol = context.Compilation.GetTypeByMetadataName("Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute");
-
                     var attributeStatusCodeToTypeMap = new Dictionary<int, ITypeSymbol>();
                     foreach (var attribute in methodSymbol.GetAttributes())
                     {
                         // check for number of arguments first --> maybe?
-                        if (attribute.AttributeClass.Equals(producesResponseTypeSymbol, SymbolEqualityComparer.Default))
+                        if (attribute.AttributeClass != null && attribute.AttributeClass.Equals(this.ProducesResponseSymbol, SymbolEqualityComparer.Default))
                         {
                             if (attribute.ConstructorArguments.Length == 1)
                             {
-                                var statusCodeValue = (int)attribute.ConstructorArguments[0].Value;
+                                var statusCodeValue = (int) attribute.ConstructorArguments[0].Value;
                                 attributeStatusCodeToTypeMap.Add(statusCodeValue, this._statusCodeToResultsMap[statusCodeValue]);
                             }
                             else
                             {
                                 var constructorValue = attribute.ConstructorArguments[0].Value;
-                                var statusCodeValue = (int)attribute.ConstructorArguments[1].Value;
+                                var statusCodeValue = (int) attribute.ConstructorArguments[1].Value;
                                 if (constructorValue is ITypeSymbol type)
                                 {
                                     // TODO Do we want a different rule for catching duplicate status codes?
@@ -157,11 +160,12 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                                     {
                                         attributeStatusCodeToTypeMap.Add(statusCodeValue, type);
                                     }
+                                    // TODO mark it on the attribute. Hint: attribute.ApplicationSyntaxReference.GetSyntax().GetLocation()
                                 }
                             }
                         }
 
-                        else if (attribute.AttributeClass.ConstructedFrom.Equals(producesResponseTypeOfTSymbol, SymbolEqualityComparer.Default))
+                        else if (attribute.AttributeClass.ConstructedFrom.Equals(this.ProducesResponseOfTSymbol, SymbolEqualityComparer.Default))
                         {
                             var statusCodeValue = (int)attribute.ConstructorArguments[0].Value;
                             var typeArgument = attribute.AttributeClass.TypeArguments[0];
@@ -174,14 +178,12 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                                     context.ReportDiagnostic(Rule, context.Symbol);
                                     return;
                                 }
-                                else
-                                {
-                                    attributeStatusCodeToTypeMap.Add(statusCodeValue, type);
-                                }
+
+                                attributeStatusCodeToTypeMap.Add(statusCodeValue, type);
                             }
                         }
 
-                        else if (attribute.AttributeClass.ConstructedFrom.Equals(swaggerResponseTypeSymbol, SymbolEqualityComparer.Default))
+                        else if (attribute.AttributeClass.ConstructedFrom.Equals(this.SwaggerResponseSymbol, SymbolEqualityComparer.Default))
                         {
                             var statusCodeValue = (int)attribute.ConstructorArguments[0].Value;
                             
@@ -219,7 +221,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                 }
             }
         }
-
+        
         private IEnumerable<(int statusCode, ITypeSymbol symbol)> GetReturnStatusAndTypeFromMethod(ITypeSymbol typeSymbol)
         {
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol)

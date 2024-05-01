@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Workleap.Extensions.OpenApi.Analyzers\Workleap.Extensions.OpenApi.Analyzers.csproj"/>
+    <ProjectReference Include="..\..\Workleap.Extensions.OpenAPI\Workleap.Extensions.OpenAPI.csproj" />
   </ItemGroup>
 
 </Project>
