@@ -14,7 +14,8 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         messageFormat: "Mismatch between annotation return type and endpoint return type",
         category: RuleCategories.Design,
         DiagnosticSeverity.Warning,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        helpLinkUri: RuleIdentifiers.HelpUri);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AnnotationMustMatchTypedResult);
 
