@@ -20,7 +20,7 @@ public class TypedResultController : ControllerBase
 
     [HttpGet]
     [Route("/withAnnotation")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TypedResultExample), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public Results<Ok<ProblemDetails>, BadRequest<ProblemDetails>, NotFound> TypedResultWithAnnotation(int id)
