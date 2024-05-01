@@ -140,7 +140,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                   [HttpGet]
                                   [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-                                  [ProducesResponseType(StatusCodes.Status404NotFound)]
+                                  [{|WLOAS001:ProducesResponseType(StatusCodes.Status404NotFound)|}]
                                   public Ok<string> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
@@ -158,8 +158,8 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
-                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-                                  public Ok<int> {|WLOAS001:GetExplicitOperationIdInName|}() => throw null;
+                                  [{|WLOAS001:ProducesResponseType(typeof(string), StatusCodes.Status200OK)|}]
+                                  public Ok<int> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
 
@@ -176,9 +176,9 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
-                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+                                  [{|WLOAS001:ProducesResponseType(typeof(string), StatusCodes.Status200OK)|}]
                                   [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-                                  public Ok<int> {|WLOAS001:GetExplicitOperationIdInName|}() => throw null;
+                                  public Ok<int> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
 
@@ -195,8 +195,8 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
-                                  [ProducesResponseType<string>(StatusCodes.Status200OK)]
-                                  public Ok<int> {|WLOAS001:GetExplicitOperationIdInName|}() => throw null;
+                                  [{|WLOAS001:ProducesResponseType<string>(StatusCodes.Status200OK)|}]
+                                  public Ok<int> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
 
@@ -213,8 +213,8 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
-                                  [SwaggerResponse(StatusCodes.Status200OK, "Returns TypedResult", typeof(string))]
-                                  public Ok<int> {|WLOAS001:GetExplicitOperationIdInName|}() => throw null;
+                                  [{|WLOAS001:SwaggerResponse(StatusCodes.Status200OK, "Returns TypedResult", typeof(string))|}]
+                                  public Ok<int> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
 
@@ -231,9 +231,9 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
-                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+                                  [{|WLOAS001:ProducesResponseType(typeof(string), StatusCodes.Status200OK)|}]
                                   [ProducesResponseType(StatusCodes.Status404NotFound)]
-                                  public async Task<Results<Ok<int>, NotFound>> {|WLOAS001:GetExplicitOperationIdInName|}() => throw null;
+                                  public async Task<Results<Ok<int>, NotFound>> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
 
@@ -251,9 +251,9 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
-                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-                                  [ProducesResponseType(StatusCodes.Status404NotFound)]
-                                  public async Task<Results<Ok<int>, NotFound<int>>> {|WLOAS001:{|WLOAS001:GetExplicitOperationIdInName|}|}() => throw null;
+                                  [{|WLOAS001:ProducesResponseType(typeof(string), StatusCodes.Status200OK)|}]
+                                  [{|WLOAS001:ProducesResponseType(StatusCodes.Status404NotFound)|}]
+                                  public async Task<Results<Ok<int>, NotFound<int>>> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
 

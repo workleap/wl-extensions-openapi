@@ -46,7 +46,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         private INamedTypeSymbol? ProducesResponseSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute");
         private INamedTypeSymbol? ProducesResponseOfTSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute`1");
         private INamedTypeSymbol? SwaggerResponseSymbol { get; } = compilation.GetTypeByMetadataName("Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute");
-        
+
         public INamedTypeSymbol?[] ResultTaskOfTSymbol { get; } =
         [
             compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`2"),
@@ -132,96 +132,110 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 
                 if (Implements(typedReturnType, iResultTypeSymbol))
                 {
-                    var attributeStatusCodeToTypeMap = new Dictionary<int, ITypeSymbol>();
+                    var methodReturnSignature = GetReturnStatusAndTypeFromMethod(typedReturnType);
+                    var methodSignatureStatusCodeToTypeMap = new Dictionary<int, ITypeSymbol>();
+                    foreach (var returnValues in methodReturnSignature)
+                    {
+                        if (!methodSignatureStatusCodeToTypeMap.ContainsKey(returnValues.statusCode))
+                        {
+                            methodSignatureStatusCodeToTypeMap.Add(returnValues.statusCode, returnValues.symbol);
+                        }
+                    }
+
                     foreach (var attribute in methodSymbol.GetAttributes())
                     {
-                        // check for number of arguments first --> maybe?
                         if (attribute.AttributeClass != null && attribute.AttributeClass.Equals(this.ProducesResponseSymbol, SymbolEqualityComparer.Default))
                         {
                             if (attribute.ConstructorArguments.Length == 1)
                             {
                                 var statusCodeValue = (int) attribute.ConstructorArguments[0].Value;
-                                attributeStatusCodeToTypeMap.Add(statusCodeValue, this._statusCodeToResultsMap[statusCodeValue]);
+                                if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var type))
+                                {
+                                    if (!SymbolEqualityComparer.Default.Equals(this._statusCodeToResultsMap[statusCodeValue], type))
+                                    {
+                                        var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+                                        context.ReportDiagnostic(Rule, attributeLocation);
+                                    }
+                                }
+                                else
+                                {
+                                    var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+                                    context.ReportDiagnostic(Rule, attributeLocation);
+                                }
                             }
+                            
                             else
                             {
                                 var constructorValue = attribute.ConstructorArguments[0].Value;
                                 var statusCodeValue = (int) attribute.ConstructorArguments[1].Value;
                                 if (constructorValue is ITypeSymbol type)
                                 {
-                                    // TODO Do we want a different rule for catching duplicate status codes?
-                                    if (attributeStatusCodeToTypeMap.ContainsKey(statusCodeValue))
+                                    if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var mappedType))
                                     {
-                                        var methodDeclaration = context.Symbol.Locations;
-                                        context.ReportDiagnostic(Rule, context.Symbol);
-                                        return;
+                                        if (!SymbolEqualityComparer.Default.Equals(mappedType, type))
+                                        {
+                                            var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+                                            context.ReportDiagnostic(Rule, attributeLocation);
+                                        }
                                     }
                                     else
                                     {
-                                        attributeStatusCodeToTypeMap.Add(statusCodeValue, type);
+                                        var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+                                        context.ReportDiagnostic(Rule, attributeLocation);
                                     }
-                                    // TODO mark it on the attribute. Hint: attribute.ApplicationSyntaxReference.GetSyntax().GetLocation()
                                 }
                             }
                         }
 
                         else if (attribute.AttributeClass.ConstructedFrom.Equals(this.ProducesResponseOfTSymbol, SymbolEqualityComparer.Default))
                         {
-                            var statusCodeValue = (int)attribute.ConstructorArguments[0].Value;
+                            var statusCodeValue = (int) attribute.ConstructorArguments[0].Value;
                             var typeArgument = attribute.AttributeClass.TypeArguments[0];
                             if (typeArgument is ITypeSymbol type)
                             {
-                                // TODO Do we want a different rule for catching duplicate status codes?
-                                if (attributeStatusCodeToTypeMap.ContainsKey(statusCodeValue))
+                                if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var mappedType))
                                 {
-                                    var methodDeclaration = context.Symbol.Locations;
-                                    context.ReportDiagnostic(Rule, context.Symbol);
-                                    return;
+                                    if (!SymbolEqualityComparer.Default.Equals(mappedType, type))
+                                    {
+                                        var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+                                        context.ReportDiagnostic(Rule, attributeLocation);
+                                    }
                                 }
-
-                                attributeStatusCodeToTypeMap.Add(statusCodeValue, type);
+                                else
+                                {
+                                    var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+                                    context.ReportDiagnostic(Rule, attributeLocation);
+                                }
                             }
                         }
 
                         else if (attribute.AttributeClass.ConstructedFrom.Equals(this.SwaggerResponseSymbol, SymbolEqualityComparer.Default))
                         {
                             var statusCodeValue = (int)attribute.ConstructorArguments[0].Value;
-                            
+
                             var constructorValue = attribute.ConstructorArguments[2].Value;
                             if (constructorValue is ITypeSymbol type)
                             {
-                                // TODO Do we want a different rule for catching duplicate status codes?
-                                if (attributeStatusCodeToTypeMap.ContainsKey(statusCodeValue))
+                                if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var mappedType))
                                 {
-                                    var methodDeclaration = context.Symbol.Locations;
-                                    context.ReportDiagnostic(Rule, context.Symbol);
-                                    return;
+                                    if (!SymbolEqualityComparer.Default.Equals(mappedType, type))
+                                    {
+                                        var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+                                        context.ReportDiagnostic(Rule, attributeLocation);
+                                    }
                                 }
                                 else
                                 {
-                                    attributeStatusCodeToTypeMap.Add(statusCodeValue, type);
+                                    var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+                                    context.ReportDiagnostic(Rule, attributeLocation);
                                 }
-                            }
-                        }
-                    }
-
-                    var methodReturnSignature = GetReturnStatusAndTypeFromMethod(typedReturnType);
-                    foreach (var returnValues in methodReturnSignature)
-                    {
-                        if (attributeStatusCodeToTypeMap.TryGetValue(returnValues.statusCode, out var methodReturnType))
-                        {
-                            if (!SymbolEqualityComparer.Default.Equals(methodReturnType, returnValues.symbol))
-                            {
-                                // TODO improve error message
-                                var methodDeclaration = context.Symbol.Locations;
-                                context.ReportDiagnostic(Rule, context.Symbol);
                             }
                         }
                     }
                 }
             }
         }
-        
+
         private IEnumerable<(int statusCode, ITypeSymbol symbol)> GetReturnStatusAndTypeFromMethod(ITypeSymbol typeSymbol)
         {
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol)
