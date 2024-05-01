@@ -1,18 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Immutable;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Workleap.Extensions.OpenApi.Analyzers.Internals;
-using Workleap.Extensions.OpenAPI.TypedResult;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "MyFirstAnalyzer";
+    public const string DiagnosticId = "WLOAS001";
 
     private static readonly LocalizableString Title = "Title of the issue";
     private static readonly LocalizableString MessageFormat = "Message format for the issue";
@@ -112,7 +106,12 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                 // 4. Match case by case if it is equal.
                 // var iTypeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult")!;
                 // --> may need to validate duplicate definitions
-                var iResultTypeSymbol = GetTypeSymbol<IResult>(context.Compilation);
+                var iResultTypeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult");
+                if (iResultTypeSymbol is null)
+                {
+                    return;
+                }
+
                 if (Implements(typedReturnType, iResultTypeSymbol))
                 {
                     // For each of get 
@@ -155,9 +154,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                         // typeof --> DLL will not exist --> this will not work.
                         // Value is actually the type needed here. --> could also be a generic type.
                     }
-
-                    // method to peel Task<Result>
-
+                    
                     var methodReturnSignature = GetReturnStatusAndTypeFromMethod(typedReturnType);
                     foreach (var returnValues in methodReturnSignature)
                     {
@@ -187,35 +184,29 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             {
                 return GetReturnStatusAndTypeFromMethod(namedTypeSymbol.TypeArguments[0]);
             }
-            else if (SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ConstructedFrom, ValueTaskOfTSymbol))
+
+            if (SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ConstructedFrom, this.ValueTaskOfTSymbol))
             {
-                return GetReturnStatusAndTypeFromMethod(namedTypeSymbol.TypeArguments[0]);
+                return this.GetReturnStatusAndTypeFromMethod(namedTypeSymbol.TypeArguments[0]);
             }
 
             // Result<OK, NotFound>
-            else if (ResultTaskOfTSymbol.Any(symbol => SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ConstructedFrom, symbol)))
+            if (this.ResultTaskOfTSymbol.Any(symbol => SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ConstructedFrom, symbol)))
             {
                 return namedTypeSymbol.TypeArguments.SelectMany(this.GetReturnStatusAndTypeFromMethod);
             }
-            else
+            
+            if (this._statusIResultsMap.TryGetValue(namedTypeSymbol.ConstructedFrom, out var statusCode))
             {
-                if (_statusIResultsMap.TryGetValue(namedTypeSymbol.ConstructedFrom, out var statusCode))
-                {
-                    return [(statusCode, namedTypeSymbol.TypeArguments.Length == 0 ? null : namedTypeSymbol.TypeArguments[0])];
-                }
-
-                return Enumerable.Empty<(int, ITypeSymbol)>();
+                return [(statusCode, namedTypeSymbol.TypeArguments.Length == 0 ? null : namedTypeSymbol.TypeArguments[0])];
             }
+
+            return Enumerable.Empty<(int, ITypeSymbol)>();
         }
 
         private static bool Implements(ITypeSymbol symbol, ITypeSymbol type)
         {
-            return type.Equals(symbol) || symbol.AllInterfaces.Any(i => type.Equals(i));
-        }
-
-        private static ITypeSymbol GetTypeSymbol<T>(Compilation compilation)
-        {
-            return compilation.GetTypeByMetadataName(typeof(T).FullName);
+            return SymbolEqualityComparer.Default.Equals(symbol, type) || symbol.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(type, i));
         }
     }
 }
