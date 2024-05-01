@@ -8,13 +8,11 @@ namespace Workleap.Extensions.OpenAPI.Analyzer;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 {
-    private const string DiagnosticId = "WLOAS001";
-
     internal static readonly DiagnosticDescriptor AnnotationMustMatchTypedResult = new(
-        id: DiagnosticId,
+        id: RuleIdentifiers.MismatchResponseTypeWithAnnotation,
         title: "Mismatch between annotation return type and endpoint return type",
         messageFormat: "Mismatch between annotation return type and endpoint return type",
-        category: "Usage",
+        category: RuleCategories.Design,
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
