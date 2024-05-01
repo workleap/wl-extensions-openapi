@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../Workleap.Extensions.OpenAPI.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -145,7 +145,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TypedResultExample'
+                type: string
         '400':
           description: Bad Request
           content:

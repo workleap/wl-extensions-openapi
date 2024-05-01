@@ -53,7 +53,7 @@
   <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="BuildOnlySettings;ResolveReferences">
     <ItemGroup>
       <_OurPrivateAssetsFiles Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')-&gt;WithMetadataValue('PrivateAssets', 'All'))" />
-      <_OurRoslynAnalyzersDlls Include="@(_OurPrivateAssetsFiles)" Condition=" '%(Filename)' == 'Workleap.Extensions.OpenApi.Analyzers' And '%(Extension)' == '.dll' " />
+      <_OurRoslynAnalyzersDlls Include="@(_OurPrivateAssetsFiles)" Condition=" '%(Filename)' == 'Workleap.Extensions.OpenAPI.Analyzers' And '%(Extension)' == '.dll' " />
     </ItemGroup>
 
     <!-- Prevent copying the Roslyn analyzer files multiple times (because this project targets multiple frameworks) -->

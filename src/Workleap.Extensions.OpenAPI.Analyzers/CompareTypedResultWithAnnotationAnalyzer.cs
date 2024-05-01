@@ -14,7 +14,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         id: DiagnosticId,
         title: "Mismatch between annotation return type and endpoint return type",
         messageFormat: "Mismatch between annotation return type and endpoint return type",
-        category: "OpenAPI",
+        category: "Usage",
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
