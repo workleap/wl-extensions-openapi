@@ -56,8 +56,7 @@
       <_OurRoslynAnalyzersDlls Include="@(_OurPrivateAssetsFiles)" Condition=" '%(Filename)' == 'Workleap.Extensions.OpenAPI.Analyzers' And '%(Extension)' == '.dll' " />
     </ItemGroup>
 
-    <!-- Prevent copying the Roslyn analyzer files multiple times (because this project targets multiple frameworks) -->
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <ItemGroup>
       <TfmSpecificPackageFile Include="@(_OurRoslynAnalyzersDlls)" PackagePath="analyzers\dotnet\cs" />
     </ItemGroup>
   </Target>
