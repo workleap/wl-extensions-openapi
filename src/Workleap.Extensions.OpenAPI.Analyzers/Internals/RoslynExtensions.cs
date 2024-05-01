@@ -1,6 +1,7 @@
-namespace Workleap.Extensions.OpenApi.Analyzers.Internals;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace Workleap.Extensions.OpenAPI.Analyzers.Internals;
 
 internal static class RoslynExtensions
 {

@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using Xunit;
+﻿using Workleap.Extensions.OpenAPI.Analyzer;
 
 namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
+
 public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<CompareTypedResultWithAnnotationAnalyzer>
 {
     [Fact]
@@ -274,7 +274,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                   public async Task<Results<Ok<string>, InternalServerError>> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
-    
+
         await this.WithSourceCode(source)
             .RunAsync();
     }

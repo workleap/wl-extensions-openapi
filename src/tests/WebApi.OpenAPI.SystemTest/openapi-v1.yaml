@@ -3,24 +3,6 @@ info:
   title: Test API
   version: v1
 paths:
-  /Analyzers:
-    get:
-      tags:
-        - Analyzers
-      operationId: GetExplicitOperationIdInName
-      responses:
-        '200':
-          description: '200'
-          content:
-            application/json:
-              schema:
-                type: string
-            text/json:
-              schema:
-                type: string
-            text/plain:
-              schema:
-                type: string
   /minimal-endpoint-with-name:
     get:
       tags:

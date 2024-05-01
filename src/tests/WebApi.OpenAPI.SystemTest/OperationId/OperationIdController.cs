@@ -10,7 +10,7 @@ public class OperationIdController : ControllerBase
 {
     [HttpGet("/explicitOperationIdInName", Name = "GetExplicitOperationIdInName")]
     [ProducesResponseType<int>(StatusCodes.Status200OK)]
-    [ProducesResponseType( typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     public Ok<string> GetExplicitOperationIdInName()
     {
         return TypedResults.Ok("Hello World");

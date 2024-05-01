@@ -1,15 +1,15 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Workleap.Extensions.OpenApi.Analyzers.Internals;
+using Workleap.Extensions.OpenAPI.Analyzers.Internals;
 
-namespace Workleap.Extensions.OpenAPI.Analyzers;
+namespace Workleap.Extensions.OpenAPI.Analyzer;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 {
     private const string DiagnosticId = "WLOAS001";
-    
+
     internal static readonly DiagnosticDescriptor AnnotationMustMatchTypedResult = new(
         id: DiagnosticId,
         title: "Mismatch between annotation return type and endpoint return type",
@@ -49,7 +49,6 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`5"),
             compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`6"),
         ];
-
 
         private readonly Dictionary<ITypeSymbol, int> _resultsToStatusCodeMap = InitializeHttpResultStatusCodeMap(compilation);
         private readonly Dictionary<int, ITypeSymbol> _statusCodeToResultsMap = InitializeStatusCodeMapHttpResultMap(compilation);
@@ -215,7 +214,6 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             return methodSignatureStatusCodeToTypeMap;
         }
 
-
         private IEnumerable<(int statusCode, ITypeSymbol symbol)> GetReturnStatusAndTypeFromMethodReturn(ITypeSymbol typeSymbol)
         {
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol)
@@ -224,7 +222,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
 
             // Task<>
-            if (SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ConstructedFrom, TaskOfTSymbol))
+            if (SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ConstructedFrom, this.TaskOfTSymbol))
             {
                 return this.GetReturnStatusAndTypeFromMethodReturn(namedTypeSymbol.TypeArguments[0]);
             }

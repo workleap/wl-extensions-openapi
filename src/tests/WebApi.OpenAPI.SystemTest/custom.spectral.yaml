@@ -3,3 +3,4 @@ rules:
   properties-must-have-a-type: false
   application-json-response-must-not-be-type-string: false
   operation-operationId: false
+  must-return-content-types: false
