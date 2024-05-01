@@ -12,7 +12,7 @@ namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
 public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVerifier>
     where TAnalyzer : DiagnosticAnalyzer, new()
 {
-    private const string CSharp10GlobalUsing = """
+    private const string GlobalUsingList = """
                                                global using System;
                                                global using System.Collections.Generic;
                                                global using System.IO;
@@ -30,7 +30,7 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
 
     protected BaseAnalyzerTest()
     {
-        this.TestState.Sources.Add(CSharp10GlobalUsing);
+        this.TestState.Sources.Add(GlobalUsingList);
         this.TestState.ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
 
         this.TestState.ReferenceAssemblies = this.TestState.ReferenceAssemblies.AddPackages(

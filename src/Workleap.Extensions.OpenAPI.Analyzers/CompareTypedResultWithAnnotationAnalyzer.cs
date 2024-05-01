@@ -15,7 +15,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         title: "Mismatch between annotation return type and endpoint return type",
         messageFormat: "Mismatch between annotation return type and endpoint return type",
         category: "Usage",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AnnotationMustMatchTypedResult);
@@ -28,26 +28,27 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(compilationContext =>
         {
             var analyzerContext = new AnalyzerContext(compilationContext.Compilation);
-
-            compilationContext.RegisterSymbolAction(analyzerContext.AnalyzeClassDeclaration, SymbolKind.Method);
+            compilationContext.RegisterSymbolAction(analyzerContext.ValidateEndpointResponseType, SymbolKind.Method);
         });
     }
 
     private sealed class AnalyzerContext(Compilation compilation)
     {
-        private INamedTypeSymbol? TaskOfTSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.Task`1");
-        private INamedTypeSymbol? ValueTaskOfTSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.ValueTask`1");
+        private INamedTypeSymbol? TaskOfTSymbol { get; } = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
+        private INamedTypeSymbol? ValueTaskOfTSymbol { get; } = compilation.GetTypeByMetadataName("System.Threading.Tasks.ValueTask`1");
         private INamedTypeSymbol? ProducesResponseSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute");
         private INamedTypeSymbol? ProducesResponseOfTSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute`1");
         private INamedTypeSymbol? SwaggerResponseSymbol { get; } = compilation.GetTypeByMetadataName("Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute");
 
+        private INamedTypeSymbol? ResultSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult");
+
         public INamedTypeSymbol?[] ResultTaskOfTSymbol { get; } =
         [
-            compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`2"),
-            compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`3"),
-            compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`4"),
-            compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`5"),
-            compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`6"),
+            compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`2"),
+            compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`3"),
+            compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`4"),
+            compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`5"),
+            compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.HttpResults.Results`6"),
         ];
 
         private readonly Dictionary<ITypeSymbol, int> _resultsToStatusCodeMap = InitializeHttpResultStatusCodeMap(compilation);
@@ -122,30 +123,27 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
         }
 
-        public void AnalyzeClassDeclaration(SymbolAnalysisContext context)
+        public void ValidateEndpointResponseType(SymbolAnalysisContext context)
         {
+            if (context.Symbol.GetAttributes().Length == 0)
+            {
+                return;
+            }
+
             var methodSymbol = (IMethodSymbol)context.Symbol;
+
             var returnType = methodSymbol.ReturnType;
 
             if (returnType is INamedTypeSymbol typedReturnType)
             {
-                var iResultTypeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult");
-                if (iResultTypeSymbol is null)
+                if (this.ResultSymbol is null)
                 {
                     return;
                 }
 
-                // Check if the return type is of Task<IResult> or Task<Result<>>. If yes, then keep the inner type.
-                if (SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, this.TaskOfTSymbol))
-                {
-                    var subType = typedReturnType.TypeArguments[0];
-                    if (subType is INamedTypeSymbol namedSubType)
-                    {
-                        typedReturnType = namedSubType;
-                    }
-                }
+                typedReturnType = this.UnwrapTypeFromTask(typedReturnType);
 
-                if (Implements(typedReturnType, iResultTypeSymbol))
+                if (Implements(typedReturnType, this.ResultSymbol))
                 {
                     var methodSignatureStatusCodeToTypeMap = this.GetMethodReturnStatusCodeToTypeMap(typedReturnType);
 
@@ -157,44 +155,59 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
         }
 
+        private INamedTypeSymbol UnwrapTypeFromTask(INamedTypeSymbol typedReturnType)
+        {
+            // Check if the return type is of Task<> or ValueOfTask<>. If yes, then keep the inner type.
+            if (SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, this.TaskOfTSymbol) ||
+                SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, this.ValueTaskOfTSymbol))
+            {
+                var subType = typedReturnType.TypeArguments[0];
+                if (subType is INamedTypeSymbol namedSubType)
+                {
+                    typedReturnType = namedSubType;
+                }
+            }
+
+            return typedReturnType;
+        }
+
         private void ValidateAnnotationWithTypedResult(SymbolAnalysisContext context, AttributeData attribute,
             Dictionary<int, ITypeSymbol> methodSignatureStatusCodeToTypeMap)
         {
-            if (attribute.AttributeClass != null)
+            if (attribute.AttributeClass == null || attribute.ConstructorArguments.Length == 0)
             {
-                if (attribute.AttributeClass.Equals(this.ProducesResponseSymbol, SymbolEqualityComparer.Default))
-                {
-                    if (attribute.ConstructorArguments.Length == 1)
-                    {
-                        if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
-                        {
-                            var type = this._statusCodeToResultsMap[statusCodeValue];
-                            ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, type, attribute);
-                        }
-                    }
-                    else
-                    {
-                        if (attribute.ConstructorArguments[1].Value is int statusCodeValue && attribute.ConstructorArguments[0].Value is ITypeSymbol type)
-                        {
-                            ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, type, attribute);
-                        }
-                    }
-                }
+                return;
+            }
 
-                else if (attribute.AttributeClass.ConstructedFrom.Equals(this.ProducesResponseOfTSymbol, SymbolEqualityComparer.Default))
+            if (attribute.AttributeClass.Equals(this.ProducesResponseSymbol, SymbolEqualityComparer.Default))
+            {
+                if (attribute.ConstructorArguments.Length == 1)
                 {
                     if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
                     {
-                        ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, attribute.AttributeClass.TypeArguments[0], attribute);
-                    }
-                }
-
-                else if (attribute.AttributeClass.ConstructedFrom.Equals(this.SwaggerResponseSymbol, SymbolEqualityComparer.Default))
-                {
-                    if (attribute.ConstructorArguments[0].Value is int statusCodeValue && attribute.ConstructorArguments[2].Value is ITypeSymbol type)
-                    {
+                        var type = this._statusCodeToResultsMap[statusCodeValue];
                         ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, type, attribute);
                     }
+                }
+                else if (attribute.ConstructorArguments[1].Value is int statusCodeValue && attribute.ConstructorArguments[0].Value is ITypeSymbol type)
+                {
+                    ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, type, attribute);
+                }
+            }
+
+            else if (attribute.AttributeClass.ConstructedFrom.Equals(this.ProducesResponseOfTSymbol, SymbolEqualityComparer.Default))
+            {
+                if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
+                {
+                    ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, attribute.AttributeClass.TypeArguments[0], attribute);
+                }
+            }
+
+            else if (attribute.AttributeClass.ConstructedFrom.Equals(this.SwaggerResponseSymbol, SymbolEqualityComparer.Default))
+            {
+                if (attribute.ConstructorArguments.Length > 2 && attribute.ConstructorArguments[0].Value is int statusCodeValue && attribute.ConstructorArguments[2].Value is ITypeSymbol type)
+                {
+                    ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, type, attribute);
                 }
             }
         }
@@ -255,7 +268,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                 return;
             }
 
-            var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+            var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax(context.CancellationToken).GetLocation();
             if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var mappedType))
             {
                 if (!SymbolEqualityComparer.Default.Equals(mappedType, type))
@@ -269,9 +282,9 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
         }
 
-        private static bool Implements(ITypeSymbol symbol, ITypeSymbol type)
+        private static bool Implements(ITypeSymbol interfaceSymbol, ITypeSymbol comparedType)
         {
-            return SymbolEqualityComparer.Default.Equals(symbol, type) || symbol.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(type, i));
+            return SymbolEqualityComparer.Default.Equals(interfaceSymbol, comparedType) || interfaceSymbol.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(comparedType, i));
         }
     }
 }

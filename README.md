@@ -11,9 +11,13 @@ The library offers an opinionated configuration of OpenAPI document generation a
 
 As such, we provide the following features:
 
+OpenAPI Spec generation filters:
 - Display OperationId in SwaggerUI
-- Extract Type schema  from TypedResult endpoint response types 
+- Extract Type schema from TypedResult endpoint response types
 - (Optional) Fallback to use controller name as OperationId when there is no OperationId explicitly defined for the endpoint.
+
+Roslyn Analyzers to help validate usage typed responses:
+- Rule to catch mismatches between endpoint response annotations and Typed Responses
 
 ## Getting started
 
@@ -96,7 +100,22 @@ public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
 }
 ```
 
+## Analyzer Rules
 
+### `WLOAS001`: Mismatch between annotation return type and endpoint return type.
+
+This rule validates the return type indicated by the endpoint annotations against the Typed response values indicated by the endpoint. Here is an example:
+
+```cs
+[HttpGet]
+[Route("/example")]
+[ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // This would be marked with a warning
+[ProducesResponseType(typeof(TypedResultExample), StatusCodes.Status200OK)] // This would be valid
+public Ok<TypedResultExample> TypedResultWithSwaggerResponseAnnotation()
+{
+    return TypedResults.Ok(new TypedResultExample());
+}
+```
 
 ### Limitations
 

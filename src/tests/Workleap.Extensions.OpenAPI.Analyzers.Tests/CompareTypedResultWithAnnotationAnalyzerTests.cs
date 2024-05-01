@@ -8,8 +8,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_NoAnnotationIActionResult_When_Analyze_Then_No_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                 [HttpGet]
@@ -25,8 +23,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ProducesAndIActionResult_When_Analyze_Then_No_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                 [HttpGet]
@@ -43,8 +39,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_NoAnnotationTypedResult_When_Analyze_Then_No_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -60,8 +54,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ProducesAndCorrectTypedResults_When_Analyze_Then_No_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                  [HttpGet]
@@ -79,8 +71,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_SwaggerResponseAndCorrectTypedResults_When_Analyze_Then_No_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -97,8 +87,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ProducesResponseAndCorrectTypedResults_When_Analyze_Then_No_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -115,8 +103,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ProducesResponseAndCorrectTypedResultsTask_When_Analyze_Then_No_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -134,8 +120,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ExtraProducesResponseAndCorrectTypedResults_When_Analyze_Then_No_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -153,8 +137,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ProducesResponseAndMismatchTypedResults_When_Analyze_Then_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -171,8 +153,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_DuplicateProducesResponse_When_Analyze_Then_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -190,8 +170,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ProducesResponseTypedAndMismatchTypedResults_When_Analyze_Then_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -208,8 +186,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_SwaggerResponseAndMismatchTypedResults_When_Analyze_Then_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -226,8 +202,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ProducesResponsesAndMismatchTypedResultsTask_When_Analyze_Then_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -245,8 +219,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ProducesResponsesAndTwoMismatchTypedResultsTask_When_Analyze_Then_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
@@ -264,8 +236,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
     public async Task Given_ProducesResponseAndCorrectTypedResultsTaskWithInternalServerError_When_Analyze_Then_No_Diagnostic()
     {
         const string source = """
-                              [ApiController]
-                              [Route("Analyzers")]
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]

@@ -51,7 +51,7 @@ Process {
         Exec { & dotnet clean -c Release }
         Exec { & dotnet build -c Release }
         Exec { & dotnet test  -c Release --no-build --results-directory "$outputDir" --no-restore -l "trx" -l "console;verbosity=detailed" }
-        # Exec { & Compare-GeneratedAndExpectedFiles -generatedFilePath $generatedFilePath -expectedFilePath $expectedFilePath }
+        Exec { & Compare-GeneratedAndExpectedFiles -generatedFilePath $generatedFilePath -expectedFilePath $expectedFilePath }
         Exec { & dotnet pack  -c Release -o "$outputDir" }
 
         if (($null -ne $env:NUGET_SOURCE ) -and ($null -ne $env:NUGET_API_KEY)) {
