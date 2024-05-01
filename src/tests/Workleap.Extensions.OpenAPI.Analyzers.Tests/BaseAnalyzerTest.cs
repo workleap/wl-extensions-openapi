@@ -12,7 +12,7 @@ namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
 public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVerifier>
     where TAnalyzer : DiagnosticAnalyzer, new()
 {
-    private const string CSharp10GlobalUsings = """
+    private const string CSharp10GlobalUsing = """
                                                 global using System;
                                                 global using System.Collections.Generic;
                                                 global using System.IO;
@@ -28,9 +28,9 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
 
     private const string SourceFileName = "Program.cs";
 
-    public BaseAnalyzerTest()
+    protected BaseAnalyzerTest()
     {
-        this.TestState.Sources.Add(CSharp10GlobalUsings);
+        this.TestState.Sources.Add(CSharp10GlobalUsing);
         this.TestState.ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
 
         this.TestState.ReferenceAssemblies = this.TestState.ReferenceAssemblies.AddPackages(
@@ -41,30 +41,18 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
         
         this.TestState.AdditionalReferences.Add(typeof(InternalServerError).Assembly);
     }
-
-    // TODO: Why this
+    
     protected override CompilationOptions CreateCompilationOptions()
     {
         return new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: false);
     }
-
-    // TODO: Why this
+    
     protected override ParseOptions CreateParseOptions()
     {
         return new CSharpParseOptions(LanguageVersion.CSharp11, DocumentationMode.Diagnose);
     }
 
-    // TODO: Understand this
-    public BaseAnalyzerTest<TAnalyzer> WithExpectedDiagnostic(DiagnosticDescriptor descriptor, int startLine, int startColumn, int endLine, int endColumn, params object[] args)
-    {
-        this.TestState.ExpectedDiagnostics.Add(new DiagnosticResult(descriptor)
-            .WithSpan(SourceFileName, startLine, startColumn, endLine, endColumn)
-            .WithArguments(args));
-        return this;
-    }
-
-    // TODO: Understand this
-    public BaseAnalyzerTest<TAnalyzer> WithSourceCode(string sourceCode)
+    protected BaseAnalyzerTest<TAnalyzer> WithSourceCode(string sourceCode)
     {
         this.TestState.Sources.Add((SourceFileName, sourceCode));
         return this;

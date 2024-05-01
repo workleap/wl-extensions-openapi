@@ -56,7 +56,6 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 
         private static Dictionary<ITypeSymbol, int> InitializeHttpResultStatusCodeMap(Compilation compilation)
         {
-            // TODO initialize with other response types
             var dictionary = new Dictionary<ITypeSymbol, int>(SymbolEqualityComparer.Default);
             Add("Microsoft.AspNetCore.Http.HttpResults.Ok", 200);
             Add("Microsoft.AspNetCore.Http.HttpResults.Ok`1", 200);
@@ -99,7 +98,6 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 
         private static Dictionary<int, ITypeSymbol> InitializeStatusCodeMapHttpResultMap(Compilation compilation)
         {
-            // TODO initialize with other response types
             var dictionary = new Dictionary<int, ITypeSymbol>();
             Add(200, "Microsoft.AspNetCore.Http.HttpResults.Ok");
             Add(201, "Microsoft.AspNetCore.Http.HttpResults.Created");

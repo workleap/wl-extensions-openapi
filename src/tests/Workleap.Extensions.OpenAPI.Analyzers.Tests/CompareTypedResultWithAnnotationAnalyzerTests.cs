@@ -241,7 +241,6 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
             .RunAsync();
     }
 
-    // TODO Check if we can have two violations in the same place on tests
     [Fact]
     public async Task Given_ProducesResponsesAndTwoMismatchTypedResultsTask_When_Analyze_Then_Diagnostic()
     {
