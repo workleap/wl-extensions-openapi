@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Workleap.Extensions.OpenAPI.Analyzers.Tests;
 using Xunit;
 
+namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
 public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<CompareTypedResultWithAnnotationAnalyzer>
 {
     [Fact]

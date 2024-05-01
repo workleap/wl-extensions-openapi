@@ -1,30 +1,24 @@
-﻿using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Workleap.Extensions.OpenApi.Analyzers.Internals;
+
+namespace Workleap.Extensions.OpenAPI.Analyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "WLOAS001";
-
-    private static readonly LocalizableString Title = "Title of the issue";
-    private static readonly LocalizableString MessageFormat = "Message format for the issue";
-    private static readonly LocalizableString Description = "Mismatch between annotation and method return type.";
-    private const string Category = "Naming";
-
-    private const string ErrorReason = "Mismatch between annotation and method return type.";
-
-    public static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-        DiagnosticId,
-        Title,
-        MessageFormat,
-        Category,
+    private const string DiagnosticId = "WLOAS001";
+    
+    internal static readonly DiagnosticDescriptor AnnotationMustMatchTypedResult = new(
+        id: DiagnosticId,
+        title: "Mismatch between annotation return type and endpoint return type",
+        messageFormat: "Mismatch between annotation return type and endpoint return type",
+        category: "OpenAPI",
         DiagnosticSeverity.Error,
-        isEnabledByDefault: true,
-        description: Description);
+        isEnabledByDefault: true);
 
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AnnotationMustMatchTypedResult);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -66,11 +60,28 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             var dictionary = new Dictionary<ITypeSymbol, int>(SymbolEqualityComparer.Default);
             Add("Microsoft.AspNetCore.Http.HttpResults.Ok", 200);
             Add("Microsoft.AspNetCore.Http.HttpResults.Ok`1", 200);
+            Add("Microsoft.AspNetCore.Http.HttpResults.Created", 201);
+            Add("Microsoft.AspNetCore.Http.HttpResults.Created`1", 201);
+            Add("Microsoft.AspNetCore.Http.HttpResults.CreatedAtRoute", 201);
+            Add("Microsoft.AspNetCore.Http.HttpResults.CreatedAtRoute`1", 201);
+            Add("Microsoft.AspNetCore.Http.HttpResults.Accepted", 202);
+            Add("Microsoft.AspNetCore.Http.HttpResults.Accepted`1", 202);
+            Add("Microsoft.AspNetCore.Http.HttpResults.AcceptedAtRoute", 202);
+            Add("Microsoft.AspNetCore.Http.HttpResults.AcceptedAtRoute`1", 202);
+            Add("Microsoft.AspNetCore.Http.HttpResults.NoContent", 204);
+            Add("Microsoft.AspNetCore.Http.HttpResults.BadRequest", 400);
+            Add("Microsoft.AspNetCore.Http.HttpResults.BadRequest`1", 400);
+            Add("Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult", 401);
             Add("Microsoft.AspNetCore.Http.HttpResults.NotFound", 404);
             Add("Microsoft.AspNetCore.Http.HttpResults.NotFound`1", 404);
-            // Supported in .NET 9
+            Add("Microsoft.AspNetCore.Http.HttpResults.Conflict", 409);
+            Add("Microsoft.AspNetCore.Http.HttpResults.Conflict`1", 409);
+            Add("Microsoft.AspNetCore.Http.HttpResults.UnprocessableEntity", 422);
+            Add("Microsoft.AspNetCore.Http.HttpResults.UnprocessableEntity`T", 422);
+            // Will be Supported in .NET 9
             Add("Microsoft.AspNetCore.Http.HttpResults.InternalServerError", 500);
             Add("Microsoft.AspNetCore.Http.HttpResults.InternalServerError`1", 500);
+            // Workleap's definition of the InternalServerError type result for other .NET versions
             Add("Workleap.Extensions.OpenAPI.TypedResult.InternalServerError", 500);
             Add("Workleap.Extensions.OpenAPI.TypedResult.InternalServerError`1", 500);
 
@@ -91,7 +102,14 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             // TODO initialize with other response types
             var dictionary = new Dictionary<int, ITypeSymbol>();
             Add(200, "Microsoft.AspNetCore.Http.HttpResults.Ok");
+            Add(201, "Microsoft.AspNetCore.Http.HttpResults.Created");
+            Add(202, "Microsoft.AspNetCore.Http.HttpResults.Accepted");
+            Add(204, "Microsoft.AspNetCore.Http.HttpResults.NoContent");
+            Add(400, "Microsoft.AspNetCore.Http.HttpResults.BadRequest");
+            Add(401, "Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult");
             Add(404, "Microsoft.AspNetCore.Http.HttpResults.NotFound");
+            Add(409, "Microsoft.AspNetCore.Http.HttpResults.Conflict");
+            Add(422, "Microsoft.AspNetCore.Http.HttpResults.UnprocessableEntity");
             Add(500, "Microsoft.AspNetCore.Http.HttpResults.InternalServerError");
             Add(500, "Workleap.Extensions.OpenAPI.TypedResult.InternalServerError");
 
@@ -120,8 +138,8 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                     return;
                 }
 
-                // Check if the return type is of Task<IResult> or Task<Result<>>. If yes, then 
-                if (SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, TaskOfTSymbol))
+                // Check if the return type is of Task<IResult> or Task<Result<>>. If yes, then keep the inner type.
+                if (SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, this.TaskOfTSymbol))
                 {
                     var subType = typedReturnType.TypeArguments[0];
                     if (subType is INamedTypeSymbol namedSubType)
@@ -132,111 +150,75 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 
                 if (Implements(typedReturnType, iResultTypeSymbol))
                 {
-                    var methodReturnSignature = GetReturnStatusAndTypeFromMethod(typedReturnType);
-                    var methodSignatureStatusCodeToTypeMap = new Dictionary<int, ITypeSymbol>();
-                    foreach (var returnValues in methodReturnSignature)
-                    {
-                        if (!methodSignatureStatusCodeToTypeMap.ContainsKey(returnValues.statusCode))
-                        {
-                            methodSignatureStatusCodeToTypeMap.Add(returnValues.statusCode, returnValues.symbol);
-                        }
-                    }
+                    var methodSignatureStatusCodeToTypeMap = this.GetMethodReturnStatusCodeToTypeMap(typedReturnType);
 
                     foreach (var attribute in methodSymbol.GetAttributes())
                     {
-                        if (attribute.AttributeClass != null && attribute.AttributeClass.Equals(this.ProducesResponseSymbol, SymbolEqualityComparer.Default))
-                        {
-                            if (attribute.ConstructorArguments.Length == 1)
-                            {
-                                var statusCodeValue = (int) attribute.ConstructorArguments[0].Value;
-                                if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var type))
-                                {
-                                    if (!SymbolEqualityComparer.Default.Equals(this._statusCodeToResultsMap[statusCodeValue], type))
-                                    {
-                                        var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
-                                        context.ReportDiagnostic(Rule, attributeLocation);
-                                    }
-                                }
-                                else
-                                {
-                                    var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
-                                    context.ReportDiagnostic(Rule, attributeLocation);
-                                }
-                            }
-                            
-                            else
-                            {
-                                var constructorValue = attribute.ConstructorArguments[0].Value;
-                                var statusCodeValue = (int) attribute.ConstructorArguments[1].Value;
-                                if (constructorValue is ITypeSymbol type)
-                                {
-                                    if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var mappedType))
-                                    {
-                                        if (!SymbolEqualityComparer.Default.Equals(mappedType, type))
-                                        {
-                                            var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
-                                            context.ReportDiagnostic(Rule, attributeLocation);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
-                                        context.ReportDiagnostic(Rule, attributeLocation);
-                                    }
-                                }
-                            }
-                        }
-
-                        else if (attribute.AttributeClass.ConstructedFrom.Equals(this.ProducesResponseOfTSymbol, SymbolEqualityComparer.Default))
-                        {
-                            var statusCodeValue = (int) attribute.ConstructorArguments[0].Value;
-                            var typeArgument = attribute.AttributeClass.TypeArguments[0];
-                            if (typeArgument is ITypeSymbol type)
-                            {
-                                if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var mappedType))
-                                {
-                                    if (!SymbolEqualityComparer.Default.Equals(mappedType, type))
-                                    {
-                                        var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
-                                        context.ReportDiagnostic(Rule, attributeLocation);
-                                    }
-                                }
-                                else
-                                {
-                                    var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
-                                    context.ReportDiagnostic(Rule, attributeLocation);
-                                }
-                            }
-                        }
-
-                        else if (attribute.AttributeClass.ConstructedFrom.Equals(this.SwaggerResponseSymbol, SymbolEqualityComparer.Default))
-                        {
-                            var statusCodeValue = (int)attribute.ConstructorArguments[0].Value;
-
-                            var constructorValue = attribute.ConstructorArguments[2].Value;
-                            if (constructorValue is ITypeSymbol type)
-                            {
-                                if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var mappedType))
-                                {
-                                    if (!SymbolEqualityComparer.Default.Equals(mappedType, type))
-                                    {
-                                        var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
-                                        context.ReportDiagnostic(Rule, attributeLocation);
-                                    }
-                                }
-                                else
-                                {
-                                    var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
-                                    context.ReportDiagnostic(Rule, attributeLocation);
-                                }
-                            }
-                        }
+                        this.ValidateAnnotationWithTypedResult(context, attribute, methodSignatureStatusCodeToTypeMap);
                     }
                 }
             }
         }
 
-        private IEnumerable<(int statusCode, ITypeSymbol symbol)> GetReturnStatusAndTypeFromMethod(ITypeSymbol typeSymbol)
+        private void ValidateAnnotationWithTypedResult(SymbolAnalysisContext context, AttributeData attribute,
+            Dictionary<int, ITypeSymbol> methodSignatureStatusCodeToTypeMap)
+        {
+            if (attribute.AttributeClass != null)
+            {
+                if (attribute.AttributeClass.Equals(this.ProducesResponseSymbol, SymbolEqualityComparer.Default))
+                {
+                    if (attribute.ConstructorArguments.Length == 1)
+                    {
+                        if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
+                        {
+                            var type = this._statusCodeToResultsMap[statusCodeValue];
+                            ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, type, attribute);
+                        }
+                    }
+                    else
+                    {
+                        if (attribute.ConstructorArguments[1].Value is int statusCodeValue && attribute.ConstructorArguments[0].Value is ITypeSymbol type)
+                        {
+                            ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, type, attribute);
+                        }
+                    }
+                }
+
+                else if (attribute.AttributeClass.ConstructedFrom.Equals(this.ProducesResponseOfTSymbol, SymbolEqualityComparer.Default))
+                {
+                    if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
+                    {
+                        ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, attribute.AttributeClass.TypeArguments[0], attribute);
+                    }
+                }
+
+                else if (attribute.AttributeClass.ConstructedFrom.Equals(this.SwaggerResponseSymbol, SymbolEqualityComparer.Default))
+                {
+                    if (attribute.ConstructorArguments[0].Value is int statusCodeValue && attribute.ConstructorArguments[2].Value is ITypeSymbol type)
+                    {
+                        ValidateAnnotationForTypeMismatch(context, methodSignatureStatusCodeToTypeMap, statusCodeValue, type, attribute);
+                    }
+                }
+            }
+        }
+
+        private Dictionary<int, ITypeSymbol> GetMethodReturnStatusCodeToTypeMap(ITypeSymbol methodReturnSignature)
+        {
+            var methodReturnSignatures = this.GetReturnStatusAndTypeFromMethodReturn(methodReturnSignature);
+            var methodSignatureStatusCodeToTypeMap = new Dictionary<int, ITypeSymbol>();
+            foreach (var returnValues in methodReturnSignatures)
+            {
+                if (!methodSignatureStatusCodeToTypeMap.ContainsKey(returnValues.statusCode))
+                {
+                    methodSignatureStatusCodeToTypeMap.Add(returnValues.statusCode, returnValues.symbol);
+                }
+            }
+
+            return methodSignatureStatusCodeToTypeMap;
+        }
+
+
+        private IEnumerable<(int statusCode, ITypeSymbol symbol)> GetReturnStatusAndTypeFromMethodReturn(ITypeSymbol typeSymbol)
         {
             if (typeSymbol is not INamedTypeSymbol namedTypeSymbol)
             {
@@ -246,18 +228,18 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             // Task<>
             if (SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ConstructedFrom, TaskOfTSymbol))
             {
-                return GetReturnStatusAndTypeFromMethod(namedTypeSymbol.TypeArguments[0]);
+                return this.GetReturnStatusAndTypeFromMethodReturn(namedTypeSymbol.TypeArguments[0]);
             }
 
             if (SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ConstructedFrom, this.ValueTaskOfTSymbol))
             {
-                return this.GetReturnStatusAndTypeFromMethod(namedTypeSymbol.TypeArguments[0]);
+                return this.GetReturnStatusAndTypeFromMethodReturn(namedTypeSymbol.TypeArguments[0]);
             }
 
             // Result<OK, NotFound>
             if (this.ResultTaskOfTSymbol.Any(symbol => SymbolEqualityComparer.Default.Equals(namedTypeSymbol.ConstructedFrom, symbol)))
             {
-                return namedTypeSymbol.TypeArguments.SelectMany(this.GetReturnStatusAndTypeFromMethod);
+                return namedTypeSymbol.TypeArguments.SelectMany(this.GetReturnStatusAndTypeFromMethodReturn);
             }
 
             if (this._resultsToStatusCodeMap.TryGetValue(namedTypeSymbol.ConstructedFrom, out var statusCode))
@@ -267,6 +249,28 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
 
             return Enumerable.Empty<(int, ITypeSymbol)>();
+        }
+
+        private static void ValidateAnnotationForTypeMismatch(SymbolAnalysisContext context,
+            Dictionary<int, ITypeSymbol> methodSignatureStatusCodeToTypeMap, int statusCodeValue, ITypeSymbol type, AttributeData attribute)
+        {
+            if (attribute.ApplicationSyntaxReference is null)
+            {
+                return;
+            }
+
+            var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax().GetLocation();
+            if (methodSignatureStatusCodeToTypeMap.TryGetValue(statusCodeValue, out var mappedType))
+            {
+                if (!SymbolEqualityComparer.Default.Equals(mappedType, type))
+                {
+                    context.ReportDiagnostic(AnnotationMustMatchTypedResult, attributeLocation);
+                }
+            }
+            else
+            {
+                context.ReportDiagnostic(AnnotationMustMatchTypedResult, attributeLocation);
+            }
         }
 
         private static bool Implements(ITypeSymbol symbol, ITypeSymbol type)

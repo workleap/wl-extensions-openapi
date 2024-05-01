@@ -1,9 +1,7 @@
 namespace Workleap.Extensions.OpenApi.Analyzers.Internals;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Operations;
- 
+
 internal static class RoslynExtensions
 {
     public static INamedTypeSymbol? GetBestTypeByMetadataName(this Compilation compilation, string typeMetadataName, string? assemblyName = null)
@@ -39,25 +37,8 @@ internal static class RoslynExtensions
         }
     }
 
-    public static void ReportDiagnostic(this SymbolAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, ISymbol symbol)
-    {
-        foreach (var location in symbol.Locations)
-        {
-            context.ReportDiagnostic(Diagnostic.Create(diagnosticDescriptor, location));
-        }
-    }
-    
     public static void ReportDiagnostic(this SymbolAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, Location location)
     {
-        context.ReportDiagnostic(Diagnostic.Create(diagnosticDescriptor, location));
-    }
-
-    public static void ReportDiagnostic(this OperationAnalysisContext context, DiagnosticDescriptor diagnosticDescriptor, IInvocationOperation operation)
-    {
-        var location = operation.Syntax.ChildNodes().FirstOrDefault() is MemberAccessExpressionSyntax memberAccessExpression
-            ? memberAccessExpression.Name.GetLocation()
-            : Location.None;
-
         context.ReportDiagnostic(Diagnostic.Create(diagnosticDescriptor, location));
     }
 }
