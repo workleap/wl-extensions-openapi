@@ -15,9 +15,6 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 
     private const string ErrorReason = "Mismatch between annotation and method return type.";
 
-    // maybe a liste 
-    // registe
-
     public static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
         DiagnosticId,
         Title,
@@ -34,7 +31,6 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         context.EnableConcurrentExecution();
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-        // if we do two compilations --> this wouldn't work.
         context.RegisterCompilationStartAction(compilationContext =>
         {
             var analyzerContext = new AnalyzerContext(compilationContext.Compilation);
@@ -43,18 +39,10 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         });
     }
 
-
-    // private static Type GetTypeFromSymbol(ITypeSymbol symbol)
-    // {
-    //     
-    //     return Type.GetType(symbol.Name)
-    // }
     private sealed class AnalyzerContext(Compilation compilation)
     {
-        public INamedTypeSymbol? TaskSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.Task");
-        public INamedTypeSymbol? TaskOfTSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.Task`1");
-        public INamedTypeSymbol? ValueTaskSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.ValueTask");
-        public INamedTypeSymbol? ValueTaskOfTSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.ValueTask`1");
+        private INamedTypeSymbol? TaskOfTSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.Task`1");
+        private INamedTypeSymbol? ValueTaskOfTSymbol { get; } = compilation.GetBestTypeByMetadataName("System.Threading.Tasks.ValueTask`1");
 
 
         public INamedTypeSymbol?[] ResultTaskOfTSymbol { get; } =
@@ -67,9 +55,10 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         ];
 
 
-        private readonly Dictionary<ITypeSymbol, int> _statusIResultsMap = Initialize(compilation);
+        private readonly Dictionary<ITypeSymbol, int> _resultsToStatusCodeMap = InitializeHttpResultStatusCodeMap(compilation);
+        private readonly Dictionary<int, ITypeSymbol> _statusCodeToResultsMap = InitializeStatusCodeMapHttpResultMap(compilation);
 
-        private static Dictionary<ITypeSymbol, int> Initialize(Compilation compilation)
+        private static Dictionary<ITypeSymbol, int> InitializeHttpResultStatusCodeMap(Compilation compilation)
         {
             // TODO initialize with other response types
             var dictionary = new Dictionary<ITypeSymbol, int>(SymbolEqualityComparer.Default);
@@ -90,6 +79,25 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
         }
 
+        private static Dictionary<int, ITypeSymbol> InitializeStatusCodeMapHttpResultMap(Compilation compilation)
+        {
+            // TODO initialize with other response types
+            var dictionary = new Dictionary<int, ITypeSymbol>();
+            Add(200, "Microsoft.AspNetCore.Http.HttpResults.Ok");
+            Add(404, "Microsoft.AspNetCore.Http.HttpResults.NotFound");
+
+            return dictionary;
+
+            void Add(int statusCode, string metadata)
+            {
+                var type = compilation.GetTypeByMetadataName(metadata);
+                if (type is not null)
+                {
+                    dictionary.Add(statusCode, type);
+                }
+            }
+        }
+
         public void AnalyzeClassDeclaration(SymbolAnalysisContext context)
         {
             var methodSymbol = (IMethodSymbol)context.Symbol;
@@ -97,19 +105,20 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 
             if (returnType is INamedTypeSymbol typedReturnType)
             {
-                // typedReturnType.Const
-                // 1. Detect if we have IResult response
-                // 2. Then check if we have annotations of type ProducesResponseType or SwaggerResponse type
-                // 3. If yes, then extract generic response type from both annotations and method return type signature
-                // figure out how to get response code, how to get type of response type? --> Swagger would be different.
-                // three use cases, Produces/Produces<T>/Swagger
-                // 4. Match case by case if it is equal.
-                // var iTypeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult")!;
-                // --> may need to validate duplicate definitions
                 var iResultTypeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult");
                 if (iResultTypeSymbol is null)
                 {
                     return;
+                }
+
+                // Check if the return type is of Task<IResult> or Task<Result<>>. If yes, then 
+                if (SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, TaskOfTSymbol))
+                {
+                    var subType = typedReturnType.TypeArguments[0];
+                    if (subType is INamedTypeSymbol namedSubType)
+                    {
+                        typedReturnType = namedSubType;
+                    }
                 }
 
                 if (Implements(typedReturnType, iResultTypeSymbol))
@@ -120,49 +129,88 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                     var producesResponseTypeOfTSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute`1");
                     var swaggerResponseTypeSymbol = context.Compilation.GetTypeByMetadataName("Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute");
 
-                    var dictionaryCodeToType = new Dictionary<int, ITypeSymbol>();
+                    var attributeStatusCodeToTypeMap = new Dictionary<int, ITypeSymbol>();
                     foreach (var attribute in methodSymbol.GetAttributes())
                     {
                         // check for number of arguments first --> maybe?
                         if (attribute.AttributeClass.Equals(producesResponseTypeSymbol, SymbolEqualityComparer.Default))
                         {
-                            var constructorValue = attribute.ConstructorArguments[0].Value;
-                            var statusCodeValue = (int)attribute.ConstructorArguments[1].Value;
-                            if (constructorValue is ITypeSymbol type)
+                            if (attribute.ConstructorArguments.Length == 1)
                             {
-                                // --> handle duplicate cases. --> should add a diagnostic
-                                dictionaryCodeToType.Add(statusCodeValue, type);
+                                var statusCodeValue = (int)attribute.ConstructorArguments[0].Value;
+                                attributeStatusCodeToTypeMap.Add(statusCodeValue, this._statusCodeToResultsMap[statusCodeValue]);
+                            }
+                            else
+                            {
+                                var constructorValue = attribute.ConstructorArguments[0].Value;
+                                var statusCodeValue = (int)attribute.ConstructorArguments[1].Value;
+                                if (constructorValue is ITypeSymbol type)
+                                {
+                                    // TODO Do we want a different rule for catching duplicate status codes?
+                                    if (attributeStatusCodeToTypeMap.ContainsKey(statusCodeValue))
+                                    {
+                                        var methodDeclaration = context.Symbol.Locations;
+                                        context.ReportDiagnostic(Rule, context.Symbol);
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        attributeStatusCodeToTypeMap.Add(statusCodeValue, type);
+                                    }
+                                }
                             }
                         }
 
-                        // List<T> --> attributeclass is a list of string. What we can do: take the attribute class --> ConstructedFrom, take the generic version of the Type
-                        // what is the type? --> We want to take the string.
                         else if (attribute.AttributeClass.ConstructedFrom.Equals(producesResponseTypeOfTSymbol, SymbolEqualityComparer.Default))
                         {
-                            // type arguments are declaration List<T> --> parameter is T, but argument is string
-                            // we get the type correctly
+                            var statusCodeValue = (int)attribute.ConstructorArguments[0].Value;
                             var typeArgument = attribute.AttributeClass.TypeArguments[0];
+                            if (typeArgument is ITypeSymbol type)
+                            {
+                                // TODO Do we want a different rule for catching duplicate status codes?
+                                if (attributeStatusCodeToTypeMap.ContainsKey(statusCodeValue))
+                                {
+                                    var methodDeclaration = context.Symbol.Locations;
+                                    context.ReportDiagnostic(Rule, context.Symbol);
+                                    return;
+                                }
+                                else
+                                {
+                                    attributeStatusCodeToTypeMap.Add(statusCodeValue, type);
+                                }
+                            }
                         }
 
                         else if (attribute.AttributeClass.ConstructedFrom.Equals(swaggerResponseTypeSymbol, SymbolEqualityComparer.Default))
                         {
+                            var statusCodeValue = (int)attribute.ConstructorArguments[0].Value;
+                            
+                            var constructorValue = attribute.ConstructorArguments[2].Value;
+                            if (constructorValue is ITypeSymbol type)
+                            {
+                                // TODO Do we want a different rule for catching duplicate status codes?
+                                if (attributeStatusCodeToTypeMap.ContainsKey(statusCodeValue))
+                                {
+                                    var methodDeclaration = context.Symbol.Locations;
+                                    context.ReportDiagnostic(Rule, context.Symbol);
+                                    return;
+                                }
+                                else
+                                {
+                                    attributeStatusCodeToTypeMap.Add(statusCodeValue, type);
+                                }
+                            }
                         }
-                        // dig in arguments --> Task/ValueTask --> TypeArguments --> Results of something.
-                        // --> may need to create a dictionary of Ok, badrequest, notfound --> switch case. --> this is the simples solution
-                        // 
-
-                        // typeof --> DLL will not exist --> this will not work.
-                        // Value is actually the type needed here. --> could also be a generic type.
                     }
-                    
+
                     var methodReturnSignature = GetReturnStatusAndTypeFromMethod(typedReturnType);
                     foreach (var returnValues in methodReturnSignature)
                     {
-                        if (dictionaryCodeToType.TryGetValue(returnValues.statusCode, out var methodReturnType))
+                        if (attributeStatusCodeToTypeMap.TryGetValue(returnValues.statusCode, out var methodReturnType))
                         {
                             if (!SymbolEqualityComparer.Default.Equals(methodReturnType, returnValues.symbol))
                             {
-                                // TODO improve error message --> 
+                                // TODO improve error message
                                 var methodDeclaration = context.Symbol.Locations;
                                 context.ReportDiagnostic(Rule, context.Symbol);
                             }
@@ -195,10 +243,11 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             {
                 return namedTypeSymbol.TypeArguments.SelectMany(this.GetReturnStatusAndTypeFromMethod);
             }
-            
-            if (this._statusIResultsMap.TryGetValue(namedTypeSymbol.ConstructedFrom, out var statusCode))
+
+            if (this._resultsToStatusCodeMap.TryGetValue(namedTypeSymbol.ConstructedFrom, out var statusCode))
             {
-                return [(statusCode, namedTypeSymbol.TypeArguments.Length == 0 ? null : namedTypeSymbol.TypeArguments[0])];
+                // If there is a type, then return the type, otherwise return IResult type
+                return [(statusCode, namedTypeSymbol.TypeArguments.Length == 0 ? namedTypeSymbol : namedTypeSymbol.TypeArguments[0])];
             }
 
             return Enumerable.Empty<(int, ITypeSymbol)>();

@@ -64,7 +64,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                  [HttpGet]
                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-                                 [ProducesResponseType(StatusCodes.Status404NotFound)]
+                                 // [ProducesResponseType(StatusCodes.Status404NotFound)]
                                  public Results<Ok<String>, NotFound> GetExplicitOperationIdInName() => throw null;
                               }
                               """;
@@ -194,7 +194,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                   [HttpGet]
                                   [ProducesResponseType<string>(StatusCodes.Status200OK)]
-                                  public {|WLOAS001:Ok<int>|} GetExplicitOperationIdInName() => throw null;
+                                  public Ok<int> {|WLOAS001:GetExplicitOperationIdInName|}() => throw null;
                               }
                               """;
 
@@ -212,7 +212,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                   [HttpGet]
                                   [SwaggerResponse(StatusCodes.Status200OK, "Returns TypedResult", typeof(string))]
-                                  public {|WLOAS001:Ok<int>|} GetExplicitOperationIdInName() => throw null;
+                                  public Ok<int> {|WLOAS001:GetExplicitOperationIdInName|}() => throw null;
                               }
                               """;
 
@@ -231,7 +231,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                   [HttpGet]
                                   [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
                                   [ProducesResponseType(StatusCodes.Status404NotFound)]
-                                  public async Task<Results<Ok<int>, NotFound>> GetExplicitOperationIdInName() => throw null;
+                                  public async Task<Results<Ok<int>, NotFound>> {|WLOAS001:GetExplicitOperationIdInName|}() => throw null;
                               }
                               """;
 
@@ -239,6 +239,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
             .RunAsync();
     }
 
+    // TODO Check if we can have two violations in the same place on tests
     [Fact]
     public async Task Given_ProducesResponsesAndTwoMismatchTypedResultsTask_When_Analyze_Then_Diagnostic()
     {
@@ -250,7 +251,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                   [HttpGet]
                                   [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
                                   [ProducesResponseType(StatusCodes.Status404NotFound)]
-                                  public async Task<Results<Ok<int>, NotFound<int>>> GetExplicitOperationIdInName() => throw null;
+                                  public async Task<Results<Ok<int>, NotFound<int>>> {|WLOAS001:GetExplicitOperationIdInName()|} => throw null;
                               }
                               """;
 
