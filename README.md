@@ -100,8 +100,6 @@ public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
 }
 ```
 
-## INcluded Roslyn analyzers
-
 ## Included Roslyn analyzers
 
 | Rule ID | Category | Severity | Description                                                        |
@@ -143,6 +141,17 @@ This rule enforces the usage of strongly type responses for endpoints. The usage
 [HttpGet]
 [Route("/example")]
 public IActionResult EnforceStronglyTypedResponse() //This is not a strongly typed response and would be marked with a warning
+{
+    return TypedResults.Ok(new TypedResultExample());
+}
+```
+
+Here is an example of a strongly typed response:
+
+```cs
+[HttpGet]
+[Route("/example")]
+public Ok<TypedResultExample> EnforceStronglyTypedResponse() //This is a strongly typed response 
 {
     return TypedResults.Ok(new TypedResultExample());
 }
