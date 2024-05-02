@@ -100,13 +100,12 @@ public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
 }
 ```
 
-## INcluded Roslyn analyzers
-
 ## Included Roslyn analyzers
 
 | Rule ID | Category | Severity | Description                                                        |
 |---------|----------|----------|--------------------------------------------------------------------|
-| WLOAS001 | Design    | Warning  | Mismatch between annotation return type and endpoint return type.                                 |
+| WLOAS001 | Design  | Warning  | Mismatch between annotation return type and endpoint return type. |
+| WLOAS002 | Usage  | Warning  | Enforce strongly typed endpoint response. |
 
 To modify the severity of one of these diagnostic rules, you can use a `.editorconfig` file. For example:
 
@@ -114,6 +113,7 @@ To modify the severity of one of these diagnostic rules, you can use a `.editorc
 ## Disable analyzer for test files
 [**Tests*/**.cs]
 dotnet_diagnostic.WLOAS001.severity = none
+dotnet_diagnostic.WLOAS002.severity = none
 ```
 
 To learn more about configuring or suppressing code analysis warnings, refer to [this documentation](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/suppress-warnings).
@@ -128,6 +128,30 @@ This rule validates the return type indicated by the endpoint annotations agains
 [ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // This would be marked with a warning given typeof(string) is different from typeof(TypedResultExample)
 [ProducesResponseType(typeof(TypedResultExample), StatusCodes.Status200OK)] // This would be valid
 public Ok<TypedResultExample> TypedResultExample()
+{
+    return TypedResults.Ok(new TypedResultExample());
+}
+```
+
+### `WLOAS002`: Enforce strongly typed endpoint response.
+
+This rule enforces the usage of strongly type responses for endpoints. The usage of weakly response types such as `IActionResult` and `IResult` would be marked with warnings. Here is an example of a warning:
+
+```cs
+[HttpGet]
+[Route("/example")]
+public IActionResult EnforceStronglyTypedResponse() //This is not a strongly typed response and would be marked with a warning
+{
+    return TypedResults.Ok(new TypedResultExample());
+}
+```
+
+Here is an example of a strongly typed response:
+
+```cs
+[HttpGet]
+[Route("/example")]
+public Ok<TypedResultExample> EnforceStronglyTypedResponse() //This is a strongly typed response 
 {
     return TypedResults.Ok(new TypedResultExample());
 }
