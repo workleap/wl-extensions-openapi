@@ -27,7 +27,10 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(compilationContext =>
         {
             var analyzerContext = new AnalyzerContext(compilationContext.Compilation);
-            compilationContext.RegisterSymbolAction(analyzerContext.ValidateEndpointResponseType, SymbolKind.Method);
+            if (analyzerContext.IsValid)
+            {
+                compilationContext.RegisterSymbolAction(analyzerContext.ValidateEndpointResponseType, SymbolKind.Method);
+            }
         });
     }
 
@@ -40,6 +43,8 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         private INamedTypeSymbol? SwaggerResponseSymbol { get; } = compilation.GetTypeByMetadataName("Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute");
 
         private INamedTypeSymbol? ResultSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult");
+
+        public bool IsValid => this.ProducesResponseSymbol is not null && this.ResultSymbol is not null;
 
         public INamedTypeSymbol?[] ResultTaskOfTSymbol { get; } =
         [
