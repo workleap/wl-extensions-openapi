@@ -116,7 +116,7 @@ public class EnforceTypedResultsReturnAnalyzerTests : BaseAnalyzerTest<EnforceTy
                               public class AnalyzersController : ControllerBase
                               {
                                 [HttpGet]
-                                public {|WLOAS002:IActionResult|} GetSampleEndpoint() => throw null;
+                                public IActionResult {|WLOAS002:GetSampleEndpoint|}() => throw null;
                               }
                               """;
 
@@ -131,7 +131,7 @@ public class EnforceTypedResultsReturnAnalyzerTests : BaseAnalyzerTest<EnforceTy
                               public class AnalyzersController : ControllerBase
                               {
                                 [HttpGet]
-                                public {|WLOAS002:Task<IActionResult>|} GetSampleEndpoint() => throw null;
+                                public Task<IActionResult> {|WLOAS002:GetSampleEndpoint|}() => throw null;
                               }
                               """;
 
@@ -146,7 +146,7 @@ public class EnforceTypedResultsReturnAnalyzerTests : BaseAnalyzerTest<EnforceTy
                               public class AnalyzersController : ControllerBase
                               {
                                 [HttpGet]
-                                public {|WLOAS002:IResult|} GetSampleEndpoint() => throw null;
+                                public IResult {|WLOAS002:GetSampleEndpoint|}() => throw null;
                               }
                               """;
 
@@ -161,7 +161,7 @@ public class EnforceTypedResultsReturnAnalyzerTests : BaseAnalyzerTest<EnforceTy
                               public class AnalyzersController : ControllerBase
                               {
                                 [HttpGet]
-                                public {|WLOAS002:Task<IResult>|} GetSampleEndpoint() => throw null;
+                                public Task<IResult> {|WLOAS002:GetSampleEndpoint|}() => throw null;
                               }
                               """;
 

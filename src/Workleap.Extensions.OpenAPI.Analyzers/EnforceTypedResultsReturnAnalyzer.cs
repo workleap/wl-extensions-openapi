@@ -53,17 +53,7 @@ public class EnforceTypedResultsReturnAnalyzer : DiagnosticAnalyzer
                 return;
             }
 
-            // var returnTypeSyntax = methodSymbol.ReturnType.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax();
-            // if (returnTypeSyntax == null)
-            // {
-            //     return;
-            // }
-
-            // var location = methodSymbol.ReturnType.Locations.FirstOrDefault();
-            // methodSymbol.DeclaringSyntaxReferences
-
-
-            // context.ReportDiagnostic(EndpointReturnTypedResult, location);
+            context.ReportDiagnostic(EndpointReturnTypedResult, context.Symbol);
         }
 
         private INamedTypeSymbol? GetReturnTypeSymbol(IMethodSymbol methodSymbol)
