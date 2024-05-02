@@ -137,11 +137,11 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             var typedReturnType = this.GetReturnTypeSymbol(methodSymbol);
             if (typedReturnType != null && this.IsImplementingIResult(typedReturnType))
             {
-                var methodSignatureStatusCodeToTypeMap = this.GetMethodReturnStatusCodeToTypeMap(typedReturnType);
+                var methodSignatureStatusCodeToType = this.GetMethodReturnStatusCodeToType(typedReturnType);
 
                 foreach (var attribute in methodSymbol.GetAttributes())
                 {
-                    this.ValidateAnnotationWithTypedResult(context, attribute, methodSignatureStatusCodeToTypeMap);
+                    this.ValidateAnnotationWithTypedResult(context, attribute, methodSignatureStatusCodeToType);
                 }
             }
         }
@@ -175,7 +175,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         }
 
         private void ValidateAnnotationWithTypedResult(SymbolAnalysisContext context, AttributeData attribute,
-            Dictionary<int, ITypeSymbol> methodSignatureStatusCodeToTypeMap)
+            Dictionary<int, List<ITypeSymbol>> methodSignatureStatusCodeToTypeMap)
         {
             if (attribute.AttributeClass == null || attribute.ConstructorArguments.Length == 0)
             {
@@ -189,8 +189,10 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                 {
                     if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
                     {
-                        var type = this._statusCodeToResultsMap[statusCodeValue];
-                        ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, type, methodSignatureStatusCodeToTypeMap, context);
+                        if (this._statusCodeToResultsMap.TryGetValue(statusCodeValue, out var type))
+                        {
+                            ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, type, methodSignatureStatusCodeToTypeMap, context);
+                        }
                     }
                 }
                 else if (attribute.ConstructorArguments[1].Value is int statusCodeValue && attribute.ConstructorArguments[0].Value is ITypeSymbol type)
@@ -217,15 +219,20 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
         }
 
-        private Dictionary<int, ITypeSymbol> GetMethodReturnStatusCodeToTypeMap(ITypeSymbol methodSymbol)
+        // Result<Ok<type>, Notfound>
+        private Dictionary<int, List<ITypeSymbol>> GetMethodReturnStatusCodeToType(ITypeSymbol methodSymbol)
         {
             var methodReturnSignatures = this.ExtractStatusCodeAndResultFromMethodReturn(methodSymbol);
-            var methodSignatureStatusCodeToTypeMap = new Dictionary<int, ITypeSymbol>();
+            var methodSignatureStatusCodeToTypeMap = new Dictionary<int, List<ITypeSymbol>>();
             foreach (var returnValues in methodReturnSignatures)
             {
-                if (!methodSignatureStatusCodeToTypeMap.ContainsKey(returnValues.statusCode))
+                if (methodSignatureStatusCodeToTypeMap.TryGetValue(returnValues.statusCode, out var returnTypeSymbols))
                 {
-                    methodSignatureStatusCodeToTypeMap.Add(returnValues.statusCode, returnValues.symbol);
+                    returnTypeSymbols.Add(returnValues.symbol);
+                }
+                else
+                {
+                    methodSignatureStatusCodeToTypeMap.Add(returnValues.statusCode, [returnValues.symbol]);
                 }
             }
 
@@ -255,7 +262,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         }
 
         private static void ValidateAnnotationForTypeMismatch(AttributeData attribute, int statusCodeFromAnnotation, ITypeSymbol typeFromAnnotation,
-            Dictionary<int, ITypeSymbol> methodReturnStatusCodeTypes, SymbolAnalysisContext context)
+            Dictionary<int, List<ITypeSymbol>> methodReturnStatusCodeTypes, SymbolAnalysisContext context)
         {
             if (attribute.ApplicationSyntaxReference is null)
             {
@@ -263,14 +270,12 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
 
             var attributeLocation = attribute.ApplicationSyntaxReference.GetSyntax(context.CancellationToken).GetLocation();
-            if (methodReturnStatusCodeTypes.TryGetValue(statusCodeFromAnnotation, out var mappedType))
+            if (!methodReturnStatusCodeTypes.TryGetValue(statusCodeFromAnnotation, out var mappedType))
             {
-                if (!SymbolEqualityComparer.Default.Equals(mappedType, typeFromAnnotation))
-                {
-                    context.ReportDiagnostic(AnnotationMustMatchTypedResult, attributeLocation);
-                }
+                return;
             }
-            else
+
+            if (!mappedType.Any(type => SymbolEqualityComparer.Default.Equals(type, typeFromAnnotation)))
             {
                 context.ReportDiagnostic(AnnotationMustMatchTypedResult, attributeLocation);
             }

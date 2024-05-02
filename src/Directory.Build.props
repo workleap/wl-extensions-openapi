@@ -45,6 +45,7 @@
     <Using Include="Xunit.Abstractions" />
   </ItemGroup>
 
+  <!-- Use a separate feed to have access to the public newer version of Analyzers test. https://github.com/dotnet/roslyn/issues/61979  -->
   <PropertyGroup>
     <RestoreAdditionalProjectSources>https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json</RestoreAdditionalProjectSources>
   </PropertyGroup>

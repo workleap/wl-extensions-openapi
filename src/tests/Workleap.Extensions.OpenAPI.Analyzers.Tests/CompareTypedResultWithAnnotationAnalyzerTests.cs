@@ -11,7 +11,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               public class AnalyzersController : ControllerBase
                               {
                                 [HttpGet]
-                                public IActionResult GetExplicitOperationIdInName() => throw null;
+                                public IActionResult GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -27,7 +27,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                 [HttpGet]
                                 [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-                                public IActionResult GetExplicitOperationIdInName() => throw null;
+                                public IActionResult GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -42,7 +42,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               public class AnalyzersController : ControllerBase
                               {
                                   [HttpGet]
-                                  public Ok<string> GetExplicitOperationIdInName() => throw null;
+                                  public Ok<string> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -59,7 +59,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                  [HttpGet]
                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
                                  [ProducesResponseType(StatusCodes.Status404NotFound)]
-                                 public Results<Ok<String>, NotFound> GetExplicitOperationIdInName() => throw null;
+                                 public Results<Ok<String>, NotFound> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -75,7 +75,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                   [HttpGet]
                                   [SwaggerResponse(StatusCodes.Status200OK, "Returns string", typeof(string), "application/json")]
-                                  public Ok<string> GetExplicitOperationIdInName() => throw null;
+                                  public Ok<string> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -91,7 +91,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                   [HttpGet]
                                   [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-                                  public Ok<string> GetExplicitOperationIdInName() => throw null;
+                                  public Ok<string> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -108,7 +108,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                   [HttpGet]
                                   [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
                                   [ProducesResponseType(StatusCodes.Status404NotFound)]
-                                  public async Task<Results<Ok<String>, NotFound>> GetExplicitOperationIdInName() => throw null;
+                                  public async Task<Results<Ok<String>, NotFound>> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -124,8 +124,8 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                   [HttpGet]
                                   [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-                                  [{|WLOAS001:ProducesResponseType(StatusCodes.Status404NotFound)|}]
-                                  public Ok<string> GetExplicitOperationIdInName() => throw null;
+                                  [ProducesResponseType(StatusCodes.Status404NotFound)]
+                                  public Ok<string> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -141,7 +141,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                   [HttpGet]
                                   [{|WLOAS001:ProducesResponseType(typeof(string), StatusCodes.Status200OK)|}]
-                                  public Ok<int> GetExplicitOperationIdInName() => throw null;
+                                  public Ok<int> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -158,7 +158,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                   [HttpGet]
                                   [{|WLOAS001:ProducesResponseType(typeof(string), StatusCodes.Status200OK)|}]
                                   [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-                                  public Ok<int> GetExplicitOperationIdInName() => throw null;
+                                  public Ok<int> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -174,7 +174,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                   [HttpGet]
                                   [{|WLOAS001:ProducesResponseType<string>(StatusCodes.Status200OK)|}]
-                                  public Ok<int> GetExplicitOperationIdInName() => throw null;
+                                  public Ok<int> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -190,7 +190,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                               {
                                   [HttpGet]
                                   [{|WLOAS001:SwaggerResponse(StatusCodes.Status200OK, "Returns TypedResult", typeof(string))|}]
-                                  public Ok<int> GetExplicitOperationIdInName() => throw null;
+                                  public Ok<int> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -207,7 +207,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                   [HttpGet]
                                   [{|WLOAS001:ProducesResponseType(typeof(string), StatusCodes.Status200OK)|}]
                                   [ProducesResponseType(StatusCodes.Status404NotFound)]
-                                  public async Task<Results<Ok<int>, NotFound>> GetExplicitOperationIdInName() => throw null;
+                                  public async Task<Results<Ok<int>, NotFound>> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -224,7 +224,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                   [HttpGet]
                                   [{|WLOAS001:ProducesResponseType(typeof(string), StatusCodes.Status200OK)|}]
                                   [{|WLOAS001:ProducesResponseType(StatusCodes.Status404NotFound)|}]
-                                  public async Task<Results<Ok<int>, NotFound<int>>> GetExplicitOperationIdInName() => throw null;
+                                  public async Task<Results<Ok<int>, NotFound<int>>> GetSampleEndpoint() => throw null;
                               }
                               """;
 
@@ -241,7 +241,7 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
                                   [HttpGet]
                                   [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
                                   [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-                                  public async Task<Results<Ok<string>, InternalServerError>> GetExplicitOperationIdInName() => throw null;
+                                  public async Task<Results<Ok<string>, InternalServerError>> GetSampleEndpoint() => throw null;
                               }
                               """;
 

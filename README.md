@@ -100,7 +100,23 @@ public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
 }
 ```
 
-## Analyzer Rules
+## INcluded Roslyn analyzers
+
+## Included Roslyn analyzers
+
+| Rule ID | Category | Severity | Description                                                        |
+|---------|----------|----------|--------------------------------------------------------------------|
+| WLOAS001 | Design    | Warning  | Mismatch between annotation return type and endpoint return type.                                 |
+
+To modify the severity of one of these diagnostic rules, you can use a `.editorconfig` file. For example:
+
+```ini
+## Disable analyzer for test files
+[**Tests*/**.cs]
+dotnet_diagnostic.WLOAS001.severity = none
+```
+
+To learn more about configuring or suppressing code analysis warnings, refer to [this documentation](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/suppress-warnings).
 
 ### `WLOAS001`: Mismatch between annotation return type and endpoint return type.
 
@@ -109,9 +125,9 @@ This rule validates the return type indicated by the endpoint annotations agains
 ```cs
 [HttpGet]
 [Route("/example")]
-[ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // This would be marked with a warning
+[ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // This would be marked with a warning given typeof(string) is different from typeof(TypedResultExample)
 [ProducesResponseType(typeof(TypedResultExample), StatusCodes.Status200OK)] // This would be valid
-public Ok<TypedResultExample> TypedResultWithSwaggerResponseAnnotation()
+public Ok<TypedResultExample> TypedResultExample()
 {
     return TypedResults.Ok(new TypedResultExample());
 }
