@@ -29,7 +29,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             var analyzerContext = new AnalyzerContext(compilationContext.Compilation);
             if (analyzerContext.IsValid)
             {
-                compilationContext.RegisterSymbolAction(analyzerContext.ValidateEndpointResponseType, SymbolKind.Method);
+                compilationContext.RegisterSymbolAction(analyzerContext.ValidateEndpointResponseWithAnnotationType, SymbolKind.Method);
             }
         });
     }
@@ -126,7 +126,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
         }
 
-        public void ValidateEndpointResponseType(SymbolAnalysisContext context)
+        public void ValidateEndpointResponseWithAnnotationType(SymbolAnalysisContext context)
         {
             if (context.Symbol.GetAttributes().Length == 0)
             {

@@ -7,4 +7,5 @@ internal static class RuleIdentifiers
     // DO NOT change the identifier of existing rules.
     // Projects can customize the severity level of analysis rules using a .editorconfig file.
     public const string MismatchResponseTypeWithAnnotation = "WLOAS001";
+    public const string HasTypedResultsUsage = "WLOAS002";
 }

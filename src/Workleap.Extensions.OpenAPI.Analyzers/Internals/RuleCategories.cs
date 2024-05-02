@@ -4,4 +4,5 @@ internal static class RuleCategories
 {
     // Same categories used by Microsoft
     public const string Design = "Design";
+    public const string Usage = "Usage";
 }
