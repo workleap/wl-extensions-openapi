@@ -10,9 +10,9 @@ public class EnforceTypedResultsReturnAnalyzer : DiagnosticAnalyzer
 {
     private static readonly DiagnosticDescriptor EndpointReturnTypedResult = new(
         id: RuleIdentifiers.HasTypedResultsUsage,
-        title: "Validate endpoint return type",
-        messageFormat: "Validate endpoint return type",
-        category: RuleCategories.Usage,
+        title: "Enforce strongly typed endpoint response",
+        messageFormat: "Enforce strongly typed endpoint response such as Results<> or Ok<>",
+        category: RuleCategories.Design,
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         helpLinkUri: RuleIdentifiers.HelpUri);
@@ -62,28 +62,10 @@ public class EnforceTypedResultsReturnAnalyzer : DiagnosticAnalyzer
 
             if (returnType is INamedTypeSymbol typedReturnType)
             {
-                return this.UnwrapTypeFromTask(typedReturnType);
+                return RoslynExtensions.UnwrapTypeFromTask(typedReturnType, this.TaskOfTSymbol, this.ValueTaskOfTSymbol);
             }
 
             return null;
-        }
-
-        private INamedTypeSymbol UnwrapTypeFromTask(INamedTypeSymbol typedReturnType)
-        {
-            // Check if the return type is of Task<> or ValueOfTask<>. If yes, then keep the inner type.
-            if (!SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, this.TaskOfTSymbol) &&
-                !SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, this.ValueTaskOfTSymbol))
-            {
-                return typedReturnType;
-            }
-
-            var subType = typedReturnType.TypeArguments[0];
-            if (subType is INamedTypeSymbol namedSubType)
-            {
-                typedReturnType = namedSubType;
-            }
-
-            return typedReturnType;
         }
 
         private bool IsWeaklyTypedResults(ITypeSymbol currentClassSymbol)

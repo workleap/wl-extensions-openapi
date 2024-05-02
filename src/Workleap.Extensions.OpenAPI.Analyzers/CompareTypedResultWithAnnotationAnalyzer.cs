@@ -152,26 +152,10 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
 
             if (returnType is INamedTypeSymbol typedReturnType)
             {
-                return this.UnwrapTypeFromTask(typedReturnType);
+                return RoslynExtensions.UnwrapTypeFromTask(typedReturnType, this.TaskOfTSymbol, this.ValueTaskOfTSymbol);
             }
 
             return null;
-        }
-
-        private INamedTypeSymbol UnwrapTypeFromTask(INamedTypeSymbol typedReturnType)
-        {
-            // Check if the return type is of Task<> or ValueOfTask<>. If yes, then keep the inner type.
-            if (SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, this.TaskOfTSymbol) ||
-                SymbolEqualityComparer.Default.Equals(typedReturnType.ConstructedFrom, this.ValueTaskOfTSymbol))
-            {
-                var subType = typedReturnType.TypeArguments[0];
-                if (subType is INamedTypeSymbol namedSubType)
-                {
-                    typedReturnType = namedSubType;
-                }
-            }
-
-            return typedReturnType;
         }
 
         private void ValidateAnnotationWithTypedResult(SymbolAnalysisContext context, AttributeData attribute,
