@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Workleap.Extensions.OpenAPI.OperationId;
+using Workleap.Extensions.OpenAPI.RequiredType;
 using Workleap.Extensions.OpenAPI.TypedResult;
 
 namespace Workleap.Extensions.OpenAPI.Builder;
@@ -20,7 +21,9 @@ public sealed class OpenApiBuilder
         this._services.AddSingleton<IConfigureOptions<SwaggerUIOptions>, DisplayOperationIdInSwaggerUiOptions>();
         this._services.ConfigureSwaggerGen(options =>
         {
+            options.SupportNonNullableReferenceTypes();
             options.OperationFilter<ExtractSchemaTypeResultFilter>();
+            options.SchemaFilter<SetPropertyAsRequiredTypeFilter>();
         });
     }
 
