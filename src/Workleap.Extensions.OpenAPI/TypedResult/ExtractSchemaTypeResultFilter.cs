@@ -123,27 +123,21 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
     // Initialize an instance of the result type to get the response metadata and return null if it's not possible
     private static ResponseMetadata? ExtractMetadataFromTypedResult(Type resultType)
     {
+        var typeString = $"{resultType.Namespace}.{resultType.Name}";
         // For type like Ok, BadRequest, NotFound
         if (!resultType.GenericTypeArguments.Any())
         {
-            var constructor = resultType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Array.Empty<Type>(), null);
-            if (constructor != null)
+            if (HttpResultsStatusCodeTypeHelpers.HttpResultTypeToStatusCodes.TryGetValue(typeString, out var statusCode))
             {
-                var instance = constructor.Invoke(Array.Empty<object>());
-                var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode;
-
-                return new(statusCode ?? 0, null);
+                return new(statusCode, null);
             }
         }
         // For types like Ok<T>, BadRequest<T>, NotFound<T>
         else
         {
-            var constructor = resultType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { resultType.GenericTypeArguments.First() }, null);
-            if (constructor != null)
+            if (HttpResultsStatusCodeTypeHelpers.HttpResultTypeToStatusCodes.TryGetValue(typeString, out var statusCode))
             {
-                var instance = constructor.Invoke(new object?[] { null });
-                var statusCode = (instance as IStatusCodeHttpResult)?.StatusCode;
-                return new(statusCode ?? 0, resultType.GenericTypeArguments.First());
+                return new(statusCode, resultType.GenericTypeArguments.First());
             }
         }
 

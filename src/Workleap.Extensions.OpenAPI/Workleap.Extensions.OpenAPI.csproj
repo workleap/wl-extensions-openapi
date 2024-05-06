@@ -38,6 +38,10 @@
     <ProjectReference Include="..\Workleap.Extensions.OpenAPI.Analyzers\Workleap.Extensions.OpenAPI.Analyzers.csproj" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Shared\HttpResultsStatusCodeTypeHelpers.cs" Link="Shared\HttpResultsStatusCodeTypeHelpers.cs" />
+  </ItemGroup>
+
   <PropertyGroup>
     <!--
     Here we use some advanced MSBuild to embed our Roslyn analyzers into the generated package.

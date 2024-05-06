@@ -175,6 +175,33 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: '404'
+  /withNoAnnotationOtherResponses:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationOtherResponses
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '202':
+          description: '202'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '422':
+          description: '422'
   /voidOk:
     get:
       tags:

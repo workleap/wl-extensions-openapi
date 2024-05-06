@@ -61,43 +61,17 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         private static Dictionary<ITypeSymbol, int> InitializeHttpResultStatusCodeMap(Compilation compilation)
         {
             var dictionary = new Dictionary<ITypeSymbol, int>(SymbolEqualityComparer.Default);
-            Add("Microsoft.AspNetCore.Http.HttpResults.Ok", 200);
-            Add("Microsoft.AspNetCore.Http.HttpResults.Ok`1", 200);
-            Add("Microsoft.AspNetCore.Http.HttpResults.Created", 201);
-            Add("Microsoft.AspNetCore.Http.HttpResults.Created`1", 201);
-            Add("Microsoft.AspNetCore.Http.HttpResults.CreatedAtRoute", 201);
-            Add("Microsoft.AspNetCore.Http.HttpResults.CreatedAtRoute`1", 201);
-            Add("Microsoft.AspNetCore.Http.HttpResults.Accepted", 202);
-            Add("Microsoft.AspNetCore.Http.HttpResults.Accepted`1", 202);
-            Add("Microsoft.AspNetCore.Http.HttpResults.AcceptedAtRoute", 202);
-            Add("Microsoft.AspNetCore.Http.HttpResults.AcceptedAtRoute`1", 202);
-            Add("Microsoft.AspNetCore.Http.HttpResults.NoContent", 204);
-            Add("Microsoft.AspNetCore.Http.HttpResults.BadRequest", 400);
-            Add("Microsoft.AspNetCore.Http.HttpResults.BadRequest`1", 400);
-            Add("Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult", 401);
-            Add("Microsoft.AspNetCore.Http.HttpResults.NotFound", 404);
-            Add("Microsoft.AspNetCore.Http.HttpResults.NotFound`1", 404);
-            Add("Microsoft.AspNetCore.Http.HttpResults.Conflict", 409);
-            Add("Microsoft.AspNetCore.Http.HttpResults.Conflict`1", 409);
-            Add("Microsoft.AspNetCore.Http.HttpResults.UnprocessableEntity", 422);
-            Add("Microsoft.AspNetCore.Http.HttpResults.UnprocessableEntity`T", 422);
-            // Will be Supported in .NET 9
-            Add("Microsoft.AspNetCore.Http.HttpResults.InternalServerError", 500);
-            Add("Microsoft.AspNetCore.Http.HttpResults.InternalServerError`1", 500);
-            // Workleap's definition of the InternalServerError type result for other .NET versions
-            Add("Workleap.Extensions.OpenAPI.TypedResult.InternalServerError", 500);
-            Add("Workleap.Extensions.OpenAPI.TypedResult.InternalServerError`1", 500);
 
-            return dictionary;
-
-            void Add(string metadata, int statusCode)
+            foreach (var pair in HttpResultsStatusCodeTypeHelpers.HttpResultTypeToStatusCodes)
             {
-                var type = compilation.GetTypeByMetadataName(metadata);
+                var type = compilation.GetTypeByMetadataName(pair.Key);
                 if (type is not null)
                 {
-                    dictionary.Add(type, statusCode);
+                    dictionary.Add(type, pair.Value);
                 }
             }
+
+            return dictionary;
         }
 
         private static Dictionary<int, ITypeSymbol> InitializeStatusCodeMapHttpResultMap(Compilation compilation)

@@ -21,10 +21,19 @@ public class ExtractSchemaTypeResultFilterTests
         };
         yield return new object[]
         {
-            typeof(Results<Ok<TestTypedSchema>, BadRequest<ProblemDetails>, NotFound>), // TODO: Document from this example the output OpeanAPI document (also include Produce(json))
+            typeof(Accepted<TestTypedSchema>),
+            new List<ExtractSchemaTypeResultFilter.ResponseMetadata>
+            {
+                new((int)HttpStatusCode.Accepted, typeof(TestTypedSchema))
+            }
+        };
+        yield return new object[]
+        {
+            typeof(Results<Ok<TestTypedSchema>, Accepted<TestTypedSchema>, BadRequest<ProblemDetails>, NotFound>),
             new List<ExtractSchemaTypeResultFilter.ResponseMetadata>
             {
                 new((int)HttpStatusCode.OK, typeof(TestTypedSchema)),
+                new((int)HttpStatusCode.Accepted, typeof(TestTypedSchema)),
                 new((int)HttpStatusCode.BadRequest, typeof(ProblemDetails)),
                 new((int)HttpStatusCode.NotFound, null)
             }
