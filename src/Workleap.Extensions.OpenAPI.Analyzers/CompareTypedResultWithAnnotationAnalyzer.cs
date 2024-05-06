@@ -62,7 +62,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         {
             var dictionary = new Dictionary<ITypeSymbol, int>(SymbolEqualityComparer.Default);
 
-            foreach (var pair in HttpResultsStatusCodeTypeHelpers.HttpResultTypeToStatusCodes)
+            foreach (var pair in HttpResultsStatusCodeTypeHelpersList.HttpResultTypeToStatusCodes)
             {
                 var type = compilation.GetTypeByMetadataName(pair.Key);
                 if (type is not null)
