@@ -4,6 +4,7 @@ namespace WebApi.OpenAPI.SystemTest.OperationId;
 
 [ApiController]
 [Route("RequiredType")]
+[Produces("application/json")]
 public class RequiredTypeController : ControllerBase
 {
     [HttpGet("/recordClassRequiredType", Name = "GetRecordClassRequiredType")]

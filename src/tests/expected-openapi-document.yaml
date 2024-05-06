@@ -51,13 +51,7 @@ paths:
         '200':
           description: Success
           content:
-            text/plain:
-              schema:
-                $ref: '#/components/schemas/RequiredExample'
             application/json:
-              schema:
-                $ref: '#/components/schemas/RequiredExample'
-            text/json:
               schema:
                 $ref: '#/components/schemas/RequiredExample'
   '/minimal-endpoint-with-typed-result-no-produces/{id}':

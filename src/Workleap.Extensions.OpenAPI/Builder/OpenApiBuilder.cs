@@ -23,7 +23,7 @@ public sealed class OpenApiBuilder
         {
             options.SupportNonNullableReferenceTypes();
             options.OperationFilter<ExtractSchemaTypeResultFilter>();
-            options.SchemaFilter<SetPropertyAsRequiredTypeFilter>();
+            options.SchemaFilter<ExtractRequiredAttributeFromNullableType>();
         });
     }
 

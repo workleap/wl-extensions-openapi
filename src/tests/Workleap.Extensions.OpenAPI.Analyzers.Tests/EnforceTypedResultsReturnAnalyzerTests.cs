@@ -4,6 +4,8 @@ namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
 
 public class EnforceTypedResultsReturnAnalyzerTests : BaseAnalyzerTest<EnforceTypedResultsReturnAnalyzer>
 {
+    private const string AspNetCoreHttpUsing = "global using Microsoft.AspNetCore.Http;";
+
     [Fact]
     public async Task Given_ReturnTypeResult_When_Analyze_Then_No_Diagnostic()
     {
@@ -142,6 +144,7 @@ public class EnforceTypedResultsReturnAnalyzerTests : BaseAnalyzerTest<EnforceTy
     [Fact]
     public async Task Given_ReturnIResult_When_Analyze_Then_Diagnostic()
     {
+        this.TestState.Sources.Add(AspNetCoreHttpUsing);
         const string source = """
                               public class AnalyzersController : ControllerBase
                               {
@@ -157,6 +160,7 @@ public class EnforceTypedResultsReturnAnalyzerTests : BaseAnalyzerTest<EnforceTy
     [Fact]
     public async Task Given_ReturnTaskOfIResult_When_Analyze_Then_Diagnostic()
     {
+        this.TestState.Sources.Add(AspNetCoreHttpUsing);
         const string source = """
                               public class AnalyzersController : ControllerBase
                               {
