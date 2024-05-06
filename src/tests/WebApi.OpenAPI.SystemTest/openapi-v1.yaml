@@ -42,6 +42,18 @@ paths:
       responses:
         '200':
           description: Success
+  /recordClassRequiredType:
+    get:
+      tags:
+        - RequiredType
+      operationId: GetRecordClassRequiredType
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequiredExample'
   '/minimal-endpoint-with-typed-result-no-produces/{id}':
     get:
       tags:
@@ -276,12 +288,33 @@ components:
           type: string
           nullable: true
       additionalProperties: { }
+    RequiredExample:
+      required:
+        - requiredIntProperty
+        - requiredStringProperty
+      type: object
+      properties:
+        requiredIntProperty:
+          type: integer
+          format: int32
+        requiredStringProperty:
+          type: string
+        optionalStringProperty:
+          type: string
+          nullable: true
+        optionalIntProperty:
+          type: integer
+          format: int32
+          nullable: true
+      additionalProperties: false
     TypedResultExample:
+      required:
+        - count
+        - name
       type: object
       properties:
         name:
           type: string
-          nullable: true
         count:
           type: integer
           format: int32

@@ -41,7 +41,7 @@ public class EnforceTypedResultsReturnAnalyzer : DiagnosticAnalyzer
         private INamedTypeSymbol? ResultSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult");
         private INamedTypeSymbol? ActionResultSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.IActionResult");
 
-        public bool IsValid => this.ActionResultSymbol is not null && this.ResultSymbol is not null;
+        public bool IsValid => this.ActionResultSymbol is not null || this.ResultSymbol is not null;
 
         public void ValidateEndpointResponseType(SymbolAnalysisContext context)
         {

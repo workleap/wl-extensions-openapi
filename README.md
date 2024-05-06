@@ -13,11 +13,13 @@ As such, we provide the following features:
 
 OpenAPI Spec generation filters:
 - Display OperationId in SwaggerUI
-- Extract Type schema from TypedResult endpoint response types
+- Extract Type schema from TypedResult endpoint response types.
+- Ensure that non-nullable properties are marked as required in the OpenAPI document. It is no longer necessary to add `[Required]` attributes to object properties.
 - (Optional) Fallback to use controller name as OperationId when there is no OperationId explicitly defined for the endpoint.
 
 Roslyn Analyzers to help validate usage typed responses:
 - Rule to catch mismatches between endpoint response annotations and Typed Responses
+- Rule to help enforce usage of strongly typed responses
 
 ## Getting started
 
