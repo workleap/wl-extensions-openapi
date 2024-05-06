@@ -123,22 +123,29 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
     // Initialize an instance of the result type to get the response metadata and return null if it's not possible
     private static ResponseMetadata? ExtractMetadataFromTypedResult(Type resultType)
     {
-        var typeString = $"{resultType.Namespace}.{resultType.Name}";
+        if (ExtractStatusCodeFromType(resultType) is not { } statusCode)
+        {
+            return null;
+        }
+
         // For type like Ok, BadRequest, NotFound
         if (!resultType.GenericTypeArguments.Any())
         {
-            if (HttpResultsStatusCodeTypeHelpers.HttpResultTypeToStatusCodes.TryGetValue(typeString, out var statusCode))
-            {
-                return new(statusCode, null);
-            }
+            return new(statusCode, null);
         }
         // For types like Ok<T>, BadRequest<T>, NotFound<T>
         else
         {
-            if (HttpResultsStatusCodeTypeHelpers.HttpResultTypeToStatusCodes.TryGetValue(typeString, out var statusCode))
-            {
-                return new(statusCode, resultType.GenericTypeArguments.First());
-            }
+            return new(statusCode, resultType.GenericTypeArguments.First());
+        }
+    }
+
+    private static int? ExtractStatusCodeFromType(Type resultType)
+    {
+        var typeString = $"{resultType.Namespace}.{resultType.Name}";
+        if (HttpResultsStatusCodeTypeHelpers.HttpResultTypeToStatusCodes.TryGetValue(typeString, out var statusCode))
+        {
+            return statusCode;
         }
 
         return null;

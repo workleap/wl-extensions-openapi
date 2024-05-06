@@ -187,11 +187,11 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: '404'
-  /withNoAnnotationOtherResponses:
+  /withNoAnnotationForAcceptedAndUnprocessableResponse:
     get:
       tags:
         - TypedResult
-      operationId: TypedResultWithNoAnnotationOtherResponses
+      operationId: TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponse
       parameters:
         - name: id
           in: query

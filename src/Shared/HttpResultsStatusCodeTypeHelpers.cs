@@ -1,6 +1,6 @@
 internal static class HttpResultsStatusCodeTypeHelpers
 {
-    public static Dictionary<string, int> HttpResultTypeToStatusCodes { get; } = new() 
+    public static Dictionary<string, int> HttpResultTypeToStatusCodes { get; } = new()
     {
         {"Microsoft.AspNetCore.Http.HttpResults.Ok", 200},
         {"Microsoft.AspNetCore.Http.HttpResults.Ok`1", 200},

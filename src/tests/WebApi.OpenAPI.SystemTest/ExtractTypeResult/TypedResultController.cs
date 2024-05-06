@@ -46,8 +46,8 @@ public class TypedResultController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/withNoAnnotationOtherResponses")]
-    public Results<Ok<TypedResultExample>, Accepted<TypedResultExample>, UnprocessableEntity> TypedResultWithNoAnnotationOtherResponses(int id)
+    [Route("/withNoAnnotationForAcceptedAndUnprocessableResponse")]
+    public Results<Ok<TypedResultExample>, Accepted<TypedResultExample>, UnprocessableEntity> TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponse(int id)
     {
         return id switch
         {
