@@ -46,6 +46,18 @@ public class TypedResultController : ControllerBase
     }
 
     [HttpGet]
+    [Route("/withNoAnnotationForAcceptedAndUnprocessableResponse")]
+    public Results<Ok<TypedResultExample>, Accepted<TypedResultExample>, UnprocessableEntity> TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponse(int id)
+    {
+        return id switch
+        {
+            < 0 => TypedResults.UnprocessableEntity(),
+            0 => TypedResults.Ok(new TypedResultExample("Example")),
+            _ => TypedResults.Accepted("hardcoded uri", new TypedResultExample("Example"))
+        };
+    }
+
+    [HttpGet]
     [Route("/voidOk")]
     public Ok VoidOk(int id)
     {
