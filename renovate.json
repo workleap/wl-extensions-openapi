@@ -10,10 +10,6 @@
     "github-actions",
     "nuget"
   ],
-  "ignoreDeps": [
-    "xunit",
-    "xunit.runner.visualstudio"
-  ],
   "stabilityDays": 3,
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
