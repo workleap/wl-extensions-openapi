@@ -4,13 +4,6 @@ namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
 
 public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<CompareTypedResultWithAnnotationAnalyzer>
 {
-    private const string LocalUsing = "global using Microsoft.AspNetCore.Http;";
-
-    public CompareTypedResultWithAnnotationAnalyzerTests()
-        : base()
-    {
-        this.TestState.Sources.Add(LocalUsing);
-    }
     [Fact]
     public async Task Given_NoAnnotationIActionResult_When_Analyze_Then_No_Diagnostic()
     {

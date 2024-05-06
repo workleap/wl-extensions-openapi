@@ -20,6 +20,7 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
                                            global using System.Threading;
                                            global using System.Threading.Tasks;
                                            global using Microsoft.AspNetCore.Http.HttpResults;
+                                           global using Microsoft.AspNetCore.Http;
                                            global using Microsoft.AspNetCore.Mvc;
                                            global using Swashbuckle.AspNetCore.Annotations;
                                            global using Workleap.Extensions.OpenAPI.TypedResult;
