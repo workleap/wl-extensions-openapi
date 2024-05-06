@@ -127,7 +127,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
         // For type like Ok, BadRequest, NotFound
         if (!resultType.GenericTypeArguments.Any())
         {
-            if (HttpResultsStatusCodeTypeHelpersList.HttpResultTypeToStatusCodes.TryGetValue(typeString, out var statusCode))
+            if (HttpResultsStatusCodeTypeHelpers.HttpResultTypeToStatusCodes.TryGetValue(typeString, out var statusCode))
             {
                 return new(statusCode, null);
             }
@@ -135,7 +135,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
         // For types like Ok<T>, BadRequest<T>, NotFound<T>
         else
         {
-            if (HttpResultsStatusCodeTypeHelpersList.HttpResultTypeToStatusCodes.TryGetValue(typeString, out var statusCode))
+            if (HttpResultsStatusCodeTypeHelpers.HttpResultTypeToStatusCodes.TryGetValue(typeString, out var statusCode))
             {
                 return new(statusCode, resultType.GenericTypeArguments.First());
             }

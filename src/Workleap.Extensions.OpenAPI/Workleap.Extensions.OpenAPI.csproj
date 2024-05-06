@@ -39,8 +39,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\Shared\HttpResultsStatusCodeTypeHelpersList.cs">
-      <Link>Shared\HttpResultsStatusCodeTypeHelpersList.cs</Link>
+    <Compile Include="..\Shared\HttpResultsStatusCodeTypeHelpers.cs">
+      <Link>Shared\HttpResultsStatusCodeTypeHelpers.cs</Link>
     </Compile>
   </ItemGroup>
 
