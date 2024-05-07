@@ -8,11 +8,17 @@ namespace WebApi.OpenAPI.SystemTest.OperationId;
 public class RequiredTypeController : ControllerBase
 {
     [HttpGet("/recordClassRequiredType", Name = "GetRecordClassRequiredType")]
-    [ProducesResponseType(typeof(RequiredExample), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ParentRequiredExample.RequiredExample), StatusCodes.Status200OK)]
     public IActionResult RecordClassRequiredType()
     {
-        return this.Ok(new RequiredExample(0, "example", null, 0));
+        return this.Ok();
     }
 }
 
-public sealed record RequiredExample(int RequiredIntProperty, string RequiredStringProperty, string? OptionalStringProperty, int? OptionalIntProperty);
+public sealed record ParentRequiredExample(string Id)
+{
+    public sealed record RequiredExample(IReadOnlyCollection<RequiredExample.Example> Examples, string? OptionalStringProperty)
+    {
+        public sealed record Example(string RequiredId);
+    }
+}

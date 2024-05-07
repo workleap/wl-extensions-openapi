@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -14,6 +15,8 @@ internal sealed class ExtractRequiredAttributeFromNullableType : ISchemaFilter
             return;
         }
 
+        ApplyNullabilityOnNestedSchemaProperties(schema, context);
+
         // This is used in conjunction with the SupportNonNullableReferenceTypes extension which uses the C# nullable feature to set properties as nullable.
         var notNullableProperties = schema
             .Properties
@@ -23,6 +26,34 @@ internal sealed class ExtractRequiredAttributeFromNullableType : ISchemaFilter
         foreach (var property in notNullableProperties)
         {
             schema.Required.Add(property.Key);
+        }
+    }
+
+    private static void ApplyNullabilityOnNestedSchemaProperties(OpenApiSchema schema, SchemaFilterContext context)
+    {
+        var nullabilityInfoContext = new NullabilityInfoContext();
+        var contextProperties = context.Type.GetProperties();
+        foreach (var (name, property) in schema.Properties)
+        {
+            var contextProperty = contextProperties.FirstOrDefault(x => string.Equals(name, x.Name, StringComparison.OrdinalIgnoreCase));
+            if (contextProperty is null)
+            {
+                continue;
+            }
+
+            var nullabilityInfo = nullabilityInfoContext.Create(contextProperty);
+            // If nullability is unknown or ambiguous, we continue.
+            if (nullabilityInfo is { ReadState: NullabilityState.Unknown, WriteState: NullabilityState.Unknown } || nullabilityInfo.ReadState != nullabilityInfo.WriteState)
+            {
+                continue;
+            }
+
+            var detectedNullability = property.Nullable;
+            var reflectedNullability = nullabilityInfo.ReadState == NullabilityState.Nullable;
+            if (detectedNullability != reflectedNullability)
+            {
+                property.Nullable = reflectedNullability;
+            }
         }
     }
 }

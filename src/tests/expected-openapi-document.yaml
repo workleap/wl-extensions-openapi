@@ -268,6 +268,14 @@ paths:
                 type: string
 components:
   schemas:
+    Example:
+      required:
+        - requiredId
+      type: object
+      properties:
+        requiredId:
+          type: string
+      additionalProperties: false
     ProblemDetails:
       type: object
       properties:
@@ -290,21 +298,15 @@ components:
       additionalProperties: { }
     RequiredExample:
       required:
-        - requiredIntProperty
-        - requiredStringProperty
+        - examples
       type: object
       properties:
-        requiredIntProperty:
-          type: integer
-          format: int32
-        requiredStringProperty:
-          type: string
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/Example'
         optionalStringProperty:
           type: string
-          nullable: true
-        optionalIntProperty:
-          type: integer
-          format: int32
           nullable: true
       additionalProperties: false
     TypedResultExample:
