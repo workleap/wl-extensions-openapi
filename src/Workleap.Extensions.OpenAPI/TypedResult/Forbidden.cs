@@ -7,22 +7,22 @@ namespace Workleap.Extensions.OpenAPI.TypedResult;
 
 /// <summary>
 /// An <see cref="IResult"/> that on execution will write an object to the response
-/// with Internal Server Error (500) status code.
+/// with Forbidden (403) status code.
 /// </summary>
-public sealed class InternalServerError : IResult, IEndpointMetadataProvider, IStatusCodeHttpResult
+public sealed class Forbidden : IResult, IEndpointMetadataProvider, IStatusCodeHttpResult
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="InternalServerError"/> class with the values
+    /// Initializes a new instance of the <see cref="Forbidden"/> class with the values
     /// provided.
     /// </summary>
-    internal InternalServerError()
+    internal Forbidden()
     {
     }
 
     /// <summary>
-    /// Gets the HTTP status code: <see cref="StatusCodes.Status500InternalServerError"/>
+    /// Gets the HTTP status code: <see cref="StatusCodes.Status403Forbidden"/>
     /// </summary>
-    private int StatusCode => StatusCodes.Status500InternalServerError;
+    private int StatusCode => StatusCodes.Status403Forbidden;
 
     int? IStatusCodeHttpResult.StatusCode => this.StatusCode;
 
@@ -41,6 +41,6 @@ public sealed class InternalServerError : IResult, IEndpointMetadataProvider, IS
         ArgumentNullException.ThrowIfNull(method);
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.Metadata.Add(new ProducesResponseTypeMetadata(StatusCodes.Status500InternalServerError, typeof(void)));
+        builder.Metadata.Add(new ProducesResponseTypeMetadata(StatusCodes.Status403Forbidden, typeof(void)));
     }
 }

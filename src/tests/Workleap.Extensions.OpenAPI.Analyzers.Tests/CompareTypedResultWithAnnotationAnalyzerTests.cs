@@ -248,4 +248,21 @@ public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<Co
         await this.WithSourceCode(source)
             .RunAsync();
     }
+
+    [Fact]
+    public async Task Given_ProducesResponseAndCorrectTypedResultsTaskWithForbidden_When_Analyze_Then_No_Diagnostic()
+    {
+        const string source = """
+                              public class AnalyzersController : ControllerBase
+                              {
+                                  [HttpGet]
+                                  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+                                  [ProducesResponseType(StatusCodes.Status403Forbidden)]
+                                  public async Task<Results<Ok<string>, Forbidden>> GetSampleEndpoint() => throw null;
+                              }
+                              """;
+
+        await this.WithSourceCode(source)
+            .RunAsync();
+    }
 }

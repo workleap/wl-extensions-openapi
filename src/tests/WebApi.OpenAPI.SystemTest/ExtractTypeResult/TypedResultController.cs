@@ -74,10 +74,11 @@ public class TypedResultController : ControllerBase
 
     [HttpGet]
     [Route("/withExceptionsWithExtensions")]
-    public Results<Ok<TypedResultExample>, InternalServerError<string>> TypedResultWithExceptionsWithExtensions(int id)
+    public Results<Ok<TypedResultExample>, Forbidden<string>, InternalServerError<string>> TypedResultWithExceptionsWithExtensions(int id)
     {
         return id switch
         {
+            0 => TypedResultsExtensions.Forbidden("Forbidden"),
             < 0 => TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
             _ => TypedResults.Ok(new TypedResultExample("Example"))
         };

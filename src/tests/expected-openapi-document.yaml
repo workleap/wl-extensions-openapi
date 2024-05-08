@@ -272,6 +272,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
+        '403':
+          description: '403'
+          content:
+            application/json:
+              schema:
+                type: string
         '500':
           description: '500'
           content:
