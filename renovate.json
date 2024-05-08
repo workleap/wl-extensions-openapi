@@ -24,9 +24,15 @@
     },
     {
       "matchManagers": ["nuget"],
-      "matchPackagePatterns": ["^Microsoft\\.Extensions\\.", "^System\\.", "xunit"],
+      "matchPackagePatterns": ["^Microsoft\\.Extensions\\.", "^System\\."],
       "groupName": "Ignored NuGet dependencies",
       "description": "These packages are usually set to a user-defined minimal supported version such as 6.0.0 for .NET 6, and they are overriden by consuming applications",
+      "enabled": false
+    },
+    {
+      "matchManagers": ["nuget"],
+      "excludePackageNames": ["xunit"],
+      "description": "We want to avoid updates to xunit versions given that the current version is highest non-breaking version for this project.",
       "enabled": false
     },
     {
