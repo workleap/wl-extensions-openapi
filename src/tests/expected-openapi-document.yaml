@@ -54,6 +54,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RequiredExample'
+  /classRequiredType:
+    get:
+      tags:
+        - RequiredType
+      operationId: GetClassRequiredType
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParentRequiredExampleClass'
   '/minimal-endpoint-with-typed-result-no-produces/{id}':
     get:
       tags:
@@ -270,11 +282,40 @@ components:
   schemas:
     Example:
       required:
-        - requiredId
+        - property
+        - results
       type: object
       properties:
-        requiredId:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+        property:
           type: string
+      additionalProperties: false
+    ExampleClass:
+      required:
+        - property
+        - results
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultClass'
+        property:
+          type: string
+      additionalProperties: false
+    ParentRequiredExampleClass:
+      required:
+        - requiredExample
+      type: object
+      properties:
+        requiredExample:
+          $ref: '#/components/schemas/RequiredExampleClass'
+        optionalStringProperty:
+          type: string
+          nullable: true
       additionalProperties: false
     ProblemDetails:
       type: object
@@ -306,6 +347,41 @@ components:
           items:
             $ref: '#/components/schemas/Example'
         optionalStringProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    RequiredExampleClass:
+      required:
+        - examples
+      type: object
+      properties:
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExampleClass'
+        optionalStringProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    Result:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+        optionalProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ResultClass:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+        optionalProperty:
           type: string
           nullable: true
       additionalProperties: false
