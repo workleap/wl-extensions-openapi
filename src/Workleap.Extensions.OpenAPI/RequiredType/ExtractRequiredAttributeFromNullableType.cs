@@ -15,7 +15,7 @@ internal sealed class ExtractRequiredAttributeFromNullableType : ISchemaFilter
             return;
         }
 
-        ApplyNullabilityOnNestedSchemaProperties(schema, context);
+        PatchNonNullableReferenceTypesOnNestedSchema(schema, context);
 
         // This is used in conjunction with the SupportNonNullableReferenceTypes extension which uses the C# nullable feature to set properties as nullable.
         var notNullableProperties = schema
@@ -29,10 +29,13 @@ internal sealed class ExtractRequiredAttributeFromNullableType : ISchemaFilter
         }
     }
 
-    private static void ApplyNullabilityOnNestedSchemaProperties(OpenApiSchema schema, SchemaFilterContext context)
+    // There is a bug on where SupportNonNullableReferenceTypes does not work for nested record types. This method is a workaround to fix the issue.
+    // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2758
+    private static void PatchNonNullableReferenceTypesOnNestedSchema(OpenApiSchema schema, SchemaFilterContext context)
     {
         var nullabilityInfoContext = new NullabilityInfoContext();
         var contextProperties = context.Type.GetProperties();
+
         foreach (var (name, property) in schema.Properties)
         {
             var contextProperty = contextProperties.FirstOrDefault(x => string.Equals(name, x.Name, StringComparison.OrdinalIgnoreCase));
@@ -48,6 +51,7 @@ internal sealed class ExtractRequiredAttributeFromNullableType : ISchemaFilter
                 continue;
             }
 
+            // If there is a mismatch between the OpenAPISchema nullability and the context reflected nullability, we defer to the context nullability.
             var detectedNullability = property.Nullable;
             var reflectedNullability = nullabilityInfo.ReadState == NullabilityState.Nullable;
             if (detectedNullability != reflectedNullability)
