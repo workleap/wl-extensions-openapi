@@ -329,14 +329,13 @@ components:
     RequiredExampleClass:
       required:
         - property
-        - results
+        - resultExamples
       type: object
       properties:
-        results:
+        resultExamples:
           type: array
           items:
             $ref: '#/components/schemas/ResultExampleClass'
-          readOnly: true
         property:
           type: string
       additionalProperties: false
@@ -353,14 +352,13 @@ components:
       additionalProperties: false
     RequiredExampleParentClass:
       required:
-        - examples
+        - requiredExamples
       type: object
       properties:
-        examples:
+        requiredExamples:
           type: array
           items:
             $ref: '#/components/schemas/RequiredExampleClass'
-          readOnly: true
         optionalStringProperty:
           type: string
           nullable: true

@@ -41,13 +41,13 @@ public sealed class RequiredExampleGrandParentClass(RequiredExampleParentClass r
 
 public sealed class RequiredExampleParentClass(IReadOnlyCollection<RequiredExampleClass> requiredExamples, string? optionalStringProperty)
 {
-    public IReadOnlyCollection<RequiredExampleClass> Examples { get; } = requiredExamples;
+    public IReadOnlyCollection<RequiredExampleClass> RequiredExamples { get; } = requiredExamples;
     public string? OptionalStringProperty { get; } = optionalStringProperty;
 }
 
 public sealed class RequiredExampleClass(IReadOnlyCollection<ResultExampleClass> resultExamples, string property)
 {
-    public IReadOnlyCollection<ResultExampleClass> Results { get; } = resultExamples;
+    public IReadOnlyCollection<ResultExampleClass> ResultExamples { get; } = resultExamples;
     public string Property { get; } = property;
 }
 
