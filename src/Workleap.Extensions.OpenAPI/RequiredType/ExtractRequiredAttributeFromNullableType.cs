@@ -51,7 +51,7 @@ internal sealed class ExtractRequiredAttributeFromNullableType : ISchemaFilter
                 continue;
             }
 
-            // If there is a mismatch between the OpenAPISchema nullability and the context reflected nullability, we defer to the context nullability.
+            // If there is a mismatch between the OpenApiSchema nullability and the context reflected nullability, we defer to the context nullability.
             var detectedNullability = property.Nullable;
             var reflectedNullability = nullabilityInfo.ReadState == NullabilityState.Nullable;
             if (detectedNullability != reflectedNullability)
