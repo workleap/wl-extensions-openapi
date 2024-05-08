@@ -33,6 +33,7 @@ internal sealed class ExtractRequiredAttributeFromNullableType : ISchemaFilter
     // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2758
     private static void PatchNonNullableReferenceTypesOnNestedSchema(OpenApiSchema schema, SchemaFilterContext context)
     {
+        // NullabilityInfoContext is used to analyze the nullability of properties. It uses reflection to inspect the type of the member and determine if it is nullable.
         var nullabilityInfoContext = new NullabilityInfoContext();
         var contextProperties = context.Type.GetProperties();
 
