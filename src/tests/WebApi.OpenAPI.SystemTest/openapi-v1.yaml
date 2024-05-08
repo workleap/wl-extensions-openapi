@@ -53,7 +53,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RequiredExample'
+                $ref: '#/components/schemas/RequiredExampleGrandParentRecord'
   /classRequiredType:
     get:
       tags:
@@ -280,19 +280,6 @@ paths:
                 type: string
 components:
   schemas:
-    Example:
-      required:
-        - property
-        - results
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Result'
-        property:
-          type: string
-      additionalProperties: false
     ProblemDetails:
       type: object
       properties:
@@ -313,30 +300,17 @@ components:
           type: string
           nullable: true
       additionalProperties: { }
-    RequiredExample:
-      required:
-        - examples
-      type: object
-      properties:
-        examples:
-          type: array
-          items:
-            $ref: '#/components/schemas/Example'
-        optionalStringProperty:
-          type: string
-          nullable: true
-      additionalProperties: false
     RequiredExampleClass:
       required:
-        - property
-        - resultExamples
+        - exampleProperty
+        - results
       type: object
       properties:
-        resultExamples:
+        results:
           type: array
           items:
-            $ref: '#/components/schemas/ResultExampleClass'
-        property:
+            $ref: '#/components/schemas/ResultClass'
+        exampleProperty:
           type: string
       additionalProperties: false
     RequiredExampleGrandParentClass:
@@ -346,7 +320,18 @@ components:
       properties:
         requiredExampleParent:
           $ref: '#/components/schemas/RequiredExampleParentClass'
-        optionalStringProperty:
+        optionalGrandParentProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    RequiredExampleGrandParentRecord:
+      required:
+        - requiredExampleParent
+      type: object
+      properties:
+        requiredExampleParent:
+          $ref: '#/components/schemas/RequiredExampleParentRecord'
+        optionalGrandParentProperty:
           type: string
           nullable: true
       additionalProperties: false
@@ -359,29 +344,55 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RequiredExampleClass'
-        optionalStringProperty:
+        optionalParentProperty:
           type: string
           nullable: true
       additionalProperties: false
-    Result:
+    RequiredExampleParentRecord:
       required:
-        - id
+        - requiredExamples
       type: object
       properties:
-        id:
-          type: string
-        optionalProperty:
+        requiredExamples:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequiredExampleRecord'
+        optionalParentProperty:
           type: string
           nullable: true
       additionalProperties: false
-    ResultExampleClass:
+    RequiredExampleRecord:
       required:
-        - id
+        - exampleProperty
+        - results
       type: object
       properties:
-        id:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultRecord'
+        exampleProperty:
           type: string
-        optionalProperty:
+      additionalProperties: false
+    ResultClass:
+      required:
+        - resultId
+      type: object
+      properties:
+        resultId:
+          type: string
+        optionalResultProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ResultRecord:
+      required:
+        - resultId
+      type: object
+      properties:
+        resultId:
+          type: string
+        optionalResultProperty:
           type: string
           nullable: true
       additionalProperties: false

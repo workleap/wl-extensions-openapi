@@ -8,7 +8,7 @@ namespace WebApi.OpenAPI.SystemTest.OperationId;
 public class RequiredTypeController : ControllerBase
 {
     [HttpGet("/recordClassRequiredType", Name = "GetRecordClassRequiredType")]
-    [ProducesResponseType(typeof(ParentRequiredExample.RequiredExample), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RequiredExampleGrandParentRecord), StatusCodes.Status200OK)]
     public IActionResult RecordClassRequiredType()
     {
         return this.Ok();
@@ -22,37 +22,37 @@ public class RequiredTypeController : ControllerBase
     }
 }
 
-public sealed record ParentRequiredExample(string Id)
+public sealed record RequiredExampleGrandParentRecord(RequiredExampleGrandParentRecord.RequiredExampleParentRecord RequiredExampleParent, string? OptionalGrandParentProperty)
 {
-    public sealed record RequiredExample(IReadOnlyCollection<RequiredExample.Example> Examples, string? OptionalStringProperty)
+    public sealed record RequiredExampleParentRecord(IReadOnlyCollection<RequiredExampleParentRecord.RequiredExampleRecord> RequiredExamples, string? OptionalParentProperty)
     {
-        public sealed record Example(IReadOnlyCollection<Example.Result> Results, string Property)
+        public sealed record RequiredExampleRecord(IReadOnlyCollection<RequiredExampleRecord.ResultRecord> Results, string ExampleProperty)
         {
-            public sealed record Result(string Id, string? OptionalProperty);
+            public sealed record ResultRecord(string ResultId, string? OptionalResultProperty);
         }
     }
 }
 
-public sealed class RequiredExampleGrandParentClass(RequiredExampleParentClass requiredExampleParent, string? optionalStringProperty)
+public sealed class RequiredExampleGrandParentClass(RequiredExampleParentClass requiredExampleParent, string? optionalGrandParentProperty)
 {
     public RequiredExampleParentClass RequiredExampleParent { get; } = requiredExampleParent;
-    public string? OptionalStringProperty { get; } = optionalStringProperty;
+    public string? OptionalGrandParentProperty { get; } = optionalGrandParentProperty;
 }
 
-public sealed class RequiredExampleParentClass(IReadOnlyCollection<RequiredExampleClass> requiredExamples, string? optionalStringProperty)
+public sealed class RequiredExampleParentClass(IReadOnlyCollection<RequiredExampleClass> requiredExamples, string? optionalParentProperty)
 {
     public IReadOnlyCollection<RequiredExampleClass> RequiredExamples { get; } = requiredExamples;
-    public string? OptionalStringProperty { get; } = optionalStringProperty;
+    public string? OptionalParentProperty { get; } = optionalParentProperty;
 }
 
-public sealed class RequiredExampleClass(IReadOnlyCollection<ResultExampleClass> resultExamples, string property)
+public sealed class RequiredExampleClass(IReadOnlyCollection<ResultClass> results, string exampleProperty)
 {
-    public IReadOnlyCollection<ResultExampleClass> ResultExamples { get; } = resultExamples;
-    public string Property { get; } = property;
+    public IReadOnlyCollection<ResultClass> Results { get; } = results;
+    public string ExampleProperty { get; } = exampleProperty;
 }
 
-public sealed class ResultExampleClass(string id, string? optionalProperty)
+public sealed class ResultClass(string resultId, string? optionalResultProperty)
 {
-    public string Id { get; } = id;
-    public string? OptionalProperty { get; } = optionalProperty;
+    public string ResultId { get; } = resultId;
+    public string? OptionalResultProperty { get; } = optionalResultProperty;
 }
