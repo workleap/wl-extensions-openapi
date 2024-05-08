@@ -53,7 +53,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RequiredExample'
+                $ref: '#/components/schemas/RequiredExampleGrandParentRecord'
+  /classRequiredType:
+    get:
+      tags:
+        - RequiredType
+      operationId: GetClassRequiredType
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequiredExampleGrandParentClass'
   '/minimal-endpoint-with-typed-result-no-produces/{id}':
     get:
       tags:
@@ -288,23 +300,100 @@ components:
           type: string
           nullable: true
       additionalProperties: { }
-    RequiredExample:
+    RequiredExampleClass:
       required:
-        - requiredIntProperty
-        - requiredStringProperty
+        - exampleProperty
+        - results
       type: object
       properties:
-        requiredIntProperty:
-          type: integer
-          format: int32
-        requiredStringProperty:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultClass'
+        exampleProperty:
           type: string
-        optionalStringProperty:
+      additionalProperties: false
+    RequiredExampleGrandParentClass:
+      required:
+        - requiredExampleParent
+      type: object
+      properties:
+        requiredExampleParent:
+          $ref: '#/components/schemas/RequiredExampleParentClass'
+        optionalGrandParentProperty:
           type: string
           nullable: true
-        optionalIntProperty:
-          type: integer
-          format: int32
+      additionalProperties: false
+    RequiredExampleGrandParentRecord:
+      required:
+        - requiredExampleParent
+      type: object
+      properties:
+        requiredExampleParent:
+          $ref: '#/components/schemas/RequiredExampleParentRecord'
+        optionalGrandParentProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    RequiredExampleParentClass:
+      required:
+        - requiredExamples
+      type: object
+      properties:
+        requiredExamples:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequiredExampleClass'
+        optionalParentProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    RequiredExampleParentRecord:
+      required:
+        - requiredExamples
+      type: object
+      properties:
+        requiredExamples:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequiredExampleRecord'
+        optionalParentProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    RequiredExampleRecord:
+      required:
+        - exampleProperty
+        - results
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultRecord'
+        exampleProperty:
+          type: string
+      additionalProperties: false
+    ResultClass:
+      required:
+        - resultId
+      type: object
+      properties:
+        resultId:
+          type: string
+        optionalResultProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ResultRecord:
+      required:
+        - resultId
+      type: object
+      properties:
+        resultId:
+          type: string
+        optionalResultProperty:
+          type: string
           nullable: true
       additionalProperties: false
     TypedResultExample:
