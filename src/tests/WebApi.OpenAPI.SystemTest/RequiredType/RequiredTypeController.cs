@@ -15,7 +15,7 @@ public class RequiredTypeController : ControllerBase
     }
 
     [HttpGet("/classRequiredType", Name = "GetClassRequiredType")]
-    [ProducesResponseType(typeof(ParentRequiredExampleClass), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RequiredExampleGrandParentClass), StatusCodes.Status200OK)]
     public IActionResult ClassRequiredType()
     {
         return this.Ok();
@@ -33,26 +33,26 @@ public sealed record ParentRequiredExample(string Id)
     }
 }
 
-public sealed class ParentRequiredExampleClass(RequiredExampleClass requiredExample, string? optionalStringProperty)
+public sealed class RequiredExampleGrandParentClass(RequiredExampleParentClass requiredExampleParent, string? optionalStringProperty)
 {
-    public RequiredExampleClass RequiredExample { get; } = requiredExample;
+    public RequiredExampleParentClass RequiredExampleParent { get; } = requiredExampleParent;
     public string? OptionalStringProperty { get; } = optionalStringProperty;
 }
 
-public sealed class RequiredExampleClass(IReadOnlyCollection<ExampleClass> Examples, string? OptionalStringProperty)
+public sealed class RequiredExampleParentClass(IReadOnlyCollection<RequiredExampleClass> requiredExamples, string? optionalStringProperty)
 {
-    public IReadOnlyCollection<ExampleClass> Examples { get; } = Examples;
-    public string? OptionalStringProperty { get; } = OptionalStringProperty;
+    public IReadOnlyCollection<RequiredExampleClass> Examples { get; } = requiredExamples;
+    public string? OptionalStringProperty { get; } = optionalStringProperty;
 }
 
-public sealed class ExampleClass(IReadOnlyCollection<ResultClass> Results, string Property)
+public sealed class RequiredExampleClass(IReadOnlyCollection<ResultExampleClass> resultExamples, string property)
 {
-    public IReadOnlyCollection<ResultClass> Results { get; } = Results;
-    public string Property { get; } = Property;
+    public IReadOnlyCollection<ResultExampleClass> Results { get; } = resultExamples;
+    public string Property { get; } = property;
 }
 
-public sealed class ResultClass(string Id, string? OptionalProperty)
+public sealed class ResultExampleClass(string id, string? optionalProperty)
 {
-    public string Id { get; } = Id;
-    public string? OptionalProperty { get; } = OptionalProperty;
+    public string Id { get; } = id;
+    public string? OptionalProperty { get; } = optionalProperty;
 }

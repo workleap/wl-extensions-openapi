@@ -65,7 +65,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ParentRequiredExampleClass'
+                $ref: '#/components/schemas/RequiredExampleGrandParentClass'
   '/minimal-endpoint-with-typed-result-no-produces/{id}':
     get:
       tags:
@@ -293,30 +293,6 @@ components:
         property:
           type: string
       additionalProperties: false
-    ExampleClass:
-      required:
-        - property
-        - results
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/ResultClass'
-        property:
-          type: string
-      additionalProperties: false
-    ParentRequiredExampleClass:
-      required:
-        - requiredExample
-      type: object
-      properties:
-        requiredExample:
-          $ref: '#/components/schemas/RequiredExampleClass'
-        optionalStringProperty:
-          type: string
-          nullable: true
-      additionalProperties: false
     ProblemDetails:
       type: object
       properties:
@@ -352,13 +328,39 @@ components:
       additionalProperties: false
     RequiredExampleClass:
       required:
+        - property
+        - results
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultExampleClass'
+          readOnly: true
+        property:
+          type: string
+      additionalProperties: false
+    RequiredExampleGrandParentClass:
+      required:
+        - requiredExampleParent
+      type: object
+      properties:
+        requiredExampleParent:
+          $ref: '#/components/schemas/RequiredExampleParentClass'
+        optionalStringProperty:
+          type: string
+          nullable: true
+      additionalProperties: false
+    RequiredExampleParentClass:
+      required:
         - examples
       type: object
       properties:
         examples:
           type: array
           items:
-            $ref: '#/components/schemas/ExampleClass'
+            $ref: '#/components/schemas/RequiredExampleClass'
+          readOnly: true
         optionalStringProperty:
           type: string
           nullable: true
@@ -374,7 +376,7 @@ components:
           type: string
           nullable: true
       additionalProperties: false
-    ResultClass:
+    ResultExampleClass:
       required:
         - id
       type: object
