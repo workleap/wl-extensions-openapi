@@ -199,11 +199,34 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: '404'
-  /withNoAnnotationForAcceptedAndUnprocessableResponse:
+  /withNoAnnotationForAcceptedAndUnprocessableResponseNoType:
     get:
       tags:
         - TypedResult
-      operationId: TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponse
+      operationId: TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponseNoType
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '202':
+          description: '202'
+        '422':
+          description: '422'
+  /withNoAnnotationForAcceptedAndUnprocessableResponseWithType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponseWithType
       parameters:
         - name: id
           in: query
@@ -226,6 +249,83 @@ paths:
                 $ref: '#/components/schemas/TypedResultExample'
         '422':
           description: '422'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+  /withNoAnnotationForCreatedAndConflictNoType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationForCreatedAndConflictNoType
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '201':
+          description: '201'
+        '409':
+          description: '409'
+  /withNoAnnotationForCreatedAndConflictWithType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationForCreatedAndConflictWithType
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '201':
+          description: '201'
+          content:
+            application/json:
+              schema:
+                type: string
+        '409':
+          description: '409'
+          content:
+            application/json:
+              schema:
+                type: string
+  /withNoAnnotationForNoContentAndUnauthorized:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationForNoContentAndUnauthorized
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+        '204':
+          description: '204'
+        '401':
+          description: '401'
   /voidOk:
     get:
       tags:
@@ -253,11 +353,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
-  /withExceptionsWithExtensions:
+  /withExceptionsNoType:
     get:
       tags:
         - TypedResult
-      operationId: TypedResultWithExceptionsWithExtensions
+      operationId: TypedResultWithExceptionsNoType
+      parameters:
+        - name: id
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '403':
+          description: '403'
+        '500':
+          description: '500'
+  /withExceptionsWithType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithExceptionsWithType
       parameters:
         - name: id
           in: query
