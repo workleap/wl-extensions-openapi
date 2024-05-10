@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -8,11 +7,10 @@ namespace Workleap.Extensions.OpenAPI.TypedResult;
 internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
 {
     // Based on this documentation: https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-8.0
-    private static readonly IReadOnlyList<string> DefaultContentTypes = new List<string>() { "application/json", "text/json", "text/plain", };
+    private const string DefaultContentType = "application/json";
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        var contentTypes = GetContentTypes(context);
         foreach (var responseMetadata in GetResponsesMetadata(context.MethodInfo.ReturnType))
         {
             // If the response content is already set, we won't overwrite it. This is the case for minimal APIs and
@@ -33,39 +31,11 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             if (responseMetadata.SchemaType != null)
             {
                 var schema = context.SchemaGenerator.GenerateSchema(responseMetadata.SchemaType, context.SchemaRepository);
-
-                foreach (var contentType in contentTypes)
-                {
-                    response.Content.Add(contentType, new OpenApiMediaType { Schema = schema });
-                }
+                response.Content.Add(DefaultContentType, new OpenApiMediaType { Schema = schema });
             }
 
             operation.Responses[responseMetadata.HttpCode.ToString()] = response;
         }
-    }
-
-    private static IReadOnlyCollection<string> GetContentTypes(OperationFilterContext context)
-    {
-        var methodProducesAttribute = context.MethodInfo.GetCustomAttribute<Microsoft.AspNetCore.Mvc.ProducesAttribute>();
-        if (methodProducesAttribute != null)
-        {
-            return methodProducesAttribute.ContentTypes.ToList();
-        }
-
-        var controllerProducesAttribute = context.MethodInfo.DeclaringType?.GetCustomAttribute<Microsoft.AspNetCore.Mvc.ProducesAttribute>();
-        if (controllerProducesAttribute != null)
-        {
-            return controllerProducesAttribute.ContentTypes.ToList();
-        }
-
-        var endpointProducesAttribute = context.ApiDescription.ActionDescriptor.EndpointMetadata.OfType<Microsoft.AspNetCore.Mvc.ProducesAttribute>().FirstOrDefault();
-        if (endpointProducesAttribute != null)
-        {
-            return endpointProducesAttribute.ContentTypes.ToList();
-        }
-
-        // Fallback on default content types, not supporting globally defined content types
-        return DefaultContentTypes;
     }
 
     internal static IEnumerable<ResponseMetadata> GetResponsesMetadata(Type returnType)

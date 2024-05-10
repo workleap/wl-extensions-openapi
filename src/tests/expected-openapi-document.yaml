@@ -407,6 +407,17 @@ paths:
             application/json:
               schema:
                 type: string
+  /useApplicationJsonContentType:
+    get:
+      tags:
+        - TypedResultNoProduces
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   schemas:
     ProblemDetails:
