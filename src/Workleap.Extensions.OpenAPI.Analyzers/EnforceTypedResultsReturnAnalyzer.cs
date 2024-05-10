@@ -38,10 +38,11 @@ public class EnforceTypedResultsReturnAnalyzer : DiagnosticAnalyzer
     {
         private INamedTypeSymbol? TaskOfTSymbol { get; } = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
         private INamedTypeSymbol? ValueTaskOfTSymbol { get; } = compilation.GetTypeByMetadataName("System.Threading.Tasks.ValueTask`1");
-        private INamedTypeSymbol? ResultSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult");
-        private INamedTypeSymbol? ActionResultSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.IActionResult");
+        private INamedTypeSymbol? ResultInterfaceSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IResult");
+        private INamedTypeSymbol? ActionResultInterfaceSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.IActionResult");
+        private INamedTypeSymbol? ActionResultSymbol { get; } = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ActionResult");
 
-        public bool IsValid => this.ActionResultSymbol is not null || this.ResultSymbol is not null;
+        public bool IsValid => this.ActionResultInterfaceSymbol is not null || this.ResultInterfaceSymbol is not null;
 
         public void ValidateEndpointResponseType(SymbolAnalysisContext context)
         {
@@ -70,7 +71,9 @@ public class EnforceTypedResultsReturnAnalyzer : DiagnosticAnalyzer
 
         private bool IsWeaklyTypedResults(ITypeSymbol currentClassSymbol)
         {
-            return SymbolEqualityComparer.Default.Equals(currentClassSymbol, this.ResultSymbol) || SymbolEqualityComparer.Default.Equals(currentClassSymbol, this.ActionResultSymbol);
+            return SymbolEqualityComparer.Default.Equals(currentClassSymbol, this.ResultInterfaceSymbol)
+                   || SymbolEqualityComparer.Default.Equals(currentClassSymbol, this.ActionResultInterfaceSymbol)
+                   || SymbolEqualityComparer.Default.Equals(currentClassSymbol, this.ActionResultSymbol);
         }
     }
 }

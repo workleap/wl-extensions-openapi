@@ -168,4 +168,34 @@ public class EnforceTypedResultsReturnAnalyzerTests : BaseAnalyzerTest<EnforceTy
         await this.WithSourceCode(source)
             .RunAsync();
     }
+
+    [Fact]
+    public async Task Given_ReturnActionResult_When_Analyze_Then_Diagnostic()
+    {
+        const string source = """
+                              public class AnalyzersController : ControllerBase
+                              {
+                                [HttpGet]
+                                public ActionResult {|WLOAS002:GetSampleEndpoint|}() => throw null;
+                              }
+                              """;
+
+        await this.WithSourceCode(source)
+            .RunAsync();
+    }
+
+    [Fact]
+    public async Task Given_ReturnTaskOfActionResult_When_Analyze_Then_Diagnostic()
+    {
+        const string source = """
+                              public class AnalyzersController : ControllerBase
+                              {
+                                [HttpGet]
+                                public Task<ActionResult> {|WLOAS002:GetSampleEndpoint|}() => throw null;
+                              }
+                              """;
+
+        await this.WithSourceCode(source)
+            .RunAsync();
+    }
 }

@@ -83,6 +83,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             Add(204, "Microsoft.AspNetCore.Http.HttpResults.NoContent");
             Add(400, "Microsoft.AspNetCore.Http.HttpResults.BadRequest");
             Add(401, "Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult");
+            Add(403, "Workleap.Extensions.OpenAPI.TypedResult.Forbidden");
             Add(404, "Microsoft.AspNetCore.Http.HttpResults.NotFound");
             Add(409, "Microsoft.AspNetCore.Http.HttpResults.Conflict");
             Add(422, "Microsoft.AspNetCore.Http.HttpResults.UnprocessableEntity");

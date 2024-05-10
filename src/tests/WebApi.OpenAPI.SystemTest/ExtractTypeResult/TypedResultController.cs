@@ -46,14 +46,61 @@ public class TypedResultController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/withNoAnnotationForAcceptedAndUnprocessableResponse")]
-    public Results<Ok<TypedResultExample>, Accepted<TypedResultExample>, UnprocessableEntity> TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponse(int id)
+    [Route("/withNoAnnotationForAcceptedAndUnprocessableResponseNoType")]
+    public Results<Ok<TypedResultExample>, Accepted, UnprocessableEntity> TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponseNoType(int id)
     {
         return id switch
         {
             < 0 => TypedResults.UnprocessableEntity(),
             0 => TypedResults.Ok(new TypedResultExample("Example")),
-            _ => TypedResults.Accepted("hardcoded uri", new TypedResultExample("Example"))
+            _ => TypedResults.Accepted("hardcoded uri")
+        };
+    }
+
+    [HttpGet]
+    [Route("/withNoAnnotationForAcceptedAndUnprocessableResponseWithType")]
+    public Results<Ok<TypedResultExample>, Accepted<TypedResultExample>, UnprocessableEntity<TypedResultExample>> TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponseWithType(int id)
+    {
+        return id switch
+        {
+            < 0 => TypedResults.UnprocessableEntity(new TypedResultExample("Example")),
+            0 => TypedResults.Ok(new TypedResultExample("Example")),
+            _ => TypedResults.Accepted("hardcoded uri", new TypedResultExample("example"))
+        };
+    }
+
+    [HttpGet]
+    [Route("/withNoAnnotationForCreatedAndConflictNoType")]
+    public Results<Ok<TypedResultExample>, Created, Conflict> TypedResultWithNoAnnotationForCreatedAndConflictNoType(int id)
+    {
+        return id switch
+        {
+            < 0 => TypedResults.Conflict(),
+            0 => TypedResults.Ok(new TypedResultExample("Example")),
+            _ => TypedResults.Created()
+        };
+    }
+
+    [HttpGet]
+    [Route("/withNoAnnotationForCreatedAndConflictWithType")]
+    public Results<Ok<TypedResultExample>, Created<string>, Conflict<string>> TypedResultWithNoAnnotationForCreatedAndConflictWithType(int id)
+    {
+        return id switch
+        {
+            < 0 => TypedResults.Conflict("Conflict"),
+            0 => TypedResults.Ok(new TypedResultExample("Example")),
+            _ => TypedResults.Created("hardcoded uri", "Created")
+        };
+    }
+
+    [HttpGet]
+    [Route("/withNoAnnotationForNoContentAndUnauthorized")]
+    public Results<NoContent, UnauthorizedHttpResult> TypedResultWithNoAnnotationForNoContentAndUnauthorized(int id)
+    {
+        return id switch
+        {
+            < 0 => TypedResults.NoContent(),
+            _ => TypedResults.Unauthorized()
         };
     }
 
@@ -73,11 +120,24 @@ public class TypedResultController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/withExceptionsWithExtensions")]
-    public Results<Ok<TypedResultExample>, InternalServerError<string>> TypedResultWithExceptionsWithExtensions(int id)
+    [Route("/withExceptionsNoType")]
+    public Results<Ok<TypedResultExample>, Forbidden, InternalServerError> TypedResultWithExceptionsNoType(int id)
     {
         return id switch
         {
+            0 => TypedResultsExtensions.Forbidden(),
+            < 0 => TypedResultsExtensions.InternalServerError(),
+            _ => TypedResults.Ok(new TypedResultExample("Example"))
+        };
+    }
+
+    [HttpGet]
+    [Route("/withExceptionsWithType")]
+    public Results<Ok<TypedResultExample>, Forbidden<string>, InternalServerError<string>> TypedResultWithExceptionsWithType(int id)
+    {
+        return id switch
+        {
+            0 => TypedResultsExtensions.Forbidden("Forbidden"),
             < 0 => TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
             _ => TypedResults.Ok(new TypedResultExample("Example"))
         };
