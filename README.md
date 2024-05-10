@@ -161,7 +161,8 @@ public Ok<TypedResultExample> EnforceStronglyTypedResponse() //This is a strongl
 
 ### Limitations
 
-We currently only support the extraction of the default media type and not any globally defined content types such as [`{ "application/json", "text/json", "text/plain", }`](https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-8.0)
+[Given that HttpResults return types do not leverage the configured Formatters](https://learn.microsoft.com/en-us/aspnet/core/web-api/action-return-types?view=aspnetcore-8.0#httpresults-type), content negotiation is not supported for these endpoints and the produced Content-Type is decided by HttpResults implementation. For our use cases, it will be `application/json`.
+
 
 ## Building, releasing and versioning
 
