@@ -142,4 +142,31 @@ public class TypedResultController : ControllerBase
             _ => TypedResults.Ok(new TypedResultExample("Example"))
         };
     }
+
+    [HttpGet]
+    [Route("/validateOkNotPresent")]
+    public Results<Created<TypedResultExample>, Forbidden<string>, InternalServerError<string>> TypedResultWithOutOk(int id)
+    {
+        return id switch
+        {
+            0 => TypedResultsExtensions.Forbidden("Forbidden"),
+            < 0 => TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
+            _ => TypedResults.Created("hardcoded uri", new TypedResultExample("Example"))
+        };
+    }
+
+    [HttpGet]
+    [Route("/validateOkNotPresentButAnnotationPresent")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(string))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, Type = typeof(string))]
+    public Results<Created<TypedResultExample>, Forbidden<string>, InternalServerError<string>> TypedResultWithoutOkButAnnotationPresent(int id)
+    {
+        return id switch
+        {
+            0 => TypedResultsExtensions.Forbidden("Forbidden"),
+            < 0 => TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
+            _ => TypedResults.Created("hardcoded uri", new TypedResultExample("Example"))
+        };
+    }
 }

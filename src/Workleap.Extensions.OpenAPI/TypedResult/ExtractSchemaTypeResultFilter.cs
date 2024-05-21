@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using static System.Int32;
 
 namespace Workleap.Extensions.OpenAPI.TypedResult;
 
@@ -8,11 +9,18 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
 {
     // Based on this documentation: https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-8.0
     private const string DefaultContentType = "application/json";
+    private const string ProducesResponseTypeAttribute = "Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute";
+    private const string SwaggerResponseTypeAttribute = "Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute";
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
+        // If the endpoint has annotations defined, we don't want to remove them.
+        var responseCodes = ExtractResponseCodesFromAttributes(context);
+
+        var usesTypedResultsReturnType = false;
         foreach (var responseMetadata in GetResponsesMetadata(context.MethodInfo.ReturnType))
         {
+            responseCodes.Add(responseMetadata.HttpCode);
             // If the response content is already set, we won't overwrite it. This is the case for minimal APIs and
             if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse))
             {
@@ -25,6 +33,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
                 }
             }
 
+            usesTypedResultsReturnType = true;
             var response = new OpenApiResponse();
             response.Description = responseMetadata.HttpCode.ToString();
 
@@ -35,6 +44,11 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             }
 
             operation.Responses[responseMetadata.HttpCode.ToString()] = response;
+        }
+
+        if (usesTypedResultsReturnType)
+        {
+            RemoveUnnecessaryResponses(operation, responseCodes);
         }
     }
 
@@ -119,6 +133,49 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
         }
 
         return null;
+    }
+
+    private static HashSet<int> ExtractResponseCodesFromAttributes(OperationFilterContext context)
+    {
+        HashSet<int> responseCodes = [];
+        foreach (var attribute in context.MethodInfo.CustomAttributes)
+        {
+            if (attribute.AttributeType.FullName is not (ProducesResponseTypeAttribute or SwaggerResponseTypeAttribute))
+            {
+                continue;
+            }
+
+            foreach (var argument in attribute.ConstructorArguments)
+            {
+                if (argument.Value is int httpCode)
+                {
+                    responseCodes.Add(httpCode);
+                }
+            }
+        }
+
+        return responseCodes;
+    }
+
+    private static void RemoveUnnecessaryResponses(OpenApiOperation operation, HashSet<int> responseCodes)
+    {
+        var keysToRemove = new List<string>();
+
+        foreach (var response in operation.Responses)
+        {
+            if (responseCodes.Contains(Parse(response.Key)))
+            {
+                continue;
+            }
+
+            keysToRemove.Add(response.Key);
+            operation.Responses.Remove(response.Key);
+        }
+
+        foreach (var responseToRemove in keysToRemove)
+        {
+            operation.Responses.Remove(responseToRemove);
+        }
     }
 
     internal class ResponseMetadata
