@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using static System.Int32;
 
 namespace Workleap.Extensions.OpenAPI.TypedResult;
 
@@ -163,7 +162,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
 
         foreach (var response in operation.Responses)
         {
-            if (responseCodes.Contains(Parse(response.Key)))
+            if (responseCodes.Contains(int.Parse(response.Key)))
             {
                 continue;
             }
