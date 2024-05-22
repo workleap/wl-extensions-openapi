@@ -1,4 +1,6 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -11,20 +13,26 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
+        // If the endpoint has annotations defined, we don't want to remove them.
+        var explicitlyDefinedResponseCodes = ExtractResponseCodesFromAttributes(context.MethodInfo.CustomAttributes);
+
+        var usesTypedResultsReturnType = false;
         foreach (var responseMetadata in GetResponsesMetadata(context.MethodInfo.ReturnType))
         {
+            explicitlyDefinedResponseCodes.Add(responseMetadata.HttpCode);
             // If the response content is already set, we won't overwrite it. This is the case for minimal APIs and
+            // when the ProducesResponseType attribute is present.
             if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse))
             {
                 var canEnrichContent = !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
 
-                // when the ProducesResponseType attribute is present.
                 if (!canEnrichContent)
                 {
                     continue;
                 }
             }
 
+            usesTypedResultsReturnType = true;
             var response = new OpenApiResponse();
             response.Description = responseMetadata.HttpCode.ToString();
 
@@ -35,6 +43,12 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             }
 
             operation.Responses[responseMetadata.HttpCode.ToString()] = response;
+        }
+
+        // The spec is generated with a default 200 response, we need to remove it if the endpoint does not return 200.
+        if (usesTypedResultsReturnType && !explicitlyDefinedResponseCodes.Contains(200))
+        {
+            operation.Responses.Remove("200");
         }
     }
 
@@ -88,6 +102,28 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
                 }
             }
         }
+    }
+
+    internal static HashSet<int> ExtractResponseCodesFromAttributes(IEnumerable<CustomAttributeData> customAttributes)
+    {
+        HashSet<int> responseCodes = [];
+        foreach (var attribute in customAttributes)
+        {
+            if (!typeof(ProducesResponseTypeAttribute).IsAssignableFrom(attribute.AttributeType))
+            {
+                continue;
+            }
+
+            foreach (var argument in attribute.ConstructorArguments)
+            {
+                if (argument.Value is int httpCode)
+                {
+                    responseCodes.Add(httpCode);
+                }
+            }
+        }
+
+        return responseCodes;
     }
 
     // Initialize an instance of the result type to get the response metadata and return null if it's not possible

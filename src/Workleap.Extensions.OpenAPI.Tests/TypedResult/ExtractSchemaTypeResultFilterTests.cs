@@ -1,14 +1,16 @@
 ﻿using System.Net;
+using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using Workleap.Extensions.OpenAPI.TypedResult;
 
 namespace Workleap.Extensions.OpenAPI.Tests.TypedResult;
 
 public class ExtractSchemaTypeResultFilterTests
 {
-    public static IEnumerable<object[]> GetData()
+    public static IEnumerable<object[]> GetResponseMetadataData()
     {
         // Synchronous results
         yield return new object[]
@@ -98,11 +100,30 @@ public class ExtractSchemaTypeResultFilterTests
         };
     }
 
+    public static IEnumerable<object[]> GetAttributesData()
+    {
+        var methodsAndExpectedCodes = new Dictionary<string, HashSet<int>>
+        {
+            { "WithOneProducesResponse", [200] },
+            { "WithTwoProducesResponse", [200, 404] },
+            { "WithProducesResponseWithType", [200, 404] },
+            { "WithProducesResponseWithSwaggerResponse", [200, 400, 404] }
+        };
+
+        foreach (var pair in methodsAndExpectedCodes)
+        {
+            var attributes = typeof(AnnotationTestClass).GetMethod(pair.Key)?.CustomAttributes;
+            if (attributes != null)
+            {
+                yield return new object[] { attributes, pair.Value };
+            }
+        }
+    }
+
     [Theory]
-    [MemberData(nameof(GetData))]
+    [MemberData(nameof(GetResponseMetadataData))]
     internal void GetResponsesMetadata_ReturnsCorrectMetadata_ForTypedResultControllerMethods(Type returnType, IList<ExtractSchemaTypeResultFilter.ResponseMetadata> expectedMetadata)
     {
-
         // Act
         var responsesMetadata = ExtractSchemaTypeResultFilter.GetResponsesMetadata(returnType).ToList();
 
@@ -116,8 +137,46 @@ public class ExtractSchemaTypeResultFilterTests
         }
     }
 
+    [Theory]
+    [MemberData(nameof(GetAttributesData))]
+    internal void ExtractResponseCodesFromAttributes_ReturnsCorrectHashSet(IEnumerable<CustomAttributeData> endpointAttributes, HashSet<int> expectedResponseCodes)
+    {
+        // Act
+        var actualResponsesCodes = ExtractSchemaTypeResultFilter.ExtractResponseCodesFromAttributes(endpointAttributes);
+
+        // Assert
+        Assert.Equal(actualResponsesCodes, expectedResponseCodes);
+    }
+
     private sealed class TestTypedSchema
     {
         public int Count { get; set; }
+    }
+
+    private sealed class AnnotationTestClass
+    {
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public void WithOneProducesResponse()
+        {
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public void WithTwoProducesResponse()
+        {
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
+        public void WithProducesResponseWithType()
+        {
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
+        public void WithProducesResponseWithSwaggerResponse()
+        {
+        }
     }
 }

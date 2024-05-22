@@ -1,5 +1,4 @@
 extends: [https://raw.githubusercontent.com/gsoft-inc/wl-api-guidelines/main/.spectral.yaml]
 rules:
-  application-json-response-must-not-be-type-string: false
   must-return-content-types: false
   operation-operationId: false
