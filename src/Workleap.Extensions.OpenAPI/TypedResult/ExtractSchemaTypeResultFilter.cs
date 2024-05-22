@@ -21,11 +21,11 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
         {
             responseCodes.Add(responseMetadata.HttpCode);
             // If the response content is already set, we won't overwrite it. This is the case for minimal APIs and
+            // when the ProducesResponseType attribute is present.
             if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse))
             {
                 var canEnrichContent = !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
 
-                // when the ProducesResponseType attribute is present.
                 if (!canEnrichContent)
                 {
                     continue;
@@ -45,9 +45,10 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             operation.Responses[responseMetadata.HttpCode.ToString()] = response;
         }
 
-        if (usesTypedResultsReturnType)
+        // The spec is generated with a default 200 response, we need to remove it if the endpoint does not return 200.
+        if (usesTypedResultsReturnType && !responseCodes.Contains(200))
         {
-            RemoveUnnecessaryResponses(operation, responseCodes);
+            operation.Responses.Remove("200");
         }
     }
 
@@ -154,27 +155,6 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
         }
 
         return responseCodes;
-    }
-
-    private static void RemoveUnnecessaryResponses(OpenApiOperation operation, HashSet<int> responseCodes)
-    {
-        var keysToRemove = new List<string>();
-
-        foreach (var response in operation.Responses)
-        {
-            if (responseCodes.Contains(int.Parse(response.Key)))
-            {
-                continue;
-            }
-
-            keysToRemove.Add(response.Key);
-            operation.Responses.Remove(response.Key);
-        }
-
-        foreach (var responseToRemove in keysToRemove)
-        {
-            operation.Responses.Remove(responseToRemove);
-        }
     }
 
     internal class ResponseMetadata
