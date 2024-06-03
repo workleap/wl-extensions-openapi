@@ -148,7 +148,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                 {
                     return;
                 }
-                
+
                 if (attribute.ConstructorArguments.Length == 1)
                 {
                     if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
@@ -180,12 +180,12 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                 {
                     return;
                 }
-                
+
                 if (attribute.ConstructorArguments.Length > 2 && attribute.ConstructorArguments[0].Value is int statusCodeValue)
                 {
                     if (attribute.ConstructorArguments[2].Value is ITypeSymbol typeFromAnnotation)
                     {
-                        ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, typeFromAnnotation, methodSignatureStatusCodeToTypeMap, context);    
+                        ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, typeFromAnnotation, methodSignatureStatusCodeToTypeMap, context);
                     }
                     else if (this._statusCodeToResultsMap.TryGetValue(statusCodeValue, out var type))
                     {
