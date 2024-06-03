@@ -144,12 +144,15 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             // For the annotations [ProducesResponseType(<StatusCode>)], [ProducesResponseType(<typeof()>, <StatusCode>)] and [ProducesResponseType(<StatusCode>, Type = <typeof()>)] 
             if (attribute.AttributeClass.Equals(this.ProducesResponseSymbol, SymbolEqualityComparer.Default))
             {
-                if (attribute.NamedArguments.Length > 0 && ValidateTypeInNamedArguments(context, attribute, methodSignatureStatusCodeToTypeMap))
+                if (TryGetTypeFromNamedArguments(attribute, out var typeFromNamedArgument))
                 {
-                    return;
+                    if (attribute.ConstructorArguments[0].Value is int statusCodeValue && typeFromNamedArgument != null)
+                    {
+                        ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, typeFromNamedArgument, methodSignatureStatusCodeToTypeMap, context);
+                    }
                 }
 
-                if (attribute.ConstructorArguments.Length == 1)
+                else if (attribute.ConstructorArguments.Length == 1)
                 {
                     if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
                     {
@@ -176,12 +179,15 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             // For the annotations [SwaggerResponse(<StatusCode>, "description", <typeof()>] and [SwaggerResponse(<StatusCode>, "description", Type = <typeof()>]
             else if (attribute.AttributeClass.ConstructedFrom.Equals(this.SwaggerResponseSymbol, SymbolEqualityComparer.Default))
             {
-                if (attribute.NamedArguments.Length > 0 && ValidateTypeInNamedArguments(context, attribute, methodSignatureStatusCodeToTypeMap))
+                if (TryGetTypeFromNamedArguments(attribute, out var typeFromNamedArgument))
                 {
-                    return;
+                    if (attribute.ConstructorArguments[0].Value is int statusCodeValue && typeFromNamedArgument != null)
+                    {
+                        ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, typeFromNamedArgument, methodSignatureStatusCodeToTypeMap, context);
+                    }
                 }
 
-                if (attribute.ConstructorArguments.Length > 2 && attribute.ConstructorArguments[0].Value is int statusCodeValue)
+                else if (attribute.ConstructorArguments.Length > 2 && attribute.ConstructorArguments[0].Value is int statusCodeValue)
                 {
                     if (attribute.ConstructorArguments[2].Value is ITypeSymbol typeFromAnnotation)
                     {
@@ -195,20 +201,16 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             }
         }
 
-        private static bool ValidateTypeInNamedArguments(SymbolAnalysisContext context, AttributeData attribute,
-            Dictionary<int, List<ITypeSymbol>> methodSignatureStatusCodeToTypeMap)
+        private static bool TryGetTypeFromNamedArguments(AttributeData attribute, out ITypeSymbol? type)
         {
-            if (attribute.NamedArguments.FirstOrDefault(kp => kp.Key == "Type") is not { Value.Value: ITypeSymbol type })
+            var typeNamedArgument = attribute.NamedArguments.FirstOrDefault(kp => kp.Key == "Type");
+            if (typeNamedArgument.Value.Value is ITypeSymbol matchedType)
             {
-                return false;
-            }
-
-            if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
-            {
-                ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, type, methodSignatureStatusCodeToTypeMap, context);
+                type = matchedType;
                 return true;
             }
 
+            type = null;
             return false;
         }
 
