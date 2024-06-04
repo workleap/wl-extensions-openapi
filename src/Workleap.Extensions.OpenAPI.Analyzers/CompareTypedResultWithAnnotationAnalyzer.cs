@@ -141,62 +141,83 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
                 return;
             }
 
-            // For the annotations [ProducesResponseType(<StatusCode>)], [ProducesResponseType(<typeof()>, <StatusCode>)] and [ProducesResponseType(<StatusCode>, Type = <typeof()>)] 
-            if (attribute.AttributeClass.Equals(this.ProducesResponseSymbol, SymbolEqualityComparer.Default))
+            // For the case when the Type is a named argument 
+            if (TryGetTypeFromNamedArguments(attribute, out var typeFromNamedArgument) && typeFromNamedArgument != null)
             {
-                if (TryGetTypeFromNamedArguments(attribute, out var typeFromNamedArgument))
-                {
-                    if (attribute.ConstructorArguments[0].Value is int statusCodeValue && typeFromNamedArgument != null)
-                    {
-                        ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, typeFromNamedArgument, methodSignatureStatusCodeToTypeMap, context);
-                    }
-                }
+                this.HandleTypeAsNamedArgument(context, attribute, methodSignatureStatusCodeToTypeMap, typeFromNamedArgument);
+            }
 
-                else if (attribute.ConstructorArguments.Length == 1)
-                {
-                    if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
-                    {
-                        if (this._statusCodeToResultsMap.TryGetValue(statusCodeValue, out var type))
-                        {
-                            ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, type, methodSignatureStatusCodeToTypeMap, context);
-                        }
-                    }
-                }
-                else if (attribute.ConstructorArguments[1].Value is int statusCodeValue && attribute.ConstructorArguments[0].Value is ITypeSymbol type)
-                {
-                    ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, type, methodSignatureStatusCodeToTypeMap, context);
-                }
+            // For the annotations [ProducesResponseType(<StatusCode>)], [ProducesResponseType(<typeof()>, <StatusCode>)] and [ProducesResponseType(<StatusCode>, Type = <typeof()>)] 
+            else if (attribute.AttributeClass.Equals(this.ProducesResponseSymbol, SymbolEqualityComparer.Default))
+            {
+                this.HandleProducesResponseAnnotation(context, attribute, methodSignatureStatusCodeToTypeMap);
             }
             // For the annotations [ProducesResponseType<T>(<StatusCode>)]
             else if (attribute.AttributeClass.ConstructedFrom.Equals(this.ProducesResponseOfTSymbol, SymbolEqualityComparer.Default))
             {
-                if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
-                {
-                    ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, attribute.AttributeClass.TypeArguments[0], methodSignatureStatusCodeToTypeMap, context);
-                }
+                this.HandleProducesResponseOfTAnnotation(context, attribute, methodSignatureStatusCodeToTypeMap);
             }
 
             // For the annotations [SwaggerResponse(<StatusCode>, "description", <typeof()>] and [SwaggerResponse(<StatusCode>, "description", Type = <typeof()>]
             else if (attribute.AttributeClass.ConstructedFrom.Equals(this.SwaggerResponseSymbol, SymbolEqualityComparer.Default))
             {
-                if (TryGetTypeFromNamedArguments(attribute, out var typeFromNamedArgument))
+                this.HandleSwaggerResponseAnnotation(context, attribute, methodSignatureStatusCodeToTypeMap);
+            }
+        }
+
+        private void HandleTypeAsNamedArgument(SymbolAnalysisContext context, AttributeData attribute,
+            Dictionary<int, List<ITypeSymbol>> methodSignatureStatusCodeToTypeMap, ITypeSymbol typeFromNamedArgument)
+        {
+            if (attribute.ConstructorArguments[0].Value is int statusCodeValue)
+            {
+                ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, typeFromNamedArgument, methodSignatureStatusCodeToTypeMap, context);
+            }
+        }
+
+        private void HandleProducesResponseAnnotation(SymbolAnalysisContext context, AttributeData attribute,
+            Dictionary<int, List<ITypeSymbol>> methodSignatureStatusCodeToTypeMap)
+        {
+            // If there is a single argument, then StatusCode is the first argument.
+            if (attribute.ConstructorArguments.Length == 1)
+            {
+                if (attribute.ConstructorArguments[0].Value is not int statusCodeValue)
                 {
-                    if (attribute.ConstructorArguments[0].Value is int statusCodeValue && typeFromNamedArgument != null)
-                    {
-                        ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, typeFromNamedArgument, methodSignatureStatusCodeToTypeMap, context);
-                    }
+                    return;
                 }
 
-                else if (attribute.ConstructorArguments.Length > 2 && attribute.ConstructorArguments[0].Value is int statusCodeValue)
+                if (this._statusCodeToResultsMap.TryGetValue(statusCodeValue, out var type))
                 {
-                    if (attribute.ConstructorArguments[2].Value is ITypeSymbol typeFromAnnotation)
-                    {
-                        ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, typeFromAnnotation, methodSignatureStatusCodeToTypeMap, context);
-                    }
-                    else if (this._statusCodeToResultsMap.TryGetValue(statusCodeValue, out var type))
-                    {
-                        ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, type, methodSignatureStatusCodeToTypeMap, context);
-                    }
+                    ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, type, methodSignatureStatusCodeToTypeMap, context);
+                }
+            }
+            // If there are two arguments, then StatusCode is the second argument.
+            else if (attribute.ConstructorArguments[1].Value is int statusCodeValue && attribute.ConstructorArguments[0].Value is ITypeSymbol type)
+            {
+                ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, type, methodSignatureStatusCodeToTypeMap, context);
+            }
+        }
+
+        private void HandleProducesResponseOfTAnnotation(SymbolAnalysisContext context, AttributeData attribute,
+            Dictionary<int, List<ITypeSymbol>> methodSignatureStatusCodeToTypeMap)
+        {
+            if (attribute.ConstructorArguments[0].Value is int statusCodeValue && attribute.AttributeClass != null)
+            {
+                ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, attribute.AttributeClass.TypeArguments[0], methodSignatureStatusCodeToTypeMap, context);
+            }
+        }
+
+        private void HandleSwaggerResponseAnnotation(SymbolAnalysisContext context, AttributeData attribute,
+            Dictionary<int, List<ITypeSymbol>> methodSignatureStatusCodeToTypeMap)
+        {
+            if (attribute.ConstructorArguments.Length > 2 && attribute.ConstructorArguments[0].Value is int statusCodeValue)
+            {
+                if (attribute.ConstructorArguments[2].Value is ITypeSymbol typeFromAnnotation)
+                {
+                    ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, typeFromAnnotation, methodSignatureStatusCodeToTypeMap, context);
+                }
+                else if (this._statusCodeToResultsMap.TryGetValue(statusCodeValue, out var type))
+                {
+                    ValidateAnnotationForTypeMismatch(attribute, statusCodeValue, type, methodSignatureStatusCodeToTypeMap, context);
                 }
             }
         }
