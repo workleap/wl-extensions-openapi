@@ -51,7 +51,7 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, XUnitVe
     // Specify the language version and that diagnostics should be reported for missing documentation.
     protected override ParseOptions CreateParseOptions()
     {
-        return new CSharpParseOptions(LanguageVersion.CSharp11, DocumentationMode.Diagnose);
+        return new CSharpParseOptions(LanguageVersion.CSharp12, DocumentationMode.Diagnose);
     }
 
     protected BaseAnalyzerTest<TAnalyzer> WithSourceCode(string sourceCode)
