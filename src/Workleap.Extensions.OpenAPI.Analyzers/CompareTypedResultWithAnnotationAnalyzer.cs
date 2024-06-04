@@ -136,7 +136,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
         private void ValidateAnnotationWithTypedResult(SymbolAnalysisContext context, AttributeData attribute,
             Dictionary<int, List<ITypeSymbol>> methodSignatureStatusCodeToTypeMap)
         {
-            if (attribute.AttributeClass == null || attribute.ConstructorArguments.Length == 0 && attribute.NamedArguments.Length == 0)
+            if (attribute.AttributeClass == null || (attribute.ConstructorArguments.Length == 0 && attribute.NamedArguments.Length == 0))
             {
                 return;
             }
