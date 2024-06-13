@@ -136,7 +136,7 @@ paths:
             format: int32
       responses:
         '200':
-          description: '200'
+          description: OK
           content:
             application/json:
               schema:
@@ -186,19 +186,19 @@ paths:
             format: int32
       responses:
         '200':
-          description: '200'
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '400':
-          description: '400'
+          description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
         '404':
-          description: '404'
+          description: Not Found
   /withNoAnnotationForAcceptedAndUnprocessableResponseNoType:
     get:
       tags:
@@ -213,15 +213,15 @@ paths:
             format: int32
       responses:
         '200':
-          description: '200'
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '202':
-          description: '202'
+          description: OK
         '422':
-          description: '422'
+          description: Unprocessable Content
   /withNoAnnotationForAcceptedAndUnprocessableResponseWithType:
     get:
       tags:
@@ -236,19 +236,19 @@ paths:
             format: int32
       responses:
         '200':
-          description: '200'
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '202':
-          description: '202'
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '422':
-          description: '422'
+          description: Unprocessable Content
           content:
             application/json:
               schema:
@@ -267,15 +267,15 @@ paths:
             format: int32
       responses:
         '200':
-          description: '200'
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '201':
-          description: '201'
+          description: Created
         '409':
-          description: '409'
+          description: Conflict
   /withNoAnnotationForCreatedAndConflictWithType:
     get:
       tags:
@@ -290,19 +290,19 @@ paths:
             format: int32
       responses:
         '200':
-          description: '200'
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '201':
-          description: '201'
+          description: Created
           content:
             application/json:
               schema:
                 type: string
         '409':
-          description: '409'
+          description: Conflict
           content:
             application/json:
               schema:
@@ -321,9 +321,9 @@ paths:
             format: int32
       responses:
         '204':
-          description: '204'
+          description: Accepted
         '401':
-          description: '401'
+          description: Unauthorized
   /voidOk:
     get:
       tags:
@@ -365,15 +365,15 @@ paths:
             format: int32
       responses:
         '200':
-          description: '200'
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '403':
-          description: '403'
+          description: Forbidden
         '500':
-          description: '500'
+          description: Internal Server Error
   /withExceptionsWithType:
     get:
       tags:
@@ -388,19 +388,19 @@ paths:
             format: int32
       responses:
         '200':
-          description: '200'
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '403':
-          description: '403'
+          description: Forbidden
           content:
             application/json:
               schema:
                 type: string
         '500':
-          description: '500'
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -419,19 +419,19 @@ paths:
             format: int32
       responses:
         '201':
-          description: '201'
+          description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '403':
-          description: '403'
+          description: Forbidden
           content:
             application/json:
               schema:
                 type: string
         '500':
-          description: '500'
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -464,19 +464,19 @@ paths:
               schema:
                 type: string
         '201':
-          description: '201'
+          description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '403':
-          description: '403'
+          description: Forbidden
           content:
             application/json:
               schema:
                 type: string
         '500':
-          description: '500'
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -487,7 +487,7 @@ paths:
         - TypedResultNoProduces
       responses:
         '200':
-          description: '200'
+          description: OK
           content:
             application/json:
               schema:
