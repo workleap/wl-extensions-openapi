@@ -34,7 +34,14 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
 
             usesTypedResultsReturnType = true;
             var response = new OpenApiResponse();
-            response.Description = responseMetadata.HttpCode.ToString();
+            if (HttpResultsStatusCodeTypeHelpers.StatusCodesToDescription.TryGetValue(responseMetadata.HttpCode, out var description))
+            {
+                response.Description = description;
+            }
+            else
+            {
+                response.Description = responseMetadata.HttpCode.ToString();
+            }
 
             if (responseMetadata.SchemaType != null)
             {
