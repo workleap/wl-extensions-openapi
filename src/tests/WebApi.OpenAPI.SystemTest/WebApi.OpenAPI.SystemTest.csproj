@@ -23,7 +23,8 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <OpenApiSpectralRulesetUrl>./custom.spectral.yaml</OpenApiSpectralRulesetUrl>
+<!--    <OpenApiSpectralRulesetUrl>./custom.spectral.yaml</OpenApiSpectralRulesetUrl>-->
+    <OpenApiServiceProfile>frontend</OpenApiServiceProfile>
   </PropertyGroup>
 
   <ItemGroup>

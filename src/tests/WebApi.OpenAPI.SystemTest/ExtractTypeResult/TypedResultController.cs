@@ -127,7 +127,7 @@ public class TypedResultController : ControllerBase
         {
             0 => TypedResultsExtensions.Forbidden(),
             < 0 => TypedResultsExtensions.InternalServerError(),
-            _ => TypedResults.Ok(new TypedResultExample("Example"))
+            _ => TypedResults.Ok(new TypedResultExample("Example", OperationEnum.GetNotOperationId))
         };
     }
 
@@ -151,7 +151,7 @@ public class TypedResultController : ControllerBase
         {
             0 => TypedResultsExtensions.Forbidden("Forbidden"),
             < 0 => TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
-            _ => TypedResults.Created("hardcoded uri", new TypedResultExample("Example"))
+            _ => TypedResults.Created("hardcoded uri", new TypedResultExample("Example", OperationEnum.GetExplicitOperationIdInSwagger))
         };
     }
 
@@ -166,7 +166,7 @@ public class TypedResultController : ControllerBase
         {
             0 => TypedResultsExtensions.Forbidden("Forbidden"),
             < 0 => TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
-            _ => TypedResults.Created("hardcoded uri", new TypedResultExample("Example"))
+            _ => TypedResults.Created("hardcoded uri", new TypedResultExample("Example", OperationEnum.GetExplicitOperationIdInName))
         };
     }
 }

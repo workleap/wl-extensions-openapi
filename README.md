@@ -102,6 +102,34 @@ public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
 }
 ```
 
+### Note: TypedResults requires `Microsoft.AspNetCore.Http.Json.JsonOptions` to be configured
+
+TypedResults uses obtains the JsonOptions from `Microsoft.AspNetCore.Http.Json.JsonOptions`. If you are using IActionResult return types, typically, you would configure `Microsoft.AspNetCore.Mvc.JsonOptions` which also configure the JsonSerializerOptions for SwashBuckle. To use this library, you need to configure both JsonOptions. Here is a snippet of code demonstrating that:
+
+```cs
+// API Extension methods
+
+// SwashBuckle and TypedResults require different JsonOptions to be configured.
+// https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2293
+public static IServiceCollection ConfigureJsonSerializerOptions(this IServiceCollection services)
+{
+    services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => ConfigureJsonOptions(options.SerializerOptions));
+    services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(options => ConfigureJsonOptions(options.JsonSerializerOptions));
+
+    return services;
+}
+
+private static void ConfigureJsonOptions(JsonSerializerOptions options)
+{
+    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+    options.WriteIndented = true;
+    options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    options.Converters.Add(new JsonStringEnumConverter());
+}
+```
+
+
 ## Included Roslyn analyzers
 
 | Rule ID | Category | Severity | Description                                                        |
