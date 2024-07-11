@@ -66,6 +66,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RequiredExampleGrandParentClass'
+  '/minimal-endpoint-with-typed-result-no-produces/{id}':
+    get:
+      tags:
+        - TypedResult
+      operationId: GetMinimalApiWithTypedResultWithNoProduces
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
   /minimal-endpoint-with-typed-result-with-produces:
     get:
       tags:
