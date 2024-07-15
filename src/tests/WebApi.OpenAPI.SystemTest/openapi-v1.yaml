@@ -496,9 +496,9 @@ components:
   schemas:
     OperationEnum:
       enum:
-        - GetExplicitOperationIdInName
-        - GetExplicitOperationIdInSwagger
-        - GetNotOperationId
+        - Foo
+        - Bar
+        - Foobar
       type: string
     ProblemDetails:
       type: object

@@ -24,7 +24,7 @@ public class TypedResultExample
 
 public enum OperationEnum
 {
-    GetExplicitOperationIdInName,
-    GetExplicitOperationIdInSwagger,
-    GetNotOperationId
+    Foo,
+    Bar,
+    Foobar
 }
