@@ -494,6 +494,12 @@ paths:
                 type: string
 components:
   schemas:
+    OperationEnum:
+      enum:
+        - Foo
+        - Bar
+        - Foobar
+      type: string
     ProblemDetails:
       type: object
       properties:
@@ -614,6 +620,7 @@ components:
       required:
         - count
         - name
+        - operation
       type: object
       properties:
         name:
@@ -624,4 +631,6 @@ components:
         description:
           type: string
           nullable: true
+        operation:
+          $ref: '#/components/schemas/OperationEnum'
       additionalProperties: false
