@@ -123,7 +123,6 @@ private static void ConfigureJsonOptions(JsonSerializerOptions options)
 {
     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     options.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-    options.WriteIndented = true;
     options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     options.Converters.Add(new JsonStringEnumConverter());
 }
