@@ -25,7 +25,6 @@ public static class ApiExtensions
     {
         options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-        options.WriteIndented = true;
         options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         options.Converters.Add(new JsonStringEnumConverter());
     }

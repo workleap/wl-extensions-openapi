@@ -5,7 +5,6 @@ using WebApi.OpenAPI.SystemTest.OperationId;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
 builder.Services.ConfigureControllers();
 builder.Services.AddSwagger();
 
