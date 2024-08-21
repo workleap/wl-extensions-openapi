@@ -7,9 +7,9 @@ on:
 
 jobs:
   test-breaking-changes-detection-with-swagger2:
-    uses: .github/workflows/openapi-breaking-change-detection.yml@feature/idp-2090_add_breaking_changes_workflow
+    uses: gsoft-inc/wl-internal-reusable-workflows/.github/workflows/openapi-breaking-change-detection.yml@feature/idp-2090_add_breaking_changes_workflow
     with:
-      OpenApiSpecPath: 'src\tests\expected-openapi-document.yaml'
+      OpenApiSpecPath: 'src/tests/expected-openapi-document.yaml'
       DefaultBranchName: 'main'
       FailOn: 'WARN'
       UsesSwagger2: true
