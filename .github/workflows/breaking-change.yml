@@ -6,11 +6,12 @@ on:
       - main
 
 jobs:
-  test-breaking-changes-detection-with-swagger2:
-    uses: gsoft-inc/wl-internal-reusable-workflows/.github/workflows/openapi-breaking-change-detection.yml@feature/idp-2090_add_breaking_changes_workflow
+  generate-lms-courses-integration-client:
+    uses: gsoft-inc/wl-internal-reusable-workflows/.github/workflows/openapi-generate-dotnet-client.yml@main
     with:
-      OpenApiSpecPath: 'src/tests/expected-openapi-document.yaml'
-      DefaultBranchName: 'main'
-      FailOn: 'WARN'
-      UsesSwagger2: true
+      OpenApiSpecPath: 'src\tests\expected-openapi-document.yaml'
+      NuGetPackageName: 'Test.CoursesIntegration.Client'
+      NuGetPackageVersion: '0.1.0-preview.${{ github.run_number }}'
+      ScaffolditTemplateVersion: '1.1.143'
+      PublishToFeed: false
     secrets: inherit
