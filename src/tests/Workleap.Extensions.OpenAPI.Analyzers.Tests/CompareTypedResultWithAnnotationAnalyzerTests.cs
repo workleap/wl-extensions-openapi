@@ -1,6 +1,4 @@
-﻿using Workleap.Extensions.OpenAPI.Analyzer;
-
-namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
+﻿namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
 
 public class CompareTypedResultWithAnnotationAnalyzerTests : BaseAnalyzerTest<CompareTypedResultWithAnnotationAnalyzer>
 {
