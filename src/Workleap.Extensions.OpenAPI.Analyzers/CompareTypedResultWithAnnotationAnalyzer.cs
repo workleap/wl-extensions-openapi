@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Workleap.Extensions.OpenAPI.Analyzers.Internals;
 
-namespace Workleap.Extensions.OpenAPI.Analyzer;
+namespace Workleap.Extensions.OpenAPI.Analyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer

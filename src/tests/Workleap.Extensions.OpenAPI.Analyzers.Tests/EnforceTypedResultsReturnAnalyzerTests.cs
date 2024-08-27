@@ -1,5 +1,3 @@
-using Workleap.Extensions.OpenAPI.Analyzer;
-
 namespace Workleap.Extensions.OpenAPI.Analyzers.Tests;
 
 public class EnforceTypedResultsReturnAnalyzerTests : BaseAnalyzerTest<EnforceTypedResultsReturnAnalyzer>
