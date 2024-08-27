@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApi.OpenAPI.SystemTest.OperationId;
+namespace WebApi.OpenAPI.SystemTest.RequiredType;
 
 [ApiController]
 [Route("RequiredType")]
