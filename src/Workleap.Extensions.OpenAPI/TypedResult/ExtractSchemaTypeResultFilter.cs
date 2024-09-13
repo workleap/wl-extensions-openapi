@@ -142,7 +142,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
         }
 
         // For type like Ok, BadRequest, NotFound
-        if (!resultType.GenericTypeArguments.Any())
+        if (resultType.GenericTypeArguments.Length == 0)
         {
             return new(statusCode, null);
         }
