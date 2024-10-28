@@ -5,6 +5,10 @@ on:
     branches: ["main", "master"]
     paths-ignore: ["*.md"]
 
+  push:
+    branches:
+      - "renovate/**"
+
 jobs:
   ci:
     runs-on: ubuntu-latest
