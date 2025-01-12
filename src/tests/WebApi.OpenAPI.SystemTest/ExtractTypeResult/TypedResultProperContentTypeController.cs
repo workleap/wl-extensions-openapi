@@ -7,8 +7,16 @@ public class TypedResultNoProducesController
 {
     [HttpGet]
     [Route("/useApplicationJsonContentType")]
+    [ProducesResponseType<string>(StatusCodes.Status200OK)]
+    public Ok<string> GivenTypedResultAndNoContenTypeThenContentTypeApplicationJson()
+    {
+        return TypedResults.Ok("example");
+    }
+
+    [HttpGet]
+    [Route("/usetextplainContentType")]
     [ProducesResponseType<string>(StatusCodes.Status200OK, "text/plain")]
-    public Ok<string> TypedResultUseApplicationJsonContentType()
+    public Ok<string> GivenTypedResultAndContentTypeThenKeepContentType()
     {
         return TypedResults.Ok("example");
     }
