@@ -26,7 +26,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse))
             {
                 // If no content type is specified, three will be added by default: application/json, text/plain, and text/json.
-                // In this case we want to enforce the application/json content type.
+                // In this case we want to enforce the proper content type associated with the method's return type.
                 if (IsDefaultContentTypes(existingResponse.Content))
                 {
                     existingResponse.Content.Clear();
