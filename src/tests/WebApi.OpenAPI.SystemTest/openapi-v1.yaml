@@ -478,7 +478,7 @@ paths:
     get:
       tags:
         - TypedResultProperContentType
-      operationId: Tem<>platedOkNoContentType
+      operationId: TemplatedOkNoContentType
       responses:
         '200':
           description: OK
