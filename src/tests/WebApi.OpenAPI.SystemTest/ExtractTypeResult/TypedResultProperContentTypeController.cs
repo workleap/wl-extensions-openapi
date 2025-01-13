@@ -15,7 +15,7 @@ public class TypedResultProperContentTypeController
     }
 
     [HttpGet]
-    [EndpointName("Tem<>platedOkNoContentType")]
+    [EndpointName("TemplatedOkNoContentType")]
     [Route("/useApplicationJsonContentTypeWithOk<T>")]
     [ProducesResponseType<string>(StatusCodes.Status200OK)]
     public Ok<string> GivenTemplatedOkTypedResultAndNoContenTypeThenContentTypeApplicationJson()
