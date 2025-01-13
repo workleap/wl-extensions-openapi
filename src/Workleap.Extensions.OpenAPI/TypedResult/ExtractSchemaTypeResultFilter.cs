@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ namespace Workleap.Extensions.OpenAPI.TypedResult;
 internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
 {
     // Based on this documentation: https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-8.0
-    private const string DefaultContentType = "application/json";
+    private const string DefaultContentType = MediaTypeNames.Application.Json;
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
@@ -24,6 +25,13 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             // when the ProducesResponseType attribute is present.
             if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse))
             {
+                // If no content type is specified, three will be added by default: application/json, text/plain, and text/json.
+                // In this case we want to enforce the application/json content type.
+                if (IsDefaultContentTypes(existingResponse.Content))
+                {
+                    existingResponse.Content.Clear();
+                }
+
                 var canEnrichContent = !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
 
                 if (!canEnrichContent)
@@ -58,6 +66,11 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             operation.Responses.Remove("200");
         }
     }
+
+    private static bool IsDefaultContentTypes(IDictionary<string, OpenApiMediaType> contentTypes) =>
+        contentTypes.ContainsKey(MediaTypeNames.Application.Json) &&
+        contentTypes.ContainsKey(MediaTypeNames.Text.Plain) &&
+        contentTypes.ContainsKey("text/json");
 
     internal static IEnumerable<ResponseMetadata> GetResponsesMetadata(Type returnType)
     {
@@ -146,11 +159,9 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
         {
             return new(statusCode, null);
         }
+
         // For types like Ok<T>, BadRequest<T>, NotFound<T>
-        else
-        {
-            return new(statusCode, resultType.GenericTypeArguments.First());
-        }
+        return new(statusCode, resultType.GenericTypeArguments.First());
     }
 
     private static int? ExtractStatusCodeFromType(Type resultType)
