@@ -3,7 +3,7 @@
     <Copyright>Copyright © Workleap $([System.DateTime]::UtcNow.ToString(yyyy))</Copyright>
     <Authors>Workleap</Authors>
     <Owners>Workleap</Owners>
-    <PackageProjectUrl>https://github.com/gsoft-inc/wl-extensions-openapi</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/workleap/wl-extensions-openapi</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <LangVersion>12</LangVersion>
