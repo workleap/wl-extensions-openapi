@@ -5,6 +5,7 @@
     <IsTestProject>true</IsTestProject>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../Workleap.Extensions.OpenAPI.snk</AssemblyOriginatorKeyFile>
+    <NoWarn>$(NoWarn);CS8002</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

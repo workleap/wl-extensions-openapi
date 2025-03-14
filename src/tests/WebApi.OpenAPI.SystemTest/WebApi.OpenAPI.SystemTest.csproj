@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <IsPackable>false</IsPackable>
         <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>../../Workleap.Extensions.OpenAPI.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
 
   <ItemGroup>
