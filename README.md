@@ -107,7 +107,7 @@ public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
 
 TypedResults uses obtains the JsonOptions from `Microsoft.AspNetCore.Http.Json.JsonOptions`. If you are using IActionResult return types, typically, you would configure `Microsoft.AspNetCore.Mvc.JsonOptions` which also configure the JsonSerializerOptions for SwashBuckle. To use this library, you need to configure both JsonOptions.
 
-We offer an extension method which contains a default configuration of both methods through `ConfigureStandardJsonOptions()`.
+We offer an extension method which contains a default configuration of both methods through `ConfigureStandardJsonSerializerOptions()`.
 ```cs
 services.ConfigureOpenApiGeneration()
     .GenerateMissingOperationId() // Optional
