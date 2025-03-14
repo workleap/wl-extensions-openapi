@@ -1,3 +1,4 @@
+# DO NOT EDIT. This is a generated file
 openapi: 3.0.1
 info:
   title: Test API
@@ -120,6 +121,18 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '404':
           description: Not Found
+  /withEnum:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypeResultWithEnum
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
   /withOnlyOnePath:
     get:
       tags:

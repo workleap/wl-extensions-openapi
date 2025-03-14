@@ -6,11 +6,17 @@ using Workleap.Extensions.OpenAPI.TypedResult;
 namespace WebApi.OpenAPI.SystemTest.ExtractTypeResult;
 
 [ApiController]
-[Route("typedResult")]
 [Produces("application/json")]
 [Consumes("application/json")]
 public class TypedResultController : ControllerBase
 {
+    [HttpGet]
+    [Route("/withEnum")]
+    public Ok<TypedResultExample> TypeResultWithEnum()
+    {
+        return TypedResults.Ok(new TypedResultExample("Example", OperationEnum.Foobar));
+    }
+
     [HttpGet]
     [Route("/withOnlyOnePath")]
     public Ok<TypedResultExample> TypeResultWithOnlyOnePath(int id)

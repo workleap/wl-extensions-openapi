@@ -17,7 +17,8 @@ public static class SwaggerConfigurationExtensions
         });
 
         services.ConfigureOpenApiGeneration()
-            .GenerateMissingOperationId();
+            .GenerateMissingOperationId()
+            .ConfigureStandardJsonSerializerOptions();
 
         return services;
     }
