@@ -17,6 +17,20 @@
         "/^Microsoft\\.CodeAnalysis\\./",
         "/^System\\./"
       ]
+    },
+    {
+      "matchManagers": [
+        "nuget"
+      ],
+      "groupName": "Ignore major update for this dependency",
+      "description": "This project has a package reference where different versions are used for net8.0 or net9.0. We want to avoid major updates for this package",
+      "matchPackageNames": [
+        "Microsoft.AspNetCore.Mvc.Testing"
+      ],
+     "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
     }
   ]
 }

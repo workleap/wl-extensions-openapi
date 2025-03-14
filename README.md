@@ -30,7 +30,8 @@ public void ConfigureServices(IServiceCollection services)
 {
   // [...]
   services.ConfigureOpenApiGeneration()
-    .GenerateMissingOperationId(); // Optional
+    .GenerateMissingOperationId() // Optional
+    .ConfigureStandardJsonSerializerOptions(); //Optional
 }
 ```
 
@@ -104,7 +105,26 @@ public Ok<ProblemDetails> TypedResultWithProducesResponseTypeAnnotation()
 
 ### Note: TypedResults requires `Microsoft.AspNetCore.Http.Json.JsonOptions` to be configured
 
-TypedResults uses obtains the JsonOptions from `Microsoft.AspNetCore.Http.Json.JsonOptions`. If you are using IActionResult return types, typically, you would configure `Microsoft.AspNetCore.Mvc.JsonOptions` which also configure the JsonSerializerOptions for SwashBuckle. To use this library, you need to configure both JsonOptions. Here is a snippet of code demonstrating that:
+TypedResults uses obtains the JsonOptions from `Microsoft.AspNetCore.Http.Json.JsonOptions`. If you are using IActionResult return types, typically, you would configure `Microsoft.AspNetCore.Mvc.JsonOptions` which also configure the JsonSerializerOptions for SwashBuckle. To use this library, you need to configure both JsonOptions.
+
+We offer an extension method which contains a default configuration of both methods through `ConfigureStandardJsonSerializerOptions()`.
+```cs
+services.ConfigureOpenApiGeneration()
+    .GenerateMissingOperationId() // Optional
+    .ConfigureStandardJsonSerializerOptions(); //Optional
+
+/*
+The default configuration is equivalent to:
+
+options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+options.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+options.Converters.Add(new JsonStringEnumConverter());
+*/
+```
+
+
+If you would like to configure JsonOptions different, then you can register them as your own extension method. Here is a snippet of code demonstrating that:
 
 ```cs
 // API Extension methods

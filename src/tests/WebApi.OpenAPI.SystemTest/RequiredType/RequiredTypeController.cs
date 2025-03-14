@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.OpenAPI.SystemTest.RequiredType;
 
 [ApiController]
-[Route("RequiredType")]
 [Produces("application/json")]
 public class RequiredTypeController : ControllerBase
 {
