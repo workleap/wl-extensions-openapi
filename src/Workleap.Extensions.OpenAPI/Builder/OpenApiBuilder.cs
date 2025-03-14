@@ -50,11 +50,6 @@ public sealed class OpenApiBuilder
 
     public OpenApiBuilder ConfigureStandardJsonSerializerOptions()
     {
-        this._services.ConfigureSwaggerGen(options =>
-        {
-            options.OperationFilter<FallbackOperationIdToMethodNameFilter>();
-        });
-
         this._services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => this.ConfigureJsonOptions(options.SerializerOptions));
         this._services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(options => this.ConfigureJsonOptions(options.JsonSerializerOptions));
 
