@@ -1,5 +1,6 @@
 #nullable enable
 static Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions.ConfigureOpenApiGeneration(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder!
+static Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions.ConfigureStandardJsonSerializerOptions(this Microsoft.Extensions.DependencyInjection.IMvcBuilder! mvcBuilder) -> Microsoft.Extensions.DependencyInjection.IMvcBuilder!
 static Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.Forbidden() -> Workleap.Extensions.OpenAPI.TypedResult.Forbidden!
 static Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.Forbidden<T>(T? error) -> Workleap.Extensions.OpenAPI.TypedResult.Forbidden<T>!
 static Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.InternalServerError() -> Workleap.Extensions.OpenAPI.TypedResult.InternalServerError!
