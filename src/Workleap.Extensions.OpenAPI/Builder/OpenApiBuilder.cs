@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Workleap.Extensions.OpenAPI.OperationId;
@@ -48,19 +46,14 @@ public sealed class OpenApiBuilder
         return this;
     }
 
+    /// <summary>
+    /// Configures the default Json serializer options used for OpenAPI and controllers
+    /// </summary>
+    /// <returns></returns>
     public OpenApiBuilder ConfigureStandardJsonSerializerOptions()
     {
-        this._services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => this.ConfigureJsonOptions(options.SerializerOptions));
-        this._services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(options => this.ConfigureJsonOptions(options.JsonSerializerOptions));
+        this._services.ConfigureAllStandardJsonSerializerOptions();
 
         return this;
-    }
-
-    private void ConfigureJsonOptions(JsonSerializerOptions options)
-    {
-        options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        options.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-        options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        options.Converters.Add(new JsonStringEnumConverter());
     }
 }
