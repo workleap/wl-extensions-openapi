@@ -72,52 +72,52 @@ public sealed class OpenApiBuilder
 
                 if (mvcJsonOptions.JsonSerializerOptions.DictionaryKeyPolicy != httpJsonOptions.SerializerOptions.DictionaryKeyPolicy)
                 {
-                    throw new JsonSerializerDifferenceException("Property name");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for DictionaryKeyPolicy is different.");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.PropertyNamingPolicy != httpJsonOptions.SerializerOptions.PropertyNamingPolicy)
                 {
-                    throw new JsonSerializerDifferenceException("Dictionary key");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for PropertyNamingPolicy is different.");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.DefaultIgnoreCondition != httpJsonOptions.SerializerOptions.DefaultIgnoreCondition)
                 {
-                    throw new JsonSerializerDifferenceException("Default ignore condition");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for DefaultIgnoreCondition is different.");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.NumberHandling != httpJsonOptions.SerializerOptions.NumberHandling)
                 {
-                    throw new JsonSerializerDifferenceException("Property name");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for NumberHandling is different.");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.RespectNullableAnnotations != httpJsonOptions.SerializerOptions.RespectNullableAnnotations)
                 {
-                    throw new JsonSerializerDifferenceException("Dictionary key");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for RespectNullableAnnotations is different.");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.RespectRequiredConstructorParameters != httpJsonOptions.SerializerOptions.RespectRequiredConstructorParameters)
                 {
-                    throw new JsonSerializerDifferenceException("Default ignore condition");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for RespectRequiredConstructorParameters is different.");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.IgnoreReadOnlyProperties != httpJsonOptions.SerializerOptions.IgnoreReadOnlyProperties)
                 {
-                    throw new JsonSerializerDifferenceException("Property name");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for IgnoreReadOnlyProperties is different.");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.IgnoreReadOnlyFields != httpJsonOptions.SerializerOptions.IgnoreReadOnlyFields)
                 {
-                    throw new JsonSerializerDifferenceException("Dictionary key");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for IgnoreReadOnlyFields is different.");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.IncludeFields != httpJsonOptions.SerializerOptions.IncludeFields)
                 {
-                    throw new JsonSerializerDifferenceException("Default ignore condition");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for IncludeFields is different.");
                 }
 
                 if (!CompareConverters(mvcJsonOptions.JsonSerializerOptions.Converters, httpJsonOptions.SerializerOptions.Converters))
                 {
-                    throw new JsonSerializerDifferenceException("Converters");
+                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for Converters is different.");
                 }
 
                 next(builder);
