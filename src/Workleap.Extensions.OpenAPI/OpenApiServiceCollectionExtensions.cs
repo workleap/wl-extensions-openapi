@@ -45,5 +45,6 @@ public static class OpenApiServiceCollectionExtensions
         options.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
         options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         options.Converters.Add(new JsonStringEnumConverter());
+        options.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
     }
 }
