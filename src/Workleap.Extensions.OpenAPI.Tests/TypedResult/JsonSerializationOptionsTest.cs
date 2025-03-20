@@ -258,7 +258,7 @@ public class JsonSerializationOptionsTest(ITestOutputHelper testOutputHelper)
         });
 
         // Act
-        Assert.Throws<JsonSerializerDifferenceException>(() => webApplicationFactory.Server);
+        Assert.Throws<JsonSerializerDifferenceException>(webApplicationFactory.CreateClient);
     }
 
     private async Task SameJsonOptionsPropertyComparison(Action<JsonSerializerOptions> jsonOptions)
