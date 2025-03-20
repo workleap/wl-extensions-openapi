@@ -1,3 +1,3 @@
 namespace Workleap.Extensions.OpenAPI.Builder;
 
-public sealed class JsonSerializerDifferenceException(string propertyName) : Exception($"JsonSerializerOptions for {propertyName} is different.");
+public sealed class JsonSerializerDifferenceException(string propertyName) : Exception($"The JSON serializer option values for '{propertyName}' differ between Microsoft.AspNetCore.Mvc.JsonOptions and Microsoft.AspNetCore.Http.JsonOptions. Consider setting JSON serializers options with {nameof(OpenApiServiceCollectionExtensions.ConfigureStandardJsonSerializerOptions)}.");
