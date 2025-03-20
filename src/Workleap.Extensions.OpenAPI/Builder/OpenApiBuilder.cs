@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Workleap.Extensions.OpenAPI.OperationId;
@@ -25,6 +28,7 @@ public sealed class OpenApiBuilder
             options.OperationFilter<ExtractSchemaTypeResultFilter>();
             options.SchemaFilter<ExtractRequiredAttributeFromNullableType>();
         });
+        this._services.AddSingleton<IStartupFilter, JsonOptionsFilter>();
     }
 
     /// <summary>
@@ -55,5 +59,99 @@ public sealed class OpenApiBuilder
         this._services.ConfigureAllStandardJsonSerializerOptions();
 
         return this;
+    }
+
+    private sealed class JsonOptionsFilter : IStartupFilter
+    {
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+        {
+            return builder =>
+            {
+                var mvcJsonOptions = builder.ApplicationServices.GetRequiredService<IOptions<Microsoft.AspNetCore.Mvc.JsonOptions>>().Value;
+                var httpJsonOptions = builder.ApplicationServices.GetRequiredService<IOptions<Microsoft.AspNetCore.Http.Json.JsonOptions>>().Value;
+
+                if (mvcJsonOptions.JsonSerializerOptions.DictionaryKeyPolicy != httpJsonOptions.SerializerOptions.DictionaryKeyPolicy)
+                {
+                    throw new JsonSerializerDifferenceException("DictionaryKeyPolicy");
+                }
+
+                if (mvcJsonOptions.JsonSerializerOptions.PropertyNamingPolicy != httpJsonOptions.SerializerOptions.PropertyNamingPolicy)
+                {
+                    throw new JsonSerializerDifferenceException("PropertyNamingPolicy");
+                }
+
+                if (mvcJsonOptions.JsonSerializerOptions.DefaultIgnoreCondition != httpJsonOptions.SerializerOptions.DefaultIgnoreCondition)
+                {
+                    throw new JsonSerializerDifferenceException("DefaultIgnoreCondition");
+                }
+
+                if (mvcJsonOptions.JsonSerializerOptions.NumberHandling != httpJsonOptions.SerializerOptions.NumberHandling)
+                {
+                    throw new JsonSerializerDifferenceException("NumberHandling");
+                }
+
+                if (mvcJsonOptions.JsonSerializerOptions.RespectNullableAnnotations != httpJsonOptions.SerializerOptions.RespectNullableAnnotations)
+                {
+                    throw new JsonSerializerDifferenceException("RespectNullableAnnotations");
+                }
+
+                if (mvcJsonOptions.JsonSerializerOptions.RespectRequiredConstructorParameters != httpJsonOptions.SerializerOptions.RespectRequiredConstructorParameters)
+                {
+                    throw new JsonSerializerDifferenceException("RespectRequiredConstructorParameters");
+                }
+
+                if (mvcJsonOptions.JsonSerializerOptions.IgnoreReadOnlyProperties != httpJsonOptions.SerializerOptions.IgnoreReadOnlyProperties)
+                {
+                    throw new JsonSerializerDifferenceException("IgnoreReadOnlyProperties");
+                }
+
+                if (mvcJsonOptions.JsonSerializerOptions.IgnoreReadOnlyFields != httpJsonOptions.SerializerOptions.IgnoreReadOnlyFields)
+                {
+                    throw new JsonSerializerDifferenceException("IgnoreReadOnlyFields");
+                }
+
+                if (mvcJsonOptions.JsonSerializerOptions.IncludeFields != httpJsonOptions.SerializerOptions.IncludeFields)
+                {
+                    throw new JsonSerializerDifferenceException("IncludeFields");
+                }
+
+                if (!CompareConverters(mvcJsonOptions.JsonSerializerOptions.Converters, httpJsonOptions.SerializerOptions.Converters))
+                {
+                    throw new JsonSerializerDifferenceException("Converters");
+                }
+
+                next(builder);
+            };
+        }
+
+        private static bool CompareConverters(IList<JsonConverter>? left, IList<JsonConverter>? right)
+        {
+            // equates null with empty lists
+            if (left is null)
+            {
+                return right is null || right.Count == 0;
+            }
+
+            if (right is null)
+            {
+                return left.Count == 0;
+            }
+
+            int n;
+            if ((n = left.Count) != right.Count)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < n; i++)
+            {
+                if (left[i].GetType() != right[i].GetType())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }
