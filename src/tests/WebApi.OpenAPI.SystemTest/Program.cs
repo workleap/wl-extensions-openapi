@@ -27,6 +27,5 @@ catch (Exception e)
     throw;
 }
 
-
 // For integration testing purposes only in order to use WebApplicationFactory<TProgram>
 public partial class Program;
