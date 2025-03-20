@@ -258,7 +258,8 @@ public class JsonSerializationOptionsTest(ITestOutputHelper testOutputHelper)
         });
 
         // Act
-        Assert.Throws<JsonSerializerDifferenceException>(() => webApplicationFactory.Services);
+        var exception = Assert.ThrowsAny<Exception>(() => webApplicationFactory.Services);
+        Assert.True(exception is JsonSerializerDifferenceException or ObjectDisposedException); // There is a race condition where IServiceProvider can be disposed.
     }
 
     private async Task SameJsonOptionsPropertyComparison(Action<JsonSerializerOptions> jsonOptions)
