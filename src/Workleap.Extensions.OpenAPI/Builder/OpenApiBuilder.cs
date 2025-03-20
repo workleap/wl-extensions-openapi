@@ -72,52 +72,52 @@ public sealed class OpenApiBuilder
 
                 if (mvcJsonOptions.JsonSerializerOptions.DictionaryKeyPolicy != httpJsonOptions.SerializerOptions.DictionaryKeyPolicy)
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for DictionaryKeyPolicy is different.");
+                    throw new JsonSerializerDifferenceException("DictionaryKeyPolicy");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.PropertyNamingPolicy != httpJsonOptions.SerializerOptions.PropertyNamingPolicy)
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for PropertyNamingPolicy is different.");
+                    throw new JsonSerializerDifferenceException("PropertyNamingPolicy");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.DefaultIgnoreCondition != httpJsonOptions.SerializerOptions.DefaultIgnoreCondition)
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for DefaultIgnoreCondition is different.");
+                    throw new JsonSerializerDifferenceException("DefaultIgnoreCondition");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.NumberHandling != httpJsonOptions.SerializerOptions.NumberHandling)
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for NumberHandling is different.");
+                    throw new JsonSerializerDifferenceException("NumberHandling");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.RespectNullableAnnotations != httpJsonOptions.SerializerOptions.RespectNullableAnnotations)
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for RespectNullableAnnotations is different.");
+                    throw new JsonSerializerDifferenceException("RespectNullableAnnotations");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.RespectRequiredConstructorParameters != httpJsonOptions.SerializerOptions.RespectRequiredConstructorParameters)
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for RespectRequiredConstructorParameters is different.");
+                    throw new JsonSerializerDifferenceException("RespectRequiredConstructorParameters");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.IgnoreReadOnlyProperties != httpJsonOptions.SerializerOptions.IgnoreReadOnlyProperties)
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for IgnoreReadOnlyProperties is different.");
+                    throw new JsonSerializerDifferenceException("IgnoreReadOnlyProperties");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.IgnoreReadOnlyFields != httpJsonOptions.SerializerOptions.IgnoreReadOnlyFields)
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for IgnoreReadOnlyFields is different.");
+                    throw new JsonSerializerDifferenceException("IgnoreReadOnlyFields");
                 }
 
                 if (mvcJsonOptions.JsonSerializerOptions.IncludeFields != httpJsonOptions.SerializerOptions.IncludeFields)
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for IncludeFields is different.");
+                    throw new JsonSerializerDifferenceException("IncludeFields");
                 }
 
                 if (!CompareConverters(mvcJsonOptions.JsonSerializerOptions.Converters, httpJsonOptions.SerializerOptions.Converters))
                 {
-                    throw new JsonSerializerDifferenceException("JsonSerializerOptions for Converters is different.");
+                    throw new JsonSerializerDifferenceException("Converters");
                 }
 
                 next(builder);
@@ -145,7 +145,7 @@ public sealed class OpenApiBuilder
 
             for (var i = 0; i < n; i++)
             {
-                if (left[i].Type != right[i].Type)
+                if (left[i].GetType() != right[i].GetType())
                 {
                     return false;
                 }

@@ -258,7 +258,7 @@ public class JsonSerializationOptionsTest(ITestOutputHelper testOutputHelper)
         });
 
         // Act
-        Assert.Throws<JsonSerializerDifferenceException>(() => webApplicationFactory.CreateClient());
+        Assert.Throws<JsonSerializerDifferenceException>(() => webApplicationFactory.Server);
     }
 
     private async Task SameJsonOptionsPropertyComparison(Action<JsonSerializerOptions> jsonOptions)
@@ -278,7 +278,6 @@ public class JsonSerializationOptionsTest(ITestOutputHelper testOutputHelper)
         });
         // Act
         _ = webApplicationFactory.Server; // Force to run the server
-        _ = await client.GetStringAsync("/withEnum");
     }
 
     private sealed class CustomConverter : JsonConverter<int>
