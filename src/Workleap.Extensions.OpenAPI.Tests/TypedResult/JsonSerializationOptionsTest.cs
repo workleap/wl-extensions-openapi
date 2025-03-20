@@ -277,7 +277,7 @@ public class JsonSerializationOptionsTest(ITestOutputHelper testOutputHelper)
             });
         });
         // Act
-        var client = webApplicationFactory.CreateClient();
+        _ = webApplicationFactory.Server; // Force to run the server
         _ = await client.GetStringAsync("/withEnum");
     }
 
