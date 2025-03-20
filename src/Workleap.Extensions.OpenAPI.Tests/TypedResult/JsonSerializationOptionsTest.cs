@@ -277,7 +277,7 @@ public class JsonSerializationOptionsTest(ITestOutputHelper testOutputHelper)
             });
         });
         // Act
-        _ = webApplicationFactory.Server; // Force to run the server
+        _ = webApplicationFactory.Services; // Force to run the server
     }
 
     private sealed class CustomConverter : JsonConverter<int>
