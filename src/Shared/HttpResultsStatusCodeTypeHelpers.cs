@@ -32,13 +32,13 @@ internal static class HttpResultsStatusCodeTypeHelpers
         { "Workleap.Extensions.OpenAPI.TypedResult.InternalServerError`1", 500 },
     };
 
-    // Using the same descriptions from the Swashbuckle library: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.SwaggerGen/SwaggerGenerator/SwaggerGenerator.cs
+    // Using the same descriptions from the Swashbuckle library: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/fca056a330a8ddb5173eaa6ad912b77fd0cf0b39/src/Swashbuckle.AspNetCore.SwaggerGen/SwaggerGenerator/SwaggerGenerator.cs#L1027
     public static Dictionary<int, string> StatusCodesToDescription { get; } = new()
     {
         { 200, "OK"},
         { 201, "Created" },
-        { 202, "OK" },
-        { 204, "Accepted" },
+        { 202, "Accepted" },
+        { 204, "No Content" },
         { 400, "Bad Request" },
         { 401, "Unauthorized" },
         { 403, "Forbidden" },
