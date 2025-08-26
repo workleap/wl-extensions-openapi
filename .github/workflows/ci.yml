@@ -33,7 +33,7 @@ jobs:
         uses: workleap/wl-reusable-workflows/az-artifact-authenticate@main
         with:
           feed-url: ${{ secrets.NUGET_GSOFTDEV_FEED_URL }}
-          variables: VSS_NUGET_ACCESSTOKEN
+          variables: ${{ toJSON(vars) }}
 
       - uses: actions/setup-dotnet@v4
         with:
