@@ -43,7 +43,6 @@ jobs:
         shell: pwsh
         env:
           NUGET_SOURCE: ${{ secrets.NUGET_GSOFTDEV_FEED_URL }}
-          VSS_NUGET_ACCESSTOKEN: ${{ env.VSS_NUGET_ACCESSTOKEN }}
 
   linearb:
     needs: [ci]
