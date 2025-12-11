@@ -5,17 +5,12 @@ using Workleap.Extensions.OpenAPI.TypedResult;
 
 namespace WebApi.OpenAPI.SystemTest.Ordering;
 
-// test ff ffffff
-
+// Repro case of a bug where a ProduceResponseType on the controller level messes up the ordering of the responses
 [ApiController]
 [Route("ordering")]
 [ProducesResponseType(typeof(IEnumerable<ForbiddenReason>), 403, MediaTypeNames.Application.Json)]
 public class OrderingController : ControllerBase
 {
-    /// <summary>
-    /// Test endpoint with ProducesResponseType at class level and multiple TypedResults
-    /// This tests non-deterministic ordering of swagger results
-    /// </summary>
     [HttpPost("withLostOfResults")]
     public async Task<Results<Ok<string>, NotFound, BadRequest, InternalServerError<ProblemDetails>>> WithLotsOfResults()
     {

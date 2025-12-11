@@ -3,6 +3,9 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Workleap.Extensions.OpenAPI.Ordering;
 
+/// <summary>
+/// This filter ensures consistent ordering for better source control diffs and predictable documentation.
+/// </summary>
 internal class OrderResponseFilter: IDocumentFilter
 {
     public void Apply(OpenApiDocument document, DocumentFilterContext context)
@@ -20,6 +23,11 @@ internal class OrderResponseFilter: IDocumentFilter
             {
                 path.Value.Operations.Add(operation.Key, operation.Value);
 
+                // Sort responses by status code (200, 400, 403, 404, 500, etc.)
+                // This is critical because responses from both controller-level ProducesResponseType
+                // and method-level attributes are added in the order they're processed, not by status code.
+                // Without sorting, a 403 from a controller-level attribute might appear before a 200
+                // from the method-level TypedResult, causing unpredictable ordering and noisy diffs.
                 var sortedResponse = operation.Value.Responses.OrderBy(responseKvp => responseKvp.Key, StringComparer.Ordinal).ToList();
                 operation.Value.Responses.Clear();
                 foreach (var response in sortedResponse)

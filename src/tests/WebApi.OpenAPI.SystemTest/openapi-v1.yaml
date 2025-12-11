@@ -529,6 +529,14 @@ paths:
             application/json:
               schema:
                 type: string
+  /useApplicationJsonContentTypeWithNoContent:
+    get:
+      tags:
+        - TypedResultProperContentType
+      operationId: NoContentType
+      responses:
+        '204':
+          description: No Content
   /useApplicationJsonContentTypeWithResultsType:
     get:
       tags:
