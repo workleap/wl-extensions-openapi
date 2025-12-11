@@ -20,8 +20,8 @@ internal class OrderResponseFilter: IDocumentFilter
             {
                 path.Value.Operations.Add(operation.Key, operation.Value);
 
-                // Sort response
-                var sortedResponse = operation.Value.Responses.OrderBy(responseKvp => responseKvp.Key, StringComparer.Ordinal);
+                // Sort response test
+                var sortedResponse = operation.Value.Responses.OrderBy(responseKvp => responseKvp.Key, StringComparer.Ordinal).ToList();
                 operation.Value.Responses.Clear();
                 foreach (var response in sortedResponse)
                 {

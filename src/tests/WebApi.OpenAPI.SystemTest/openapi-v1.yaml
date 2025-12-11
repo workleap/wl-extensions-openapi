@@ -4,35 +4,99 @@ info:
   title: Test API
   version: v1
 paths:
-  /classRequiredType:
-    get:
-      tags:
-        - RequiredType
-      operationId: GetClassRequiredType
-      responses: { }
-  /explicitOperationIdInName:
-    get:
-      tags:
-        - OperationId
-      operationId: GetExplicitOperationIdInName
-      responses: { }
-  /explicitOperationIdInSwagger:
-    get:
-      tags:
-        - OperationId
-      operationId: GetExplicitOperationIdInSwagger
-      responses: { }
   /minimal-endpoint-with-name:
     get:
       tags:
         - OperationId
       operationId: GetMinimalApiWithName
-      responses: { }
+      responses:
+        '200':
+          description: OK
   /minimal-endpoint-with-no-name:
     get:
       tags:
         - OperationId
-      responses: { }
+      responses:
+        '200':
+          description: OK
+  /explicitOperationIdInName:
+    get:
+      tags:
+        - OperationId
+      operationId: GetExplicitOperationIdInName
+      responses:
+        '200':
+          description: OK
+  /explicitOperationIdInSwagger:
+    get:
+      tags:
+        - OperationId
+      operationId: GetExplicitOperationIdInSwagger
+      responses:
+        '200':
+          description: OK
+  /noOperationId:
+    get:
+      tags:
+        - OperationId
+      operationId: GetNotOperationId
+      responses:
+        '200':
+          description: OK
+  /ordering/withLostOfResults:
+    post:
+      tags:
+        - Ordering
+      operationId: WithLotsOfResults
+      responses:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ForbiddenReason'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /recordClassRequiredType:
+    get:
+      tags:
+        - RequiredType
+      operationId: GetRecordClassRequiredType
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequiredExampleGrandParentRecord'
+  /classRequiredType:
+    get:
+      tags:
+        - RequiredType
+      operationId: GetClassRequiredType
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequiredExampleGrandParentClass'
   '/minimal-endpoint-with-typed-result-no-produces/{id}':
     get:
       tags:
@@ -45,7 +109,21 @@ paths:
           schema:
             type: integer
             format: int32
-      responses: { }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
   /minimal-endpoint-with-typed-result-with-produces:
     get:
       tags:
@@ -58,211 +136,33 @@ paths:
           schema:
             type: integer
             format: int32
-      responses: { }
-  /noOperationId:
-    get:
-      tags:
-        - OperationId
-      operationId: GetNotOperationId
-      responses: { }
-  /overwriteContenTypeWithProduceAttributeTextPlainForOk:
-    get:
-      tags:
-        - TypedResultProperContentType
-      operationId: OkContentTypeTextPlain
-      responses: { }
-  /overwriteContenTypeWithProduceAttributeTextPlainForOk<T>:
-    get:
-      tags:
-        - TypedResultProperContentType
-      operationId: TemplatedOkContentTypeTextPlain
-      responses: { }
-  /overwriteContenTypeWithProduceAttributeTextPlainForResultsType:
-    get:
-      tags:
-        - TypedResultProperContentType
-      operationId: ResultsContentTypeTextPlain
-      responses: { }
-  /recordClassRequiredType:
-    get:
-      tags:
-        - RequiredType
-      operationId: GetRecordClassRequiredType
-      responses: { }
-  /useApplicationJsonContentTypeWithNoContent:
-    get:
-      tags:
-        - TypedResultProperContentType
-      operationId: NoContentType
-      responses: { }
-  /useApplicationJsonContentTypeWithOk:
-    get:
-      tags:
-        - TypedResultProperContentType
-      operationId: OkNoContentType
-      responses: { }
-  /useApplicationJsonContentTypeWithOk<T>:
-    get:
-      tags:
-        - TypedResultProperContentType
-      operationId: TemplatedOkNoContentType
-      responses: { }
-  /useApplicationJsonContentTypeWithResultsType:
-    get:
-      tags:
-        - TypedResultProperContentType
-      operationId: ResultsNoContentType
-      responses: { }
-  /validateOkNotPresent:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithOutOk
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /validateOkNotPresentButAnnotationPresent:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithoutOkButAnnotationPresent
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /voidOk:
-    get:
-      tags:
-        - TypedResult
-      operationId: VoidOk
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /withAnnotation:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithAnnotation
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
   /withEnum:
     get:
       tags:
         - TypedResult
       operationId: TypeResultWithEnum
-      responses: { }
-  /withExceptionsNoType:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithExceptionsNoType
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /withExceptionsWithType:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithExceptionsWithType
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /withNoAnnotation:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithNoAnnotation
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /withNoAnnotationForAcceptedAndUnprocessableResponseNoType:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponseNoType
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /withNoAnnotationForAcceptedAndUnprocessableResponseWithType:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponseWithType
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /withNoAnnotationForCreatedAndConflictNoType:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithNoAnnotationForCreatedAndConflictNoType
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /withNoAnnotationForCreatedAndConflictWithType:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithNoAnnotationForCreatedAndConflictWithType
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
-  /withNoAnnotationForNoContentAndUnauthorized:
-    get:
-      tags:
-        - TypedResult
-      operationId: TypedResultWithNoAnnotationForNoContentAndUnauthorized
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses: { }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
   /withOnlyOnePath:
     get:
       tags:
@@ -274,15 +174,451 @@ paths:
           schema:
             type: integer
             format: int32
-      responses: { }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+  /withAnnotation:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithAnnotation
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /withNoAnnotation:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotation
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+  /withNoAnnotationForAcceptedAndUnprocessableResponseNoType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponseNoType
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '202':
+          description: Accepted
+        '422':
+          description: Unprocessable Content
+  /withNoAnnotationForAcceptedAndUnprocessableResponseWithType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationForAcceptedAndUnprocessableResponseWithType
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '422':
+          description: Unprocessable Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+  /withNoAnnotationForCreatedAndConflictNoType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationForCreatedAndConflictNoType
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '201':
+          description: Created
+        '409':
+          description: Conflict
+  /withNoAnnotationForCreatedAndConflictWithType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationForCreatedAndConflictWithType
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: string
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: string
+  /withNoAnnotationForNoContentAndUnauthorized:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithNoAnnotationForNoContentAndUnauthorized
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+  /voidOk:
+    get:
+      tags:
+        - TypedResult
+      operationId: VoidOk
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
   /withSwaggerResponseAnnotation:
     get:
       tags:
         - TypedResult
       operationId: TypedResultWithSwaggerResponseAnnotation
-      responses: { }
+      responses:
+        '200':
+          description: Returns TypedResult
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+  /withExceptionsNoType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithExceptionsNoType
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+  /withExceptionsWithType:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithExceptionsWithType
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /validateOkNotPresent:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithOutOk
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /validateOkNotPresentButAnnotationPresent:
+    get:
+      tags:
+        - TypedResult
+      operationId: TypedResultWithoutOkButAnnotationPresent
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /useApplicationJsonContentTypeWithOk:
+    get:
+      tags:
+        - TypedResultProperContentType
+      operationId: OkNoContentType
+      responses:
+        '200':
+          description: OK
+  /useApplicationJsonContentTypeWithOk<T>:
+    get:
+      tags:
+        - TypedResultProperContentType
+      operationId: TemplatedOkNoContentType
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /useApplicationJsonContentTypeWithNoContent:
+    get:
+      tags:
+        - TypedResultProperContentType
+      operationId: NoContentType
+      responses:
+        '204':
+          description: No Content
+  /useApplicationJsonContentTypeWithResultsType:
+    get:
+      tags:
+        - TypedResultProperContentType
+      operationId: ResultsNoContentType
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+  /overwriteContenTypeWithProduceAttributeTextPlainForOk:
+    get:
+      tags:
+        - TypedResultProperContentType
+      operationId: OkContentTypeTextPlain
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+  /overwriteContenTypeWithProduceAttributeTextPlainForOk<T>:
+    get:
+      tags:
+        - TypedResultProperContentType
+      operationId: TemplatedOkContentTypeTextPlain
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+  /overwriteContenTypeWithProduceAttributeTextPlainForResultsType:
+    get:
+      tags:
+        - TypedResultProperContentType
+      operationId: ResultsContentTypeTextPlain
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
 components:
   schemas:
+    ForbiddenReason:
+      required:
+        - reason
+      type: object
+      properties:
+        reason:
+          type: string
+      additionalProperties: false
     OperationEnum:
       enum:
         - Foo

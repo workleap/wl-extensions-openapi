@@ -28,7 +28,7 @@ public sealed class OpenApiBuilder
             options.SupportNonNullableReferenceTypes();
             options.OperationFilter<ExtractSchemaTypeResultFilter>();
             options.SchemaFilter<ExtractRequiredAttributeFromNullableType>();
-            options.DocumentFilter<OrderResponseFilter>();
+            //options.DocumentFilter<OrderResponseFilter>();
         });
         this._services.AddSingleton<IStartupFilter, JsonOptionsFilter>();
     }
