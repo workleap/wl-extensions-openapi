@@ -4,9 +4,9 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace Workleap.Extensions.OpenAPI.Ordering;
 
 /// <summary>
-/// This filter ensures consistent ordering for better source control diffs and predictable documentation.
+///     This filter ensures consistent ordering for better source control diffs and predictable documentation.
 /// </summary>
-internal class OrderResponseFilter: IDocumentFilter
+internal class OrderResponseFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument document, DocumentFilterContext context)
     {

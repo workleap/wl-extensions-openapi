@@ -43,7 +43,7 @@ paths:
       responses:
         '200':
           description: OK
-  /ordering/withLostOfResults:
+  /ordering/withLotsOfResults:
     post:
       tags:
         - Ordering

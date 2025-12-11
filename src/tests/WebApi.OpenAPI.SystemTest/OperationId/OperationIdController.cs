@@ -6,7 +6,7 @@ namespace WebApi.OpenAPI.SystemTest.OperationId;
 [ApiController]
 [Route("OperationId")]
 [Produces("application/json")]
-public class OperationIdController : ControllerBase
+public sealed class OperationIdController : ControllerBase
 {
     [HttpGet("/explicitOperationIdInName", Name = "GetExplicitOperationIdInName")]
     public IActionResult GetExplicitOperationIdInName()
