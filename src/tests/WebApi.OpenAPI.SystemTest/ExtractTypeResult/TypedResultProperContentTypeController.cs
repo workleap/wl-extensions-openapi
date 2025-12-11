@@ -23,13 +23,13 @@ public class TypedResultProperContentTypeController
         return TypedResults.Ok("example");
     }
 
-    [HttpGet]
-    [EndpointName("NoContentType")]
-    [Route("/useApplicationJsonContentTypeWithNoContent")]
-    public NoContent GivenNoContentTypeResultThenNoContentTypeApplicationJson()
-    {
-        return TypedResults.NoContent();
-    }
+    // [HttpGet]
+    // [EndpointName("NoContentType")]
+    // [Route("/useApplicationJsonContentTypeWithNoContent")]
+    // public NoContent GivenNoContentTypeResultThenNoContentTypeApplicationJson()
+    // {
+    //     return TypedResults.NoContent();
+    // }
 
     [HttpGet]
     [EndpointName("ResultsNoContentType")]

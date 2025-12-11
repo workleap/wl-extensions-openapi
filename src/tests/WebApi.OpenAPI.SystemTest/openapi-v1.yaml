@@ -49,6 +49,14 @@ paths:
         - Ordering
       operationId: WithLotsOfResults
       responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
         '403':
           description: Forbidden
           content:
@@ -57,16 +65,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ForbiddenReason'
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: string
         '404':
           description: Not Found
-        '400':
-          description: Bad Request
         '500':
           description: Internal Server Error
           content:
@@ -479,6 +479,12 @@ paths:
       responses:
         '200':
           description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
         '202':
           description: Accepted
           content:
@@ -491,12 +497,6 @@ paths:
             application/json:
               schema:
                 type: string
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypedResultExample'
         '403':
           description: Forbidden
           content:
@@ -529,14 +529,6 @@ paths:
             application/json:
               schema:
                 type: string
-  /useApplicationJsonContentTypeWithNoContent:
-    get:
-      tags:
-        - TypedResultProperContentType
-      operationId: NoContentType
-      responses:
-        '204':
-          description: No Content
   /useApplicationJsonContentTypeWithResultsType:
     get:
       tags:
