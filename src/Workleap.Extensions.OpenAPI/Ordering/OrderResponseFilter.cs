@@ -6,7 +6,7 @@ namespace Workleap.Extensions.OpenAPI.Ordering;
 /// <summary>
 ///     This filter ensures consistent ordering for better source control diffs and predictable documentation.
 /// </summary>
-internal class OrderResponseFilter : IDocumentFilter
+internal sealed class OrderResponseFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument document, DocumentFilterContext context)
     {
