@@ -43,6 +43,36 @@ paths:
       responses:
         '200':
           description: OK
+  /ordering/withLotsOfResults:
+    post:
+      tags:
+        - Ordering
+      operationId: WithLotsOfResults
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ForbiddenReason'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /recordClassRequiredType:
     get:
       tags:
@@ -226,7 +256,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '202':
-          description: OK
+          description: Accepted
         '422':
           description: Unprocessable Content
   /withNoAnnotationForAcceptedAndUnprocessableResponseWithType:
@@ -248,7 +278,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TypedResultExample'
         '202':
-          description: OK
+          description: Accepted
           content:
             application/json:
               schema:
@@ -324,7 +354,7 @@ paths:
             format: int32
       responses:
         '204':
-          description: Accepted
+          description: No Content
         '401':
           description: Unauthorized
   /voidOk:
@@ -449,6 +479,12 @@ paths:
       responses:
         '200':
           description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedResultExample'
         '202':
           description: Accepted
           content:
@@ -461,12 +497,6 @@ paths:
             application/json:
               schema:
                 type: string
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypedResultExample'
         '403':
           description: Forbidden
           content:
@@ -499,6 +529,14 @@ paths:
             application/json:
               schema:
                 type: string
+  /useApplicationJsonContentTypeWithNoContent:
+    get:
+      tags:
+        - TypedResultProperContentType
+      operationId: NoContentType
+      responses:
+        '204':
+          description: No Content
   /useApplicationJsonContentTypeWithResultsType:
     get:
       tags:
@@ -573,6 +611,14 @@ paths:
                 type: string
 components:
   schemas:
+    ForbiddenReason:
+      required:
+        - reason
+      type: object
+      properties:
+        reason:
+          type: string
+      additionalProperties: false
     OperationEnum:
       enum:
         - Foo

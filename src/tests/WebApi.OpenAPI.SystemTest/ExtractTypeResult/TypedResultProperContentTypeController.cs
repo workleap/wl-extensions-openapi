@@ -24,6 +24,14 @@ public class TypedResultProperContentTypeController
     }
 
     [HttpGet]
+    [EndpointName("NoContentType")]
+    [Route("/useApplicationJsonContentTypeWithNoContent")]
+    public NoContent GivenNoContentTypeResultThenNoContentTypeApplicationJson()
+    {
+        return TypedResults.NoContent();
+    }
+
+    [HttpGet]
     [EndpointName("ResultsNoContentType")]
     [Route("/useApplicationJsonContentTypeWithResultsType")]
     [ProducesResponseType<string>(StatusCodes.Status200OK)]

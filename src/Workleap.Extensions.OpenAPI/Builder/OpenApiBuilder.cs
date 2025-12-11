@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Workleap.Extensions.OpenAPI.OperationId;
+using Workleap.Extensions.OpenAPI.Ordering;
 using Workleap.Extensions.OpenAPI.RequiredType;
 using Workleap.Extensions.OpenAPI.TypedResult;
 
@@ -28,6 +30,13 @@ public sealed class OpenApiBuilder
             options.OperationFilter<ExtractSchemaTypeResultFilter>();
             options.SchemaFilter<ExtractRequiredAttributeFromNullableType>();
         });
+
+        // Use PostConfigure to ensure ordering happens after all other filters
+        this._services.PostConfigure<SwaggerGenOptions>(options =>
+        {
+            options.DocumentFilter<OrderResponseFilter>();
+        });
+
         this._services.AddSingleton<IStartupFilter, JsonOptionsFilter>();
     }
 
