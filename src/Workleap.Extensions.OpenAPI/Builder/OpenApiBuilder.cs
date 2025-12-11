@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Workleap.Extensions.OpenAPI.OperationId;
+using Workleap.Extensions.OpenAPI.Ordering;
 using Workleap.Extensions.OpenAPI.RequiredType;
 using Workleap.Extensions.OpenAPI.TypedResult;
 
@@ -27,6 +28,7 @@ public sealed class OpenApiBuilder
             options.SupportNonNullableReferenceTypes();
             options.OperationFilter<ExtractSchemaTypeResultFilter>();
             options.SchemaFilter<ExtractRequiredAttributeFromNullableType>();
+            options.DocumentFilter<OrderResponseFilter>();
         });
         this._services.AddSingleton<IStartupFilter, JsonOptionsFilter>();
     }
