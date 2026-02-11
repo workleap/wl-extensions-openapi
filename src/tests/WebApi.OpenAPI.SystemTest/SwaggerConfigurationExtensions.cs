@@ -1,4 +1,8 @@
-﻿using Microsoft.OpenApi.Models;
+﻿#if NET10_0_OR_GREATER
+using Microsoft.OpenApi;
+#else
+using Microsoft.OpenApi.Models;
+#endif
 using Workleap.Extensions.OpenAPI;
 
 namespace WebApi.OpenAPI.SystemTest;
