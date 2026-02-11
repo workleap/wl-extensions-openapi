@@ -28,7 +28,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             // If the response content is already set, we won't overwrite it. This is the case for minimal APIs and
             // when the ProducesResponseType attribute is present.
 #if NET10_0_OR_GREATER
-            if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponseInterface))
+            if (operation.Responses?.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponseInterface) == true)
             {
                 if (existingResponseInterface is not OpenApiResponse existingResponse)
                 {
@@ -37,12 +37,12 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
 
                 // If no content type is specified, three will be added by default: application/json, text/plain, and text/json.
                 // In this case we want to enforce the proper content type associated with the method's return type.
-                if (IsDefaultContentTypes(existingResponse.Content))
+                if (existingResponse.Content != null && IsDefaultContentTypes(existingResponse.Content))
                 {
                     existingResponse.Content.Clear();
                 }
 
-                var canEnrichContent = !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
+                var canEnrichContent = existingResponse.Content != null && !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
 
                 if (!canEnrichContent)
                 {
@@ -50,16 +50,16 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
                 }
             }
 #else
-            if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse))
+            if (operation.Responses?.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse) == true)
             {
                 // If no content type is specified, three will be added by default: application/json, text/plain, and text/json.
                 // In this case we want to enforce the proper content type associated with the method's return type.
-                if (IsDefaultContentTypes(existingResponse.Content))
+                if (existingResponse.Content != null && IsDefaultContentTypes(existingResponse.Content))
                 {
                     existingResponse.Content.Clear();
                 }
 
-                var canEnrichContent = !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
+                var canEnrichContent = existingResponse.Content != null && !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
 
                 if (!canEnrichContent)
                 {
@@ -82,16 +82,19 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             if (responseMetadata.SchemaType != null)
             {
                 var schema = context.SchemaGenerator.GenerateSchema(responseMetadata.SchemaType, context.SchemaRepository);
-                response.Content.Add(DefaultContentType, new OpenApiMediaType { Schema = schema });
+                response.Content?.Add(DefaultContentType, new OpenApiMediaType { Schema = schema });
             }
 
-            operation.Responses[responseMetadata.HttpCode.ToString()] = response;
+            if (operation.Responses != null)
+            {
+                operation.Responses[responseMetadata.HttpCode.ToString()] = response;
+            }
         }
 
         // The spec is generated with a default 200 response, we need to remove it if the endpoint does not return 200.
         if (usesTypedResultsReturnType && !explicitlyDefinedResponseCodes.Contains(200))
         {
-            operation.Responses.Remove("200");
+            operation.Responses?.Remove("200");
         }
     }
 

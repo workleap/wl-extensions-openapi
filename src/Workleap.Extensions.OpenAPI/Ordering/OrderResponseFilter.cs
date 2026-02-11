@@ -12,8 +12,27 @@ namespace Workleap.Extensions.OpenAPI.Ordering;
 /// </summary>
 internal sealed class OrderResponseFilter : IDocumentFilter
 {
+#if NET10_0_OR_GREATER
+    private static readonly Dictionary<string, int> HttpMethodOrder = new()
+    {
+        { "GET", 0 },
+        { "POST", 1 },
+        { "PUT", 2 },
+        { "PATCH", 3 },
+        { "DELETE", 4 },
+        { "OPTIONS", 5 },
+        { "HEAD", 6 },
+        { "TRACE", 7 }
+    };
+#endif
+
     public void Apply(OpenApiDocument document, DocumentFilterContext context)
     {
+        if (document.Paths == null)
+        {
+            return;
+        }
+
         var paths = document.Paths.ToList();
         document.Paths.Clear();
         document.Paths = new OpenApiPaths();
@@ -22,18 +41,20 @@ internal sealed class OrderResponseFilter : IDocumentFilter
             document.Paths.Add(path.Key, path.Value);
 
 #if NET10_0_OR_GREATER
-            if (path.Value is not OpenApiPathItem pathItem)
+            if (path.Value is not OpenApiPathItem pathItem || pathItem.Operations == null)
             {
                 continue;
             }
 
-            var sortedOperations = pathItem.Operations.OrderBy(op => (int)op.Key).ToList();
+            var sortedOperations = pathItem.Operations
+                .OrderBy(op => HttpMethodOrder.TryGetValue(op.Key.Method.ToUpperInvariant(), out var order) ? order : 99)
+                .ToList();
             pathItem.Operations.Clear();
             foreach (var operation in sortedOperations)
             {
                 pathItem.Operations.Add(operation.Key, operation.Value);
 
-                if (operation.Value is not OpenApiOperation openApiOperation)
+                if (operation.Value is not OpenApiOperation openApiOperation || openApiOperation.Responses == null)
                 {
                     continue;
                 }
