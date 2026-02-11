@@ -7,7 +7,6 @@ public static class ExtractTypedResultMinimalApis
 {
     public static void AddEndpointsForTypedResult(this WebApplication app)
     {
-#if NET10_0_OR_GREATER
         app.MapGet("minimal-endpoint-with-typed-result-no-produces/{id:int}", CheckReturnById)
             .WithName("GetMinimalApiWithTypedResultWithNoProduces")
             .WithTags("TypedResult");
@@ -17,19 +16,6 @@ public static class ExtractTypedResultMinimalApis
             .WithTags("TypedResult")
             .Produces<TypedResultExample>()
             .Produces<ProblemDetails>(400);
-#else
-        app.MapGet("minimal-endpoint-with-typed-result-no-produces/{id:int}", CheckReturnById)
-            .WithName("GetMinimalApiWithTypedResultWithNoProduces")
-            .WithTags("TypedResult")
-            .WithOpenApi();
-
-        app.MapGet("minimal-endpoint-with-typed-result-with-produces", CheckReturnByIdWithProblemDetails)
-            .WithName("GetMinimalApiWithTypedResultWithProduces")
-            .WithTags("TypedResult")
-            .Produces<TypedResultExample>()
-            .Produces<ProblemDetails>(400)
-            .WithOpenApi();
-#endif
     }
 
     private static Results<Ok<TypedResultExample>, BadRequest<ProblemDetails>, NotFound> CheckReturnById(int id)

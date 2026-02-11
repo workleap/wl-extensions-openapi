@@ -1,8 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-using Microsoft.OpenApi;
-#else
-using Microsoft.OpenApi.Models;
-#endif
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Workleap.Extensions.OpenAPI.Ordering;
@@ -12,7 +8,6 @@ namespace Workleap.Extensions.OpenAPI.Ordering;
 /// </summary>
 internal sealed class OrderResponseFilter : IDocumentFilter
 {
-#if NET10_0_OR_GREATER
     private static readonly Dictionary<string, int> HttpMethodOrder = new()
     {
         { "GET", 0 },
@@ -24,7 +19,6 @@ internal sealed class OrderResponseFilter : IDocumentFilter
         { "HEAD", 6 },
         { "TRACE", 7 }
     };
-#endif
 
     public void Apply(OpenApiDocument document, DocumentFilterContext context)
     {
@@ -40,7 +34,6 @@ internal sealed class OrderResponseFilter : IDocumentFilter
         {
             document.Paths.Add(path.Key, path.Value);
 
-#if NET10_0_OR_GREATER
             if (path.Value is not OpenApiPathItem pathItem || pathItem.Operations == null)
             {
                 continue;
@@ -71,26 +64,6 @@ internal sealed class OrderResponseFilter : IDocumentFilter
                     openApiOperation.Responses.Add(response.Key, response.Value);
                 }
             }
-#else
-            var sortedOperations = path.Value.Operations.OrderBy(op => (int)op.Key).ToList();
-            path.Value.Operations.Clear();
-            foreach (var operation in sortedOperations)
-            {
-                path.Value.Operations.Add(operation.Key, operation.Value);
-
-                // Sort responses by status code (200, 400, 403, 404, 500, etc.)
-                // This is critical because responses from both controller-level ProducesResponseType
-                // and method-level attributes are added in the order they're processed, not by status code.
-                // Without sorting, a 403 from a controller-level attribute might appear before a 200
-                // from the method-level TypedResult, causing unpredictable ordering and noisy diffs.
-                var sortedResponse = operation.Value.Responses.OrderBy(responseKvp => responseKvp.Key, StringComparer.Ordinal).ToList();
-                operation.Value.Responses.Clear();
-                foreach (var response in sortedResponse)
-                {
-                    operation.Value.Responses.Add(response.Key, response.Value);
-                }
-            }
-#endif
         }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-#if !NET10_0_OR_GREATER
-using Workleap.Extensions.OpenAPI.TypedResult;
-#endif
 
 namespace WebApi.OpenAPI.SystemTest.ExtractTypeResult;
 
@@ -129,11 +126,7 @@ public class TypedResultController : ControllerBase
 
     [HttpGet]
     [Route("/withExceptionsNoType")]
-#if NET10_0_OR_GREATER
     public Results<Ok<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError> TypedResultWithExceptionsNoType(int id)
-#else
-    public Results<Ok<TypedResultExample>, Forbidden, InternalServerError> TypedResultWithExceptionsNoType(int id)
-#endif
     {
         return id switch
         {
@@ -145,11 +138,7 @@ public class TypedResultController : ControllerBase
 
     [HttpGet]
     [Route("/withExceptionsWithType")]
-#if NET10_0_OR_GREATER
     public Results<Ok<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden<string>, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<string>> TypedResultWithExceptionsWithType(int id)
-#else
-    public Results<Ok<TypedResultExample>, Forbidden<string>, InternalServerError<string>> TypedResultWithExceptionsWithType(int id)
-#endif
     {
         return id switch
         {
@@ -161,11 +150,7 @@ public class TypedResultController : ControllerBase
 
     [HttpGet]
     [Route("/validateOkNotPresent")]
-#if NET10_0_OR_GREATER
     public Results<Created<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden<string>, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<string>> TypedResultWithOutOk(int id)
-#else
-    public Results<Created<TypedResultExample>, Forbidden<string>, InternalServerError<string>> TypedResultWithOutOk(int id)
-#endif
     {
         return id switch
         {
@@ -180,11 +165,7 @@ public class TypedResultController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(string))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, Type = typeof(string))]
-#if NET10_0_OR_GREATER
     public Results<Created<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden<string>, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<string>> TypedResultWithoutOkButAnnotationPresent(int id)
-#else
-    public Results<Created<TypedResultExample>, Forbidden<string>, InternalServerError<string>> TypedResultWithoutOkButAnnotationPresent(int id)
-#endif
     {
         return id switch
         {

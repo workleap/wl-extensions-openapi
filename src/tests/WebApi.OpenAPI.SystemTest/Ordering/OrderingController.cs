@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-#if !NET10_0_OR_GREATER
-using Workleap.Extensions.OpenAPI.TypedResult;
-#endif
 
 namespace WebApi.OpenAPI.SystemTest.Ordering;
 
@@ -14,11 +11,7 @@ namespace WebApi.OpenAPI.SystemTest.Ordering;
 public class OrderingController : ControllerBase
 {
     [HttpPost("withLotsOfResults")]
-#if NET10_0_OR_GREATER
     public async Task<Results<Ok<string>, NotFound, BadRequest, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<ProblemDetails>>> WithLotsOfResults()
-#else
-    public async Task<Results<Ok<string>, NotFound, BadRequest, InternalServerError<ProblemDetails>>> WithLotsOfResults()
-#endif
     {
         await Task.CompletedTask;
         return TypedResults.Ok("Result");
