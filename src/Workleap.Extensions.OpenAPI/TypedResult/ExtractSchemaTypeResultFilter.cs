@@ -2,7 +2,11 @@ using System.Net.Mime;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+#if NET10_0_OR_GREATER
+using Microsoft.OpenApi;
+#else
 using Microsoft.OpenApi.Models;
+#endif
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Workleap.Extensions.OpenAPI.TypedResult;
@@ -23,6 +27,29 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             explicitlyDefinedResponseCodes.Add(responseMetadata.HttpCode);
             // If the response content is already set, we won't overwrite it. This is the case for minimal APIs and
             // when the ProducesResponseType attribute is present.
+#if NET10_0_OR_GREATER
+            if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponseInterface))
+            {
+                if (existingResponseInterface is not OpenApiResponse existingResponse)
+                {
+                    continue;
+                }
+
+                // If no content type is specified, three will be added by default: application/json, text/plain, and text/json.
+                // In this case we want to enforce the proper content type associated with the method's return type.
+                if (IsDefaultContentTypes(existingResponse.Content))
+                {
+                    existingResponse.Content.Clear();
+                }
+
+                var canEnrichContent = !existingResponse.Content.Any() && responseMetadata.SchemaType != null;
+
+                if (!canEnrichContent)
+                {
+                    continue;
+                }
+            }
+#else
             if (operation.Responses.TryGetValue(responseMetadata.HttpCode.ToString(), out var existingResponse))
             {
                 // If no content type is specified, three will be added by default: application/json, text/plain, and text/json.
@@ -39,6 +66,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
                     continue;
                 }
             }
+#endif
 
             usesTypedResultsReturnType = true;
             var response = new OpenApiResponse();
