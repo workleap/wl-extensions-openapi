@@ -3,8 +3,6 @@ static Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions.ConfigureO
 static Workleap.Extensions.OpenAPI.OpenApiServiceCollectionExtensions.ConfigureStandardJsonSerializerOptions(this Microsoft.Extensions.DependencyInjection.IMvcBuilder! mvcBuilder) -> Microsoft.Extensions.DependencyInjection.IMvcBuilder!
 static Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.Forbidden() -> Workleap.Extensions.OpenAPI.TypedResult.Forbidden!
 static Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.Forbidden<T>(T? error) -> Workleap.Extensions.OpenAPI.TypedResult.Forbidden<T>!
-static Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.InternalServerError() -> Workleap.Extensions.OpenAPI.TypedResult.InternalServerError!
-static Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.InternalServerError<T>(T? error) -> Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<T>!
 Workleap.Extensions.OpenAPI.Builder.JsonSerializerDifferenceException
 Workleap.Extensions.OpenAPI.Builder.JsonSerializerDifferenceException.JsonSerializerDifferenceException(string! propertyName) -> void
 Workleap.Extensions.OpenAPI.Builder.OpenApiBuilder
@@ -16,9 +14,4 @@ Workleap.Extensions.OpenAPI.TypedResult.Forbidden.ExecuteAsync(Microsoft.AspNetC
 Workleap.Extensions.OpenAPI.TypedResult.Forbidden<TValue>
 Workleap.Extensions.OpenAPI.TypedResult.Forbidden<TValue>.ExecuteAsync(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> System.Threading.Tasks.Task!
 Workleap.Extensions.OpenAPI.TypedResult.Forbidden<TValue>.Value.get -> TValue?
-Workleap.Extensions.OpenAPI.TypedResult.InternalServerError
-Workleap.Extensions.OpenAPI.TypedResult.InternalServerError.ExecuteAsync(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> System.Threading.Tasks.Task!
-Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<TValue>
-Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<TValue>.ExecuteAsync(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> System.Threading.Tasks.Task!
-Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<TValue>.Value.get -> TValue?
 Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions

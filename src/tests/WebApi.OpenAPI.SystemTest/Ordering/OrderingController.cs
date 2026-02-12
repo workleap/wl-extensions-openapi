@@ -11,7 +11,7 @@ namespace WebApi.OpenAPI.SystemTest.Ordering;
 public class OrderingController : ControllerBase
 {
     [HttpPost("withLotsOfResults")]
-    public async Task<Results<Ok<string>, NotFound, BadRequest, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<ProblemDetails>>> WithLotsOfResults()
+    public async Task<Results<Ok<string>, NotFound, BadRequest, InternalServerError<ProblemDetails>>> WithLotsOfResults()
     {
         await Task.CompletedTask;
         return TypedResults.Ok("Result");

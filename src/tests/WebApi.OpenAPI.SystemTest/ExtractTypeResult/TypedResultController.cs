@@ -126,36 +126,36 @@ public class TypedResultController : ControllerBase
 
     [HttpGet]
     [Route("/withExceptionsNoType")]
-    public Results<Ok<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError> TypedResultWithExceptionsNoType(int id)
+    public Results<Ok<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden, InternalServerError> TypedResultWithExceptionsNoType(int id)
     {
         return id switch
         {
             0 => Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.Forbidden(),
-            < 0 => Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.InternalServerError(),
+            < 0 => TypedResults.InternalServerError(),
             _ => TypedResults.Ok(new TypedResultExample("Example", OperationEnum.Foo))
         };
     }
 
     [HttpGet]
     [Route("/withExceptionsWithType")]
-    public Results<Ok<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden<string>, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<string>> TypedResultWithExceptionsWithType(int id)
+    public Results<Ok<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden<string>, InternalServerError<string>> TypedResultWithExceptionsWithType(int id)
     {
         return id switch
         {
             0 => Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.Forbidden("Forbidden"),
-            < 0 => Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
+            < 0 => TypedResults.InternalServerError("An error occured when processing the request."),
             _ => TypedResults.Ok(new TypedResultExample("Example"))
         };
     }
 
     [HttpGet]
     [Route("/validateOkNotPresent")]
-    public Results<Created<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden<string>, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<string>> TypedResultWithOutOk(int id)
+    public Results<Created<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden<string>, InternalServerError<string>> TypedResultWithOutOk(int id)
     {
         return id switch
         {
             0 => Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.Forbidden("Forbidden"),
-            < 0 => Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
+            < 0 => TypedResults.InternalServerError("An error occured when processing the request."),
             _ => TypedResults.Created("hardcoded uri", new TypedResultExample("Example", OperationEnum.Bar))
         };
     }
@@ -165,12 +165,12 @@ public class TypedResultController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(string))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, Type = typeof(string))]
-    public Results<Created<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden<string>, Workleap.Extensions.OpenAPI.TypedResult.InternalServerError<string>> TypedResultWithoutOkButAnnotationPresent(int id)
+    public Results<Created<TypedResultExample>, Workleap.Extensions.OpenAPI.TypedResult.Forbidden<string>, InternalServerError<string>> TypedResultWithoutOkButAnnotationPresent(int id)
     {
         return id switch
         {
             0 => Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.Forbidden("Forbidden"),
-            < 0 => Workleap.Extensions.OpenAPI.TypedResult.TypedResultsExtensions.InternalServerError("An error occured when processing the request."),
+            < 0 => TypedResults.InternalServerError("An error occured when processing the request."),
             _ => TypedResults.Created("hardcoded uri", new TypedResultExample("Example", OperationEnum.Foobar))
         };
     }
