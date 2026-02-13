@@ -87,7 +87,7 @@ public class CompareTypedResultWithAnnotationAnalyzer : DiagnosticAnalyzer
             Add(404, "Microsoft.AspNetCore.Http.HttpResults.NotFound");
             Add(409, "Microsoft.AspNetCore.Http.HttpResults.Conflict");
             Add(422, "Microsoft.AspNetCore.Http.HttpResults.UnprocessableEntity");
-            Add(500, "Workleap.Extensions.OpenAPI.TypedResult.InternalServerError");
+            Add(500, "Microsoft.AspNetCore.Http.HttpResults.InternalServerError");
 
             return dictionary;
 

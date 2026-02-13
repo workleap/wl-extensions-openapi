@@ -9,15 +9,13 @@ public static class ExtractTypedResultMinimalApis
     {
         app.MapGet("minimal-endpoint-with-typed-result-no-produces/{id:int}", CheckReturnById)
             .WithName("GetMinimalApiWithTypedResultWithNoProduces")
-            .WithTags("TypedResult")
-            .WithOpenApi();
+            .WithTags("TypedResult");
 
         app.MapGet("minimal-endpoint-with-typed-result-with-produces", CheckReturnByIdWithProblemDetails)
             .WithName("GetMinimalApiWithTypedResultWithProduces")
             .WithTags("TypedResult")
             .Produces<TypedResultExample>()
-            .Produces<ProblemDetails>(400)
-            .WithOpenApi();
+            .Produces<ProblemDetails>(400);
     }
 
     private static Results<Ok<TypedResultExample>, BadRequest<ProblemDetails>, NotFound> CheckReturnById(int id)

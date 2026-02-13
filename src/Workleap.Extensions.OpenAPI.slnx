@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/files/">
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Folder Name="/tests/">
+    <File Path="tests/expected-openapi-document.yaml" />
+    <File Path="tests/RunSystemTest.ps1" />
+    <Project Path="tests/WebApi.OpenAPI.SystemTest/WebApi.OpenAPI.SystemTest.csproj" />
+    <Project Path="tests/Workleap.Extensions.OpenAPI.Analyzers.Tests/Workleap.Extensions.OpenAPI.Analyzers.Tests.csproj" />
+    <Project Path="Workleap.Extensions.OpenAPI.Tests/Workleap.Extensions.OpenAPI.Tests.csproj" />
+  </Folder>
+  <Project Path="Workleap.Extensions.OpenAPI.Analyzers/Workleap.Extensions.OpenAPI.Analyzers.csproj" />
+  <Project Path="Workleap.Extensions.OpenAPI/Workleap.Extensions.OpenAPI.csproj" />
+</Solution>

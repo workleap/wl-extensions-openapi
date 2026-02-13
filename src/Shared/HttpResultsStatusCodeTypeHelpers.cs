@@ -24,12 +24,8 @@ internal static class HttpResultsStatusCodeTypeHelpers
         { "Microsoft.AspNetCore.Http.HttpResults.Conflict`1", 409 },
         { "Microsoft.AspNetCore.Http.HttpResults.UnprocessableEntity", 422 },
         { "Microsoft.AspNetCore.Http.HttpResults.UnprocessableEntity`1", 422 },
-        // Will be Supported in .NET 9
         { "Microsoft.AspNetCore.Http.HttpResults.InternalServerError", 500 },
         { "Microsoft.AspNetCore.Http.HttpResults.InternalServerError`1", 500 },
-        // Workleap's definition of the InternalServerError type result for other .NET versions
-        { "Workleap.Extensions.OpenAPI.TypedResult.InternalServerError", 500 },
-        { "Workleap.Extensions.OpenAPI.TypedResult.InternalServerError`1", 500 },
     };
 
     // Using the same descriptions from the Swashbuckle library: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/fca056a330a8ddb5173eaa6ad912b77fd0cf0b39/src/Swashbuckle.AspNetCore.SwaggerGen/SwaggerGenerator/SwaggerGenerator.cs#L1027

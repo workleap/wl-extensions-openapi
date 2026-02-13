@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Workleap.Extensions.OpenAPI;
 
 namespace WebApi.OpenAPI.SystemTest;

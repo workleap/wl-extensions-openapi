@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using Workleap.Extensions.OpenAPI.TypedResult;
 
 namespace WebApi.OpenAPI.SystemTest.Ordering;
 
