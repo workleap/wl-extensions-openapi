@@ -24,11 +24,6 @@ internal sealed class ExtractRequiredAttributeFromNullableType : ISchemaFilter
 
         foreach (var (name, property) in openApiSchema.Properties)
         {
-            if (property is not OpenApiSchema propSchema)
-            {
-                continue;
-            }
-
             // Check if already marked as required
             if (openApiSchema.Required.Contains(name))
             {

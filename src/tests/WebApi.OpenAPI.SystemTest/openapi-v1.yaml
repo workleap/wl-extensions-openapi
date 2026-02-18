@@ -525,6 +525,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: string
   /useApplicationJsonContentTypeWithNoContent:
     get:
       tags:
@@ -541,6 +545,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: string
         '400':
           description: Bad Request
           content:
@@ -651,6 +659,8 @@ components:
           type: string
       additionalProperties: false
     RequiredExampleGrandParentClass:
+      required:
+        - requiredExampleParent
       type: object
       properties:
         requiredExampleParent:
@@ -660,6 +670,8 @@ components:
           nullable: true
       additionalProperties: false
     RequiredExampleGrandParentRecord:
+      required:
+        - requiredExampleParent
       type: object
       properties:
         requiredExampleParent:
@@ -733,6 +745,7 @@ components:
       required:
         - count
         - name
+        - operation
       type: object
       properties:
         name:

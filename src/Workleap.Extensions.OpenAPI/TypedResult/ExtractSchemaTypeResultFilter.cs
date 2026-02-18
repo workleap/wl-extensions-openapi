@@ -46,7 +46,10 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             }
 
             usesTypedResultsReturnType = true;
-            var response = new OpenApiResponse();
+            var response = new OpenApiResponse
+            {
+                Content = new Dictionary<string, OpenApiMediaType>(),
+            };
             if (HttpResultsStatusCodeTypeHelpers.StatusCodesToDescription.TryGetValue(responseMetadata.HttpCode, out var description))
             {
                 response.Description = description;
@@ -59,7 +62,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             if (responseMetadata.SchemaType != null)
             {
                 var schema = context.SchemaGenerator.GenerateSchema(responseMetadata.SchemaType, context.SchemaRepository);
-                response.Content?.Add(DefaultContentType, new OpenApiMediaType { Schema = schema });
+                response.Content.Add(DefaultContentType, new OpenApiMediaType { Schema = schema });
             }
 
             if (operation.Responses != null)
