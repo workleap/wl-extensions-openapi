@@ -15,10 +15,8 @@ internal sealed class ExtractRequiredAttributeFromNullableType : ISchemaFilter
             return;
         }
 
-        // For .NET 10 / OpenAPI 3.1 / Swashbuckle v10, the SupportNonNullableReferenceTypes extension
-        // handles nullability differently. We'll apply a simpler approach here.
-        // In OpenAPI 3.1, nullable is typically represented through anyOf/oneOf with null type.
-
+        // In Swashbuckle v10 / Microsoft.OpenApi v2, $ref properties are OpenApiSchemaReference instances
+        // (not OpenApiSchema), so we can't check schema.Nullable. Use reflection-based nullability instead.
         var nullabilityInfoContext = new NullabilityInfoContext();
         var contextProperties = context.Type.GetProperties();
 

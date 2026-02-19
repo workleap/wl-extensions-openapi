@@ -8,7 +8,9 @@ namespace Workleap.Extensions.OpenAPI.Ordering;
 /// </summary>
 internal sealed class OrderResponseFilter : IDocumentFilter
 {
-    private static readonly Dictionary<string, int> HttpMethodOrder = new()
+    // In Microsoft.OpenApi v2, operation keys are no longer the OperationType enum (where we could cast to int),
+    // they are objects with a string Method property. This dictionary preserves explicit ordering.
+    private static readonly Dictionary<string, int> HttpMethodOrder = new(StringComparer.OrdinalIgnoreCase)
     {
         { "GET", 0 },
         { "POST", 1 },
@@ -40,7 +42,7 @@ internal sealed class OrderResponseFilter : IDocumentFilter
             }
 
             var sortedOperations = pathItem.Operations
-                .OrderBy(op => HttpMethodOrder.TryGetValue(op.Key.Method.ToUpperInvariant(), out var order) ? order : 99)
+                .OrderBy(op => HttpMethodOrder.TryGetValue(op.Key.Method, out var order) ? order : 99)
                 .ToList();
             pathItem.Operations.Clear();
             foreach (var operation in sortedOperations)
