@@ -30,15 +30,18 @@ public class BaseAnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, Default
     protected BaseAnalyzerTest()
     {
         this.TestState.Sources.Add(GlobalUsingList);
-        this.TestState.ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
+        this.TestState.ReferenceAssemblies = new ReferenceAssemblies(
+            "net10.0",
+            new PackageIdentity("Microsoft.NETCore.App.Ref", "10.0.3"),
+            Path.Combine("ref", "net10.0"));
 
         this.TestState.ReferenceAssemblies = this.TestState.ReferenceAssemblies.AddPackages(
             ImmutableArray.Create(
-                new PackageIdentity("Microsoft.AspNetCore.App.Ref", "8.0.4"),
-                new PackageIdentity("Swashbuckle.AspNetCore.Annotations", "6.5.0")
+                new PackageIdentity("Microsoft.AspNetCore.App.Ref", "10.0.3"),
+                new PackageIdentity("Swashbuckle.AspNetCore.Annotations", "10.1.2")
             ));
 
-        this.TestState.AdditionalReferences.Add(typeof(InternalServerError).Assembly);
+        this.TestState.AdditionalReferences.Add(typeof(Forbidden).Assembly);
     }
 
     // Specify compilation options as DLL and that unsafe code is not allowed.

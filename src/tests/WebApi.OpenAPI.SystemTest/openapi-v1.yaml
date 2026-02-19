@@ -759,3 +759,9 @@ components:
         operation:
           $ref: '#/components/schemas/OperationEnum'
       additionalProperties: false
+tags:
+  - name: OperationId
+  - name: Ordering
+  - name: RequiredType
+  - name: TypedResult
+  - name: TypedResultProperContentType
