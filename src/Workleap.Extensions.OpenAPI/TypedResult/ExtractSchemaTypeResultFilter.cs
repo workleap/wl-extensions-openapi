@@ -48,7 +48,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
             usesTypedResultsReturnType = true;
             var response = new OpenApiResponse
             {
-                Content = new Dictionary<string, OpenApiMediaType>(),
+                Content = new Dictionary<string, IOpenApiMediaType>(),
             };
             if (HttpResultsStatusCodeTypeHelpers.StatusCodesToDescription.TryGetValue(responseMetadata.HttpCode, out var description))
             {
@@ -78,7 +78,7 @@ internal sealed class ExtractSchemaTypeResultFilter : IOperationFilter
         }
     }
 
-    private static bool IsDefaultContentTypes(IDictionary<string, OpenApiMediaType> contentTypes) =>
+    private static bool IsDefaultContentTypes(IDictionary<string, IOpenApiMediaType> contentTypes) =>
         contentTypes.ContainsKey(MediaTypeNames.Application.Json) &&
         contentTypes.ContainsKey(MediaTypeNames.Text.Plain) &&
         contentTypes.ContainsKey("text/json");
